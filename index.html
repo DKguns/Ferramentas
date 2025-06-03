@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.53</title>
+    <title>Ferramenta de Calculo de Importação v29.58</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> 
 
     <style>
         :root {
@@ -243,20 +244,20 @@
 
         .dashboard-kpi-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 12px;  
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); 
+            gap: 10px;  
         } 
         .dashboard-kpi {
             background-color: var(--theme-surface-primary);
             backdrop-filter: blur(10px) saturate(150%); -webkit-backdrop-filter: blur(10px) saturate(150%);
             border: 1px solid var(--theme-border-primary); border-radius: var(--theme-card-border-radius);
-            padding: 10px 12px; 
-            box-shadow: 0 5px 15px var(--theme-shadow-color), inset 0 0 0 1.5px rgba(255,255,255,0.08); 
+            padding: 8px 10px; 
+            box-shadow: 0 4px 12px var(--theme-shadow-color), inset 0 0 0 1px rgba(255,255,255,0.07); 
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             color: var(--theme-text-primary); position: relative; overflow: hidden;
             display: flex; 
             align-items: center; 
-            min-height: 70px; 
+            min-height: 60px; 
         }
         .dashboard-kpi::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -267,37 +268,37 @@
             transition: background 0.4s ease; z-index: 0; 
         }
         .dashboard-kpi:hover {
-            transform: translateY(-3px) scale(1.01); 
+            transform: translateY(-2px) scale(1.005); 
             border-color: var(--theme-accent-blue);
-            box-shadow: 0 7px 18px var(--theme-shadow-color),
+            box-shadow: 0 6px 15px var(--theme-shadow-color),
                             inset 0 0 0 1.5px var(--theme-accent-blue), var(--theme-glow-blue);
         }
         .dashboard-kpi:hover::before { background: linear-gradient(135deg, var(--theme-accent-blue), var(--theme-accent-orange)); }
         .dashboard-kpi p { margin: 0; position: relative; z-index: 1; }
         .dashboard-kpi .kpi-icon-container { 
-            font-size: 1.2em; 
-            margin-right: 6px; 
+            font-size: 1.1em; 
+            margin-right: 5px; 
             color: var(--theme-accent-blue);
-            line-height: 1; flex-shrink: 0; width: 20px; 
+            line-height: 1; flex-shrink: 0; width: 18px; 
             text-align: center;
         }
         .dashboard-kpi .kpi-content { flex-grow: 1; min-width: 0; }
         .dashboard-kpi .kpi-label {
-            display: block; font-size: 0.65em; 
+            display: block; font-size: 0.6em; 
             color: var(--theme-text-secondary);
-            margin-bottom: 2px; 
+            margin-bottom: 1px; 
             white-space: normal; line-height: 1.1; 
             height: auto; 
             overflow: hidden; 
         }
         .dashboard-kpi strong { 
-            display: block; font-size: 1.4em; 
+            display: block; font-size: 1.3em; 
             font-weight: 700; color: var(--theme-text-primary);
             line-height: 1.1; 
-            text-shadow: 0 0 5px var(--theme-shadow-color); word-wrap: break-word; 
+            text-shadow: 0 0 4px var(--theme-shadow-color); word-wrap: break-word; 
         }
-        .dashboard-kpi strong.blue-highlight, .dashboard-kpi .kpi-value.blue-highlight { color: var(--theme-accent-blue); text-shadow: 0 0 8px var(--theme-glow-blue); }
-        .dashboard-kpi strong.orange-highlight, .dashboard-kpi .kpi-value.orange-highlight { color: var(--theme-accent-orange); text-shadow: 0 0 8px var(--theme-glow-orange); }
+        .dashboard-kpi strong.blue-highlight { color: var(--theme-accent-blue); text-shadow: 0 0 8px var(--theme-glow-blue); }
+        .dashboard-kpi strong.orange-highlight { color: var(--theme-accent-orange); text-shadow: 0 0 8px var(--theme-glow-orange); }
         .dashboard-kpi strong.profit-positive { color: var(--theme-accent-green); text-shadow: 0 0 8px var(--theme-glow-green); }
         .dashboard-kpi strong.profit-negative { color: var(--theme-accent-red); text-shadow: 0 0 8px var(--theme-glow-red); }
 
@@ -760,6 +761,19 @@
         .profit-color-indicator.yellow { background-color: var(--theme-accent-yellow); }
         .profit-color-indicator.orange { background-color: var(--theme-accent-light-orange); }
 
+        .chart-container {
+            width: 100%;
+            max-width: 450px; /* Limita a largura máxima do gráfico */
+            margin: 20px auto; /* Centraliza o gráfico */
+            padding: 15px;
+            background-color: var(--theme-surface-primary);
+            border-radius: var(--theme-card-border-radius);
+            box-shadow: 0 4px 12px var(--theme-shadow-color);
+        }
+        body.theme-dark .chart-container {
+             background-color: var(--theme-bg-secondary); /* Fundo mais escuro para o container do gráfico no tema dark */
+        }
+
 
     </style>
 </head>
@@ -1071,6 +1085,13 @@
                     </div>
                 </section>
 
+                <section aria-labelledby="headingGraficoCustos" class="chart-section">
+                    <h3 id="headingGraficoCustos" data-translate-key="headingGraficoCustos">Composição do Custo Total Geral (Gráfico)</h3>
+                    <div class="chart-container">
+                        <canvas id="custoTotalPizzaChart"></canvas>
+                    </div>
+                </section>
+
                 <div class="top-items-grid-container"> 
                     <section aria-labelledby="headingTopLucrativos" class="top-items-section">
                         <h3 id="headingTopLucrativos" data-translate-key="headingTopLucrativos">Top 10 Itens Mais Lucrativos (Margem %)</h3>
@@ -1186,6 +1207,7 @@
         { desc: "6SL3210-1KE26-0UF1",   codInterno: "9999", pesoUnitKG: "17.00", qtd: "1.00", precoCustoUnitME: "860.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "11614.56", ncm: "" }
     ];
 
+    let custoTotalChartInstance = null; // Variável global para a instância do gráfico
 
     function geId(id) { return document.getElementById(id); }
 
@@ -1736,7 +1758,7 @@
                                         item.despesasAduaneirasBRL_item + item.icms_efetivo + 
                                         item.freteNacionalBRL_item;
                 
-                item.custoUnitarioItem = item.quantidade > 0 ? item.custoTotalLinha / item.quantidade : item.custoTotalLinha;
+                item.custoUnitarioItem = item.quantidade > 0 ? item.custoTotalLinha / item.quantidade : item.custoUnitarioItem;
                 
                 if (item.valorVendaUnitBR > 0 && item.custoUnitarioItem > 0) {
                     item.lucroPercentualUnitario = ((item.valorVendaUnitBR - item.custoUnitarioItem) / item.custoUnitarioItem) * 100;
@@ -2082,6 +2104,12 @@
 
 
             showScreen('telaDashboardPanel'); 
+            // Renderizar o gráfico de pizza após a tela do dashboard ser exibida
+            renderizarGraficoCustos(
+                [acc.fob_BRL, (acc.frete_BRL + acc.seguro_BRL + acc.outrasDespME_BRL), acc.ii_BRL, (acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL), acc.icms_efetivo_BRL, (acc.afrmm_BRL + acc.siscomex_BRL), (acc.despAduan_BRL + acc.freteNac_BRL)],
+                ['FOB', 'Frete/Seg. Intl.', 'II', 'IPI/PIS/COFINS Efet.', 'ICMS Efet.', 'Taxas (AFRMM/Sisc.)', 'Desp. Nacionais']
+            );
+
 
         } catch (e) { 
             console.error("Erro detalhado em calcularCustosMultiItem:", e, e.stack);
@@ -2178,10 +2206,90 @@
         const topMenosLucrativosList = geId('topMenosLucrativosList');
         if(topMenosLucrativosList) topMenosLucrativosList.innerHTML = '';
 
+        // Destruir o gráfico de pizza se existir
+        if (custoTotalChartInstance) {
+            custoTotalChartInstance.destroy();
+            custoTotalChartInstance = null;
+        }
+
 
         // Voltar para a primeira aba
         showScreen('telaEntradaPanel');
         console.log("Todos os campos foram limpos.");
+    }
+
+    function renderizarGraficoCustos(data, labels) {
+        const ctx = geId('custoTotalPizzaChart')?.getContext('2d');
+        if (!ctx) {
+            console.error("Elemento canvas para o gráfico de pizza não encontrado.");
+            return;
+        }
+
+        if (custoTotalChartInstance) {
+            custoTotalChartInstance.destroy();
+        }
+
+        const isDarkMode = document.body.classList.contains('theme-dark');
+        const textColor = isDarkMode ? 'rgba(232, 232, 240, 0.8)' : 'rgba(73, 80, 87, 0.9)';
+        const gridColor = isDarkMode ? 'rgba(80, 80, 80, 0.3)' : 'rgba(222, 226, 230, 0.5)';
+
+
+        custoTotalChartInstance = new Chart(ctx, {
+            type: 'doughnut', // ou 'pie'
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Composição do Custo',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(0, 123, 255, 0.7)',  // Azul
+                        'rgba(253, 126, 20, 0.7)', // Laranja
+                        'rgba(220, 53, 69, 0.7)',  // Vermelho
+                        'rgba(40, 167, 69, 0.7)',  // Verde
+                        'rgba(255, 193, 7, 0.7)',  // Amarelo
+                        'rgba(108, 117, 125, 0.7)',// Cinza
+                        'rgba(23, 162, 184, 0.7)'  // Ciano
+                    ],
+                    borderColor: [
+                        'rgba(0, 123, 255, 1)',
+                        'rgba(253, 126, 20, 1)',
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(108, 117, 125, 1)',
+                        'rgba(23, 162, 184, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: textColor,
+                            font: { size: 10 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += formatBRL(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
 
