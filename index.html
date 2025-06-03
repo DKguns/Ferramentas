@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.51</title>
+    <title>Ferramenta de Calculo de Importação v29.52</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -782,39 +782,45 @@
 
     <main class="container" id="appContainer">
         <nav role="tablist" aria-label="Navegação da Calculadora">
-            <button type="button" id="tabEntradaBtn" role="tab" aria-controls="telaEntradaPanel" aria-selected="true" onclick="showScreen('telaEntradaPanel')"><i class="fas fa-keyboard" aria-hidden="true"></i> 1. Entrada de Dados</button>
-            <button type="button" id="tabResultadosBtn" role="tab" aria-controls="telaResultadosPanel" aria-selected="false" onclick="showScreen('telaResultadosPanel')"><i class="fas fa-table-list" aria-hidden="true"></i> 2. Resultados Detalhados</button>
-            <button type="button" id="tabDashboardBtn" role="tab" aria-controls="telaDashboardPanel" aria-selected="false" onclick="showScreen('telaDashboardPanel')"><i class="fas fa-chart-pie" aria-hidden="true"></i> 3. Dashboard e Resumo</button>
+            <button type="button" id="tabEntradaBtn" role="tab" aria-controls="telaEntradaPanel" aria-selected="true" onclick="showScreen('telaEntradaPanel')" data-translate-key="tabEntrada">
+                <i class="fas fa-keyboard" aria-hidden="true"></i> <span class="tab-text">1. Entrada de Dados</span>
+            </button>
+            <button type="button" id="tabResultadosBtn" role="tab" aria-controls="telaResultadosPanel" aria-selected="false" onclick="showScreen('telaResultadosPanel')" data-translate-key="tabResultados">
+                <i class="fas fa-table-list" aria-hidden="true"></i> <span class="tab-text">2. Resultados Detalhados</span>
+            </button>
+            <button type="button" id="tabDashboardBtn" role="tab" aria-controls="telaDashboardPanel" aria-selected="false" onclick="showScreen('telaDashboardPanel')" data-translate-key="tabDashboard">
+                <i class="fas fa-chart-pie" aria-hidden="true"></i> <span class="tab-text">3. Dashboard e Resumo</span>
+            </button>
         </nav>
 
         <section id="telaEntradaPanel" role="tabpanel" aria-labelledby="tabEntradaBtn">
             <section class="data-section global-inputs" aria-labelledby="headingDadosGlobais">
-                <h2 id="headingDadosGlobais">Dados Globais do Embarque</h2>
+                <h2 id="headingDadosGlobais" data-translate-key="headingDadosGlobais">Dados Globais do Embarque</h2>
                 
-                <div class="section-separator section-separator-infoOrg"></div>
+                <div class="section-separator section-separator-infoOrg" data-translate-key="sepInfoOrganizacionais"></div>
                 <section aria-labelledby="headingInfoOrganizacionais">
                     <div class="grid-container">
-                        <div class="grid-item"><label for="nomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome" value="Diego Karloh"><small class="field-description">Nome do responsável pelo cálculo.</small></div>
-                        <div class="grid-item"><label for="nomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional" value="Hy Tech"><small class="field-description">Fornecedor dos produtos.</small></div>
-                        <div class="grid-item"><label for="refInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle" value="OC-0702"><small class="field-description">Código/nome para seu controle interno ou OC.</small></div>
-                        <div class="grid-item"><label for="numeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice" value="PO1256897"><small class="field-description">Número da Fatura Proforma.</small></div>
-                        <div class="grid-item"><label for="diProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo" value="1111"><small class="field-description">Identificador da DI ou do processo.</small></div>
-                        <div class="grid-item"><label for="dataCalculo">Data do Cálculo/Embarque:</label><input type="date" id="dataCalculo"><small class="field-description">Data relevante para este cálculo.</small></div>
+                        <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome" value="Diego Karloh"><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
+                        <div class="grid-item"><label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional" value="Hy Tech"><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small></div>
+                        <div class="grid-item"><label for="refInterna" data-translate-key="labelRefInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle" value="OC-0702"><small class="field-description" data-translate-key="descRefInterna">Código/nome para seu controle interno ou OC.</small></div>
+                        <div class="grid-item"><label for="numeroPI" data-translate-key="labelNumeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice" value="PO1256897"><small class="field-description" data-translate-key="descNumeroPI">Número da Fatura Proforma.</small></div>
+                        <div class="grid-item"><label for="diProcesso" data-translate-key="labelDiProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo" value="1111"><small class="field-description" data-translate-key="descDiProcesso">Identificador da DI ou do processo.</small></div>
+                        <div class="grid-item"><label for="dataCalculo" data-translate-key="labelDataCalculo">Data do Cálculo/Embarque:</label><input type="date" id="dataCalculo"><small class="field-description" data-translate-key="descDataCalculo">Data relevante para este cálculo.</small></div>
                     </div>
                 </section>
-                <div class="section-separator section-separator-detComLog"></div>
+                <div class="section-separator section-separator-detComLog" data-translate-key="sepDetalhesComerciais"></div>
 
                 <section aria-labelledby="headingDetalhesComerciais">
                     <div class="grid-container">
                         <div class="grid-item">
-                            <label for="moedaEstrangeira">Moeda Estrangeira Ativa:</label>
+                            <label for="moedaEstrangeira" data-translate-key="labelMoedaEstrangeira">Moeda Estrangeira Ativa:</label>
                             <input type="text" id="moedaEstrangeira" value="USD" oninput="updateCotacaoButtonLabel()">
-                            <small class="field-description">Ex: USD, EUR, CNY. Define a moeda para os custos e cotação.</small>
+                            <small class="field-description" data-translate-key="descMoedaEstrangeira">Ex: USD, EUR, CNY. Define a moeda para os custos e cotação.</small>
                         </div>
                         <div class="grid-item"> 
-                            <label for="taxaCambio">Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):</label>
+                            <label for="taxaCambio" data-translate-key="labelTaxaCambio">Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):</label>
                             <input type="number" id="taxaCambio" step="0.0001" value="5.71" placeholder="Ex: 5.20"> 
-                            <small class="field-description">Insira manualmente ou use os botões abaixo.</small>
+                            <small class="field-description" data-translate-key="descTaxaCambio">Insira manualmente ou use os botões abaixo.</small>
                             <div class="currency-buttons-group">
                                 <button type="button" onclick="fetchCotacaoMoeda('USD')">USD-BRL</button>
                                 <button type="button" onclick="fetchCotacaoMoeda('EUR')">EUR-BRL</button>
@@ -823,62 +829,73 @@
                             <output id="cotacaoInfo" aria-live="polite"></output>
                         </div>
                         <div class="grid-item">
-                            <label for="incoterm">INCOTERM:</label>
+                            <label for="incoterm" data-translate-key="labelIncoterm">INCOTERM:</label>
                             <select id="incoterm"><option value="">Selecione</option><option value="EXW">EXW</option><option value="FCA">FCA</option><option value="FAS">FAS</option><option value="FOB">FOB</option><option value="CPT" selected>CPT</option><option value="CFR">CFR</option><option value="CIP">CIP</option><option value="CIF">CIF</option><option value="DAP">DAP</option><option value="DPU">DPU</option><option value="DDP">DDP</option></select>
-                            <small class="field-description">Ex: FOB, CIF. Define responsabilidades.</small>
+                            <small class="field-description" data-translate-key="descIncoterm">Ex: FOB, CIF. Define responsabilidades.</small>
                         </div>
                          <div class="grid-item">
-                            <label for="modalidadeTransporte">Modalidade de Transporte:</label>
+                            <label for="modalidadeTransporte" data-translate-key="labelModalidadeTransporte">Modalidade de Transporte:</label>
                              <select id="modalidadeTransporte"><option value="">Selecione</option><option value="Maritimo">Marítimo</option><option value="Aereo" selected>Aéreo</option><option value="Rodoviario">Rodoviário</option><option value="Ferroviario">Ferroviário</option><option value="Outro">Outro</option></select>
-                            <small class="field-description">Ex: Marítimo, Aéreo.</small>
+                            <small class="field-description" data-translate-key="descModalidadeTransporte">Ex: Marítimo, Aéreo.</small>
                         </div>
                     </div>
                 </section>
-                <div class="section-separator section-separator-regTribCred"></div>
+                <div class="section-separator section-separator-regTribCred" data-translate-key="sepRegimeTributario"></div>
 
                 <section aria-labelledby="headingRegimeTributario">
                     <div class="grid-container">
                         <div class="grid-item">
-                            <label for="regimeTributario">Regime Tributário Federal:</label>
+                            <label for="regimeTributario" data-translate-key="labelRegimeTributario">Regime Tributário Federal:</label>
                             <select id="regimeTributario" onchange="handleRegimeChange()">
                                 <option value="Lucro Real" selected>Lucro Real</option> 
                                 <option value="Lucro Presumido">Lucro Presumido</option>
                                 <option value="Simples Nacional">Simples Nacional</option>
                             </select>
-                            <small class="field-description">Define sugestões para os créditos abaixo.</small>
+                            <small class="field-description" data-translate-key="descRegimeTributario">Define sugestões para os créditos abaixo.</small>
                         </div>
-                        <div class="grid-item"><label for="percCreditoPIS">% Crédito PIS:</label><input type="number" id="percCreditoPIS" step="0.01" value="100.00"><small class="field-description">Sugestão: L.Real = 100%; L.Presumido/Simples = 0%.</small></div>
-                        <div class="grid-item"><label for="percCreditoCOFINS">% Crédito COFINS:</label><input type="number" id="percCreditoCOFINS" step="0.01" value="100.00"><small class="field-description">Sugestão: L.Real = 100%; L.Presumido/Simples = 0%.</small></div>
-                        <div class="grid-item"><label for="percCreditoIPI">% Crédito IPI:</label><input type="number" id="percCreditoIPI" step="0.01" value="100.00"><small class="field-description">Sugestão: L.Real (Indústria) = 100%; Outros = 0%.</small></div>
-                        <div class="grid-item"><label for="percCreditoICMS">% Crédito ICMS:</label><input type="number" id="percCreditoICMS" step="0.01" value="100"><small class="field-description">Sugestão: 100% para L.Real/Presumido. Ajuste conforme TTD. Simples = 0%.</small></div>
+                        <div class="grid-item"><label for="percCreditoPIS" data-translate-key="labelPercCreditoPIS">% Crédito PIS:</label><input type="number" id="percCreditoPIS" step="0.01" value="100.00"><small class="field-description" data-translate-key="descPercCreditoPIS">Sugestão: L.Real = 100%; L.Presumido/Simples = 0%.</small></div>
+                        <div class="grid-item"><label for="percCreditoCOFINS" data-translate-key="labelPercCreditoCOFINS">% Crédito COFINS:</label><input type="number" id="percCreditoCOFINS" step="0.01" value="100.00"><small class="field-description" data-translate-key="descPercCreditoCOFINS">Sugestão: L.Real = 100%; L.Presumido/Simples = 0%.</small></div>
+                        <div class="grid-item"><label for="percCreditoIPI" data-translate-key="labelPercCreditoIPI">% Crédito IPI:</label><input type="number" id="percCreditoIPI" step="0.01" value="100.00"><small class="field-description" data-translate-key="descPercCreditoIPI">Sugestão: L.Real (Indústria) = 100%; Outros = 0%.</small></div>
+                        <div class="grid-item"><label for="percCreditoICMS" data-translate-key="labelPercCreditoICMS">% Crédito ICMS:</label><input type="number" id="percCreditoICMS" step="0.01" value="100"><small class="field-description" data-translate-key="descPercCreditoICMS">Sugestão: 100% para L.Real/Presumido. Ajuste conforme TTD. Simples = 0%.</small></div>
                     </div>
                 </section>
-                <div class="section-separator section-separator-custosGlobais"></div>
+                <div class="section-separator section-separator-custosGlobais" data-translate-key="sepCustosGlobais"></div>
 
                 <section aria-labelledby="headingCustosGlobais">
                     <div class="grid-container">
-                        <div class="grid-item"><label for="totalFreteME">Frete Int. TOTAL ($):</label><input type="number" id="totalFreteME" step="0.01" value="1657" placeholder="0.00"> <small class="field-description">Frete principal em Moeda Estrangeira.</small></div> 
-                        <div class="grid-item"><label for="totalSeguroME">Seguro Int. TOTAL ($):</label><input type="number" id="totalSeguroME" step="0.01" value="0"><small class="field-description">Seguro da carga em Moeda Estrangeira.</small></div>
-                        <div class="grid-item"><label for="totalOutrasDespesasME">Outras Desp. Origem TOTAIS ($):</label><input type="number" id="totalOutrasDespesasME" step="0.01" value="0"><small class="field-description">Ex: THC origem, docs, frete interno origem.</small></div>
-                        <div class="grid-item"><label for="taxaSiscomexBRL">Taxa Siscomex TOTAL (BRL):</label><input type="number" id="taxaSiscomexBRL" step="0.01" value="416.46" placeholder="Ex: 115.67"><small class="field-description">Taxa de uso do Siscomex.</small></div>
-                        <div class="grid-item"><label for="despesasAduaneirasBRL">Desp. Aduaneiras TOTAIS (BRL):</label><input type="number" id="despesasAduaneirasBRL" step="0.01" value="0"><small class="field-description">Ex: Despachante, Armazenagem, LI.</small></div>
-                        <div class="grid-item"><label for="freteNacionalBRL">Frete Nacional TOTAL (BRL):</label><input type="number" id="freteNacionalBRL" step="0.01" value="0"><small class="field-description">Transporte no Brasil até destino final.</small></div>
-                        <div class="grid-item"><label for="aliquotaAFRMM">Alíquota AFRMM Global (%):</label><input type="number" id="aliquotaAFRMM" step="0.01" value="0"><small class="field-description">Padrão 25% para Longo Curso. Ajuste se Cabotagem (10%).</small></div> 
+                        <div class="grid-item"><label for="totalFreteME" data-translate-key="labelTotalFreteME">Frete Int. TOTAL ($):</label><input type="number" id="totalFreteME" step="0.01" value="1657" placeholder="0.00"> <small class="field-description" data-translate-key="descTotalFreteME">Frete principal em Moeda Estrangeira.</small></div> 
+                        <div class="grid-item"><label for="totalSeguroME" data-translate-key="labelTotalSeguroME">Seguro Int. TOTAL ($):</label><input type="number" id="totalSeguroME" step="0.01" value="0"><small class="field-description" data-translate-key="descTotalSeguroME">Seguro da carga em Moeda Estrangeira.</small></div>
+                        <div class="grid-item"><label for="totalOutrasDespesasME" data-translate-key="labelTotalOutrasDespesasME">Outras Desp. Origem TOTAIS ($):</label><input type="number" id="totalOutrasDespesasME" step="0.01" value="0"><small class="field-description" data-translate-key="descTotalOutrasDespesasME">Ex: THC origem, docs, frete interno origem.</small></div>
+                        <div class="grid-item"><label for="taxaSiscomexBRL" data-translate-key="labelTaxaSiscomexBRL">Taxa Siscomex TOTAL (BRL):</label><input type="number" id="taxaSiscomexBRL" step="0.01" value="416.46" placeholder="Ex: 115.67"><small class="field-description" data-translate-key="descTaxaSiscomexBRL">Taxa de uso do Siscomex.</small></div>
+                        <div class="grid-item"><label for="despesasAduaneirasBRL" data-translate-key="labelDespesasAduaneirasBRL">Desp. Aduaneiras TOTAIS (BRL):</label><input type="number" id="despesasAduaneirasBRL" step="0.01" value="0"><small class="field-description" data-translate-key="descDespesasAduaneirasBRL">Ex: Despachante, Armazenagem, LI.</small></div>
+                        <div class="grid-item"><label for="freteNacionalBRL" data-translate-key="labelFreteNacionalBRL">Frete Nacional TOTAL (BRL):</label><input type="number" id="freteNacionalBRL" step="0.01" value="0"><small class="field-description" data-translate-key="descFreteNacionalBRL">Transporte no Brasil até destino final.</small></div>
+                        <div class="grid-item"><label for="aliquotaAFRMM" data-translate-key="labelAliquotaAFRMM">Alíquota AFRMM Global (%):</label><input type="number" id="aliquotaAFRMM" step="0.01" value="0"><small class="field-description" data-translate-key="descAliquotaAFRMM">Padrão 25% para Longo Curso. Ajuste se Cabotagem (10%).</small></div> 
                     </div>
                 </section>
             </section>
 
             <section class="data-section item-inputs" aria-labelledby="headingItensEmbarque">
-                <h2 id="headingItensEmbarque">Itens do Embarque</h2>
-                <p class="currency-note">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. A primeira linha tem valores de exemplo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.</p>
+                <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque">Itens do Embarque</h2>
+                <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. A primeira linha tem valores de exemplo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.</p>
                 <div class="table-wrapper">
                     <table id="itemInputTable" class="item-table-input" aria-labelledby="headingItensEmbarque">
                         <thead>
                             <tr>
-                                <th scope="col">#</th><th scope="col">Descrição</th><th scope="col">Cód. Interno</th><th scope="col">NCM</th><th scope="col">Qtd.</th>
-                                <th scope="col">Pr. Custo Unit. $</th><th scope="col">Peso Unit. KG</th>
-                                <th scope="col">II (%)</th><th scope="col">IPI (%)</th><th scope="col">PIS (%)</th><th scope="col">COFINS (%)</th><th scope="col">ICMS (%)</th>
-                                <th scope="col">Pr. Venda Unit. R$ Brasil</th><th scope="col">Pr. Custo Total $</th><th scope="col">Peso Total KG</th>
+                                <th scope="col">#</th>
+                                <th scope="col" data-translate-key="thDescricao">Descrição</th>
+                                <th scope="col" data-translate-key="thCodInterno">Cód. Interno</th>
+                                <th scope="col" data-translate-key="thNCM">NCM</th>
+                                <th scope="col" data-translate-key="thQtd">Qtd.</th>
+                                <th scope="col" data-translate-key="thPrecoCustoUnitME">Pr. Custo Unit. $</th>
+                                <th scope="col" data-translate-key="thPesoUnitKG">Peso Unit. KG</th>
+                                <th scope="col" data-translate-key="thII">II (%)</th>
+                                <th scope="col" data-translate-key="thIPI">IPI (%)</th>
+                                <th scope="col" data-translate-key="thPIS">PIS (%)</th>
+                                <th scope="col" data-translate-key="thCOFINS">COFINS (%)</th>
+                                <th scope="col" data-translate-key="thICMS">ICMS (%)</th>
+                                <th scope="col" data-translate-key="thPrecoVendaUnitBR">Pr. Venda Unit. R$ Brasil</th>
+                                <th scope="col" data-translate-key="thPrecoCustoTotalME">Pr. Custo Total $</th>
+                                <th scope="col" data-translate-key="thPesoTotalKG">Peso Total KG</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -887,68 +904,68 @@
             </section>
             
             <div class="action-buttons">
-                <button class="main-calculate-button" onclick="calcularCustosMultiItem()">Calcular Custos, Lucro e Indicadores</button>
-                <button type="button" class="pdf-button" onclick="gerarPDF()">Gerar PDF do Relatório</button>
-                <button type="button" class="clear-button" onclick="limparTodosOsCampos()">Limpar Todos os Campos</button>
+                <button class="main-calculate-button" onclick="calcularCustosMultiItem()" data-translate-key="btnCalcular">Calcular Custos, Lucro e Indicadores</button>
+                <button type="button" class="pdf-button" onclick="gerarPDF()" data-translate-key="btnGerarPDF">Gerar PDF do Relatório</button>
+                <button type="button" class="clear-button" onclick="limparTodosOsCampos()" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
             </div>
         </section> 
 
         <section id="telaResultadosPanel" role="tabpanel" aria-labelledby="tabResultadosBtn" hidden>
             <section id="resultsContainer" class="dashboard-section" aria-labelledby="headingResultadosDetalhados" aria-live="polite" aria-atomic="true">
-                <h2 id="headingResultadosDetalhados">Resultados Detalhados por Item</h2>
+                <h2 id="headingResultadosDetalhados" data-translate-key="headingResultadosDetalhados">Resultados Detalhados por Item</h2>
                 <div class="table-wrapper">
                     <table id="itemResultTable" class="results-table" aria-labelledby="headingResultadosDetalhados">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Cód. Interno</th>
-                                <th scope="col">Descrição</th>
-                                <th scope="col">NCM</th>
-                                <th scope="col">Qtd</th>
-                                <th scope="col">Peso Unit. KG</th> 
-                                <th scope="col">Peso Total KG</th>
-                                <th scope="col">% Rateio Peso Unit.</th> 
-                                <th scope="col">Frete por Peso Unit. (R$)</th> 
-                                <th scope="col">Pr. Custo Unit. $</th> 
-                                <th scope="col">Pr. Custo Total $</th>
-                                <th scope="col">FOB Unit. (R$)</th>
-                                <th scope="col">FOB Total (R$)</th>
-                                <th scope="col">FOB %</th> 
-                                <th scope="col">Seguro Rateado (R$)</th>
-                                <th scope="col">Outras Desp. Rateadas (R$)</th>
-                                <th scope="col">CIF Total (R$)</th> 
-                                <th scope="col">II R$</th>
-                                <th scope="col">Valor Total NF (R$)</th> 
-                                <th scope="col">Valor Unitário NF (R$)</th> 
-                                <th scope="col">IPI Pago R$</th>
-                                <th scope="col">IPI Crédito R$</th>
-                                <th scope="col">IPI Custo R$</th>
-                                <th scope="col">TX.SISC. (R$)</th> 
-                                <th scope="col">PIS Pago R$</th>
-                                <th scope="col">PIS Crédito R$</th>
-                                <th scope="col">PIS Custo R$</th>
-                                <th scope="col">COFINS Pago R$</th>
-                                <th scope="col">COFINS Crédito R$</th>
-                                <th scope="col">COFINS Custo R$</th>
-                                <th scope="col">Base Calc. ICMS R$</th>
-                                <th scope="col">ICMS Pago R$</th>
-                                <th scope="col">ICMS Crédito R$</th>
-                                <th scope="col">ICMS Custo R$</th>
-                                <th scope="col">AFRMM R$</th>
-                                <th scope="col">Desp. Adu R$</th>
-                                <th scope="col">Frete Nac R$</th>
-                                <th scope="col">Custo Total Com Impostos</th> 
-                                <th scope="col">CUSTO UNIT Com Impostos</th> 
-                                <th scope="col">Soma Impostos Que Creditam (R$)</th>
-                                <th scope="col">Soma Impostos Com Creditos (R$)</th>
-                                <th scope="col">Total Imp. Efetivos</th> 
-                                <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
-                                <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
-                                <th scope="col">PREÇO VENDA UNIT. R$ Brasil</th>
-                                <th scope="col">PREÇO VENDA Total. R$ Brasil</th> 
-                                <th scope="col">LUCRO UNIT. (R$)</th>
-                                <th scope="col">LUCRO TOTAL LINHA (R$)</th>
-                                <th scope="col">MARGEM LUCRO UNIT. %</th>
+                                <th scope="col" data-translate-key="resThCodInterno">Cód. Interno</th>
+                                <th scope="col" data-translate-key="resThDescricao">Descrição</th>
+                                <th scope="col" data-translate-key="resThNCM">NCM</th>
+                                <th scope="col" data-translate-key="resThQtd">Qtd</th>
+                                <th scope="col" data-translate-key="resThPesoUnitKG">Peso Unit. KG</th> 
+                                <th scope="col" data-translate-key="resThPesoTotalKG">Peso Total KG</th>
+                                <th scope="col" data-translate-key="resThPercRateioPesoUnit">% Rateio Peso Unit.</th> 
+                                <th scope="col" data-translate-key="resThFretePesoUnit">Frete por Peso Unit. (R$)</th> 
+                                <th scope="col" data-translate-key="resThPrecoCustoUnitME">Pr. Custo Unit. $</th> 
+                                <th scope="col" data-translate-key="resThPrecoCustoTotalME">Pr. Custo Total $</th>
+                                <th scope="col" data-translate-key="resThFOBUnit">FOB Unit. (R$)</th>
+                                <th scope="col" data-translate-key="resThFOBTotal">FOB Total (R$)</th>
+                                <th scope="col" data-translate-key="resThFOBPerc">FOB %</th> 
+                                <th scope="col" data-translate-key="resThSeguroRateado">Seguro Rateado (R$)</th>
+                                <th scope="col" data-translate-key="resThOutrasDespRateadas">Outras Desp. Rateadas (R$)</th>
+                                <th scope="col" data-translate-key="resThCIFTotal">CIF Total (R$)</th> 
+                                <th scope="col" data-translate-key="resThIIR">II R$</th>
+                                <th scope="col" data-translate-key="resThValorTotalNF">Valor Total NF (R$)</th> 
+                                <th scope="col" data-translate-key="resThValorUnitarioNF">Valor Unitário NF (R$)</th> 
+                                <th scope="col" data-translate-key="resThIPIPago">IPI Pago R$</th>
+                                <th scope="col" data-translate-key="resThIPICredito">IPI Crédito R$</th>
+                                <th scope="col" data-translate-key="resThIPICusto">IPI Custo R$</th>
+                                <th scope="col" data-translate-key="resThTXSISC">TX.SISC. (R$)</th> 
+                                <th scope="col" data-translate-key="resThPISPago">PIS Pago R$</th>
+                                <th scope="col" data-translate-key="resThPISCredito">PIS Crédito R$</th>
+                                <th scope="col" data-translate-key="resThPISCusto">PIS Custo R$</th>
+                                <th scope="col" data-translate-key="resThCOFINSPago">COFINS Pago R$</th>
+                                <th scope="col" data-translate-key="resThCOFINSCredito">COFINS Crédito R$</th>
+                                <th scope="col" data-translate-key="resThCOFINSCusto">COFINS Custo R$</th>
+                                <th scope="col" data-translate-key="resThBaseCalcICMS">Base Calc. ICMS R$</th>
+                                <th scope="col" data-translate-key="resThICMSPago">ICMS Pago R$</th>
+                                <th scope="col" data-translate-key="resThICMSCredito">ICMS Crédito R$</th>
+                                <th scope="col" data-translate-key="resThICMSCusto">ICMS Custo R$</th>
+                                <th scope="col" data-translate-key="resThAFRMM">AFRMM R$</th>
+                                <th scope="col" data-translate-key="resThDespAdu">Desp. Adu R$</th>
+                                <th scope="col" data-translate-key="resThFreteNac">Frete Nac R$</th>
+                                <th scope="col" data-translate-key="resThCustoTotalComImpostos">Custo Total Com Impostos</th> 
+                                <th scope="col" data-translate-key="resThCustoUnitComImpostos">CUSTO UNIT Com Impostos</th> 
+                                <th scope="col" data-translate-key="resThSomaImpostosQueCreditam">Soma Impostos Que Creditam (R$)</th>
+                                <th scope="col" data-translate-key="resThSomaImpostosComCreditos">Soma Impostos Com Creditos (R$)</th>
+                                <th scope="col" data-translate-key="resThTotalImpEfetivos">Total Imp. Efetivos</th> 
+                                <th scope="col" data-translate-key="resThCustoUnitLiquido">CUSTO UNIT. R$ (Líquido)</th>
+                                <th scope="col" data-translate-key="resThCustoTotalLinhaLiquido">CUSTO TOTAL LINHA R$ (Líquido)</th>
+                                <th scope="col" data-translate-key="resThPrecoVendaUnitBR">PREÇO VENDA UNIT. R$ Brasil</th>
+                                <th scope="col" data-translate-key="resThPrecoVendaTotalBR">PREÇO VENDA Total. R$ Brasil</th> 
+                                <th scope="col" data-translate-key="resThLucroUnit">LUCRO UNIT. (R$)</th>
+                                <th scope="col" data-translate-key="resThLucroTotalLinha">LUCRO TOTAL LINHA (R$)</th>
+                                <th scope="col" data-translate-key="resThMargemLucroUnit">MARGEM LUCRO UNIT. %</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -959,10 +976,10 @@
 
         <section id="telaDashboardPanel" role="tabpanel" aria-labelledby="tabDashboardBtn" hidden>
             <section id="dashboardContainer" class="dashboard-section" aria-labelledby="headingIndicadoresChave" aria-live="polite" aria-atomic="true">
-                <h2 id="headingIndicadoresChave">Indicadores Chave do Embarque</h2>
+                <h2 id="headingIndicadoresChave" data-translate-key="headingIndicadoresChave">Indicadores Chave do Embarque</h2>
                 
                 <div id="prominentProfitCard" class="prominent-profit-indicator" style="display: none;">
-                    <span class="kpi-label">Lucro Total Pedido (%):</span>
+                    <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
                     <strong id="dbProminentLucroTotalPedidoPerc" role="status" aria-live="polite"></strong>
                 </div>
 
@@ -970,35 +987,35 @@
                     <article class="dashboard-kpi"> 
                         <div class="kpi-icon-container"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Valor Pedido (ME):</span>
+                            <span class="kpi-label" data-translate-key="labelValorPedidoME">Valor Pedido (ME):</span>
                             <strong id="dbValorPedidoME"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi"> 
                         <div class="kpi-icon-container"><i class="fas fa-dollar-sign" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Custo Total Embarque (R$):</span>
+                            <span class="kpi-label" data-translate-key="labelCustoTotalEmbarque">Custo Total Embarque (R$):</span>
                             <strong id="dbTotalCustoImp"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi">
                         <div class="kpi-icon-container"><i class="fas fa-cash-register" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Receita Total Brasil (R$):</span>
+                            <span class="kpi-label" data-translate-key="labelReceitaTotalBrasil">Receita Total Brasil (R$):</span>
                             <strong id="dbReceitaTotalBrasil"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi">
                         <div class="kpi-icon-container"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Lucro Total Pedido (R$):</span>
+                            <span class="kpi-label" data-translate-key="labelLucroTotalPedidoRS">Lucro Total Pedido (R$):</span>
                             <strong id="dbLucroTotalPedidoRS"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi">
                         <div class="kpi-icon-container"><i class="fas fa-percent" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Lucro Total Pedido (%):</span>
+                            <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
                             <strong id="dbLucroTotalPedidoPerc"></strong>
                         </div>
                     </article>
@@ -1007,77 +1024,77 @@
                     <article class="dashboard-kpi">
                         <div class="kpi-icon-container"><i class="fas fa-ship" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Valor FOB Total (R$):</span>
+                            <span class="kpi-label" data-translate-key="labelValorFOBTotal">Valor FOB Total (R$):</span>
                             <strong id="dbTotalFOB_BRL"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi">
                         <div class="kpi-icon-container"><i class="fas fa-truck-loading" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Frete Intl. Total (R$):</span>
+                            <span class="kpi-label" data-translate-key="labelFreteIntlTotal">Frete Intl. Total (R$):</span>
                             <strong id="dbFreteTotalBRL"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi">
                         <div class="kpi-icon-container"><i class="fas fa-percentage" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Frete Intl. / FOB (%):</span>
+                            <span class="kpi-label" data-translate-key="labelFreteIntlFOB">Frete Intl. / FOB (%):</span>
                             <strong id="dbPercFreteSobreFOB"></strong>
                         </div>
                     </article>
                      <article class="dashboard-kpi">
                          <div class="kpi-icon-container"><i class="fas fa-receipt" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Total Impostos Pagos (Bruto R$):</span>
+                            <span class="kpi-label" data-translate-key="labelTotalImpostosBruto">Total Impostos Pagos (Bruto R$):</span>
                             <strong id="dbTotalImpostosBruto"></strong>
                         </div>
                     </article>
                     <article class="dashboard-kpi">
                          <div class="kpi-icon-container"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
                         <div class="kpi-content">
-                            <span class="kpi-label">Total Impostos Efetivos (R$):</span>
+                            <span class="kpi-label" data-translate-key="labelTotalImpostosEfetivos">Total Impostos Efetivos (R$):</span>
                             <strong id="dbTotalImpostosEfetivos"></strong>
                         </div>
                     </article>
                 </div>
 
                 <section aria-labelledby="headingDistribuicaoCusto" class="cost-distribution-section"> 
-                    <h3 id="headingDistribuicaoCusto">Distribuição Percentual Estimada do Custo Total Geral (Líquido de Créditos):</h3>
+                    <h3 id="headingDistribuicaoCusto" data-translate-key="headingDistribuicaoCusto">Distribuição Percentual Estimada do Custo Total Geral (Líquido de Créditos):</h3>
                     <div class="grid-container cost-distribution-grid">
-                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label">% Custo Produto (FOB):</span><span class="cost-dist-value"><strong id="dbDistProduto"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistProduto" class="cost-dist-bar"></div></div></div>
-                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label">% Frete/Seguro Int.:</span><span class="cost-dist-value"><strong id="dbDistFreteSegInt"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistFreteSegInt" class="cost-dist-bar"></div></div></div>
-                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label">% Imp. Fed. + AFRMM/Sisc.:</span><span class="cost-dist-value"><strong id="dbDistImpFed"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistImpFed" class="cost-dist-bar"></div></div></div>
-                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label">% ICMS (Efetivo):</span><span class="cost-dist-value"><strong id="dbDistICMS"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistICMS" class="cost-dist-bar"></div></div></div>
-                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label">% Desp. Nacionais:</span><span class="cost-dist-value"><strong id="dbDistDespNac"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistDespNac" class="cost-dist-bar"></div></div></div>
+                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label" data-translate-key="labelDistProduto">% Custo Produto (FOB):</span><span class="cost-dist-value"><strong id="dbDistProduto"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistProduto" class="cost-dist-bar"></div></div></div>
+                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label" data-translate-key="labelDistFreteSegInt">% Frete/Seguro Int.:</span><span class="cost-dist-value"><strong id="dbDistFreteSegInt"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistFreteSegInt" class="cost-dist-bar"></div></div></div>
+                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label" data-translate-key="labelDistImpFed">% Imp. Fed. + AFRMM/Sisc.:</span><span class="cost-dist-value"><strong id="dbDistImpFed"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistImpFed" class="cost-dist-bar"></div></div></div>
+                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label" data-translate-key="labelDistICMS">% ICMS (Efetivo):</span><span class="cost-dist-value"><strong id="dbDistICMS"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistICMS" class="cost-dist-bar"></div></div></div>
+                        <div class="cost-dist-item"><div class="cost-dist-info"><span class="cost-dist-label" data-translate-key="labelDistDespNac">% Desp. Nacionais:</span><span class="cost-dist-value"><strong id="dbDistDespNac"></strong></span></div><div class="cost-dist-bar-container"><div id="barDistDespNac" class="cost-dist-bar"></div></div></div>
                     </div>
                 </section>
 
                 <div class="top-items-grid-container"> 
                     <section aria-labelledby="headingTopLucrativos" class="top-items-section">
-                        <h3 id="headingTopLucrativos">Top 10 Itens Mais Lucrativos (Margem %)</h3>
+                        <h3 id="headingTopLucrativos" data-translate-key="headingTopLucrativos">Top 10 Itens Mais Lucrativos (Margem %)</h3>
                         <ul id="topLucrativosList" class="top-items-list">
                         </ul>
                     </section>
                      <section aria-labelledby="headingTopMenosLucrativos" class="top-items-section">
-                        <h3 id="headingTopMenosLucrativos">Top 10 Itens Menos Lucrativos (Margem %)</h3>
+                        <h3 id="headingTopMenosLucrativos" data-translate-key="headingTopMenosLucrativos">Top 10 Itens Menos Lucrativos (Margem %)</h3>
                         <ul id="topMenosLucrativosList" class="top-items-list">
                             </ul>
                     </section>
                 </div>
 
                 <section aria-labelledby="headingComponentesCusto" class="cost-components-section">
-                    <h3 id="headingComponentesCusto">Principais Componentes do Custo Total (%)</h3>
+                    <h3 id="headingComponentesCusto" data-translate-key="headingComponentesCusto">Principais Componentes do Custo Total (%)</h3>
                     <div id="principaisComponentesCusto" class="grid-container cost-components-grid">
                         <div class="cost-component-item">
-                            <span class="component-label">Custo do Produto (FOB):</span>
+                            <span class="component-label" data-translate-key="labelCompPercProduto">Custo do Produto (FOB):</span>
                             <strong id="compPercProduto">0.00%</strong>
                         </div>
                         <div class="cost-component-item">
-                            <span class="component-label">Total Impostos Efetivos:</span>
+                            <span class="component-label" data-translate-key="labelCompPercImpostos">Total Impostos Efetivos:</span>
                             <strong id="compPercImpostos">0.00%</strong>
                         </div>
                         <div class="cost-component-item">
-                            <span class="component-label">Demais Custos Operacionais:</span>
+                            <span class="component-label" data-translate-key="labelCompPercOutros">Demais Custos Operacionais:</span>
                             <strong id="compPercOutros">0.00%</strong>
                         </div>
                     </div>
@@ -1085,57 +1102,57 @@
             </section>
 
             <section class="results-summary-section" aria-labelledby="headingResumoGeral" aria-live="polite" aria-atomic="true">
-                <h2 id="headingResumoGeral">Resumo Geral do Embarque (BRL)</h2>
+                <h2 id="headingResumoGeral" data-translate-key="headingResumoGeral">Resumo Geral do Embarque (BRL)</h2>
                 <div id="resultsSummary" class="results-summary">
                 </div>
             </section>
         </section> 
 
         <footer class="app-footer">
-             <p>Os cálculos de crédito são estimativas e dependem da correta aplicação da legislação e do regime tributário. Consulte seu contador.</p>
+             <p data-translate-key="footerDisclaimer">Os cálculos de crédito são estimativas e dependem da correta aplicação da legislação e do regime tributário. Consulte seu contador.</p>
              <p id="footerInfo"></p>
         </footer>
 
         <div id="settingsModal" class="modal-overlay">
             <div class="modal-content">
                 <button id="closeSettingsModalBtn" class="modal-close-btn" aria-label="Fechar Configurações">&times;</button>
-                <h2>Configurações</h2>
+                <h2 data-translate-key="modalConfigTitle">Configurações</h2>
                 
                 <section class="modal-section" aria-labelledby="headingIdiomaModal">
-                    <h3 id="headingIdiomaModal">Idioma</h3>
+                    <h3 id="headingIdiomaModal" data-translate-key="modalIdiomaTitle">Idioma</h3>
                     <div class="grid-item">
-                        <label for="idiomaSelect">Selecionar Idioma:</label>
+                        <label for="idiomaSelect" data-translate-key="modalIdiomaLabel">Selecionar Idioma:</label>
                         <select id="idiomaSelect" aria-describedby="idiomaDesc">
                             <option value="pt-BR" selected>Português (Brasil)</option>
                             <option value="en-US">Inglês (English)</option>
                             </select>
-                        <small class="field-description" id="idiomaDesc">Define o idioma da interface (funcionalidade futura).</small>
+                        <small class="field-description" id="idiomaDesc" data-translate-key="modalIdiomaDesc">Define o idioma da interface (funcionalidade futura).</small>
                     </div>
                 </section>
 
                 <section class="modal-section" aria-labelledby="headingLimitesLucroModal">
-                    <h3 id="headingLimitesLucroModal">Configurações de Margem de Lucro (%)</h3>
+                    <h3 id="headingLimitesLucroModal" data-translate-key="modalLucroTitle">Configurações de Margem de Lucro (%)</h3>
                      <div class="grid-container">
                         <div class="grid-item">
-                            <label for="modalLucroAltoMin"><span class="profit-color-indicator green"></span>Mín. Lucro Alto (Verde):</label>
+                            <label for="modalLucroAltoMin"><span class="profit-color-indicator green"></span><span data-translate-key="modalLucroAltoLabel">Mín. Lucro Alto (Verde):</span></label>
                             <input type="number" id="modalLucroAltoMin" step="1" value="40" placeholder="Ex: 40">
-                            <small class="field-description">Margem mínima para cor verde (lucro alto).</small>
+                            <small class="field-description" data-translate-key="modalLucroAltoDesc">Margem mínima para cor verde (lucro alto).</small>
                         </div>
                         <div class="grid-item">
-                            <label for="modalLucroMedioMin"><span class="profit-color-indicator yellow"></span>Mín. Lucro Médio (Amarelo):</label>
+                            <label for="modalLucroMedioMin"><span class="profit-color-indicator yellow"></span><span data-translate-key="modalLucroMedioLabel">Mín. Lucro Médio (Amarelo):</span></label>
                             <input type="number" id="modalLucroMedioMin" step="1" value="30" placeholder="Ex: 30">
-                            <small class="field-description">Margem mínima para cor amarela (lucro médio).</small>
+                            <small class="field-description" data-translate-key="modalLucroMedioDesc">Margem mínima para cor amarela (lucro médio).</small>
                         </div>
                         <div class="grid-item">
-                            <label for="modalLucroBaixoMin"><span class="profit-color-indicator orange"></span>Mín. Lucro Baixo (Laranja):</label>
+                            <label for="modalLucroBaixoMin"><span class="profit-color-indicator orange"></span><span data-translate-key="modalLucroBaixoLabel">Mín. Lucro Baixo (Laranja):</span></label>
                             <input type="number" id="modalLucroBaixoMin" step="1" value="20" placeholder="Ex: 20">
-                            <small class="field-description">Margem mínima para cor laranja (lucro baixo). Abaixo disso será vermelho.</small>
+                            <small class="field-description" data-translate-key="modalLucroBaixoDesc">Margem mínima para cor laranja (lucro baixo). Abaixo disso será vermelho.</small>
                         </div>
                     </div>
                 </section>
 
                 <div class="modal-actions">
-                    <button type="button" id="saveSettingsBtn" class="main-calculate-button">Salvar e Fechar</button>
+                    <button type="button" id="saveSettingsBtn" class="main-calculate-button" data-translate-key="modalBtnSalvar">Salvar e Fechar</button>
                 </div>
             </div>
         </div>
@@ -2273,5 +2290,3 @@
 </script>
 </body>
 </html>
-
-
