@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.58</title>
+    <title>Ferramenta de Calculo de Importação v29.60</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -2156,23 +2156,7 @@
             geId(`valVendaUnitBRItem${i}`).value = '';
             updateItemCalculatedFields(i); // Para limpar campos calculados
         }
-        // Preencher a primeira linha com dados de exemplo após limpar
-        if (NUM_ITEM_ROWS > 0 && preFilledItemsData.length > 0) {
-             const firstItem = preFilledItemsData[0];
-             geId('descItem0').value = firstItem.desc;
-             geId('codInternoItem0').value = firstItem.codInterno;
-             geId('ncmItem0').value = firstItem.ncm;
-             geId('qtdItem0').value = firstItem.qtd;
-             geId('precoCustoUnitMEItem0').value = firstItem.precoCustoUnitME;
-             geId('pesoUnitKGItem0').value = firstItem.pesoUnitKG;
-             geId('aliqIIItem0').value = firstItem.aliqII;
-             geId('aliqIPIItem0').value = firstItem.aliqIPI;
-             geId('aliqPISItem0').value = firstItem.aliqPIS;
-             geId('aliqCOFINSItem0').value = firstItem.aliqCOFINS;
-             geId('aliqICMSItem0').value = firstItem.aliqICMS;
-             geId('valVendaUnitBRItem0').value = firstItem.valVendaUnitBR;
-             updateItemCalculatedFields(0);
-        }
+        // Não repopular a primeira linha aqui, ela será preenchida no onload
 
 
         // Limpar resultados da tabela de resultados
