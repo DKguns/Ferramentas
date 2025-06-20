@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.60</title>
+    <title>Ferramenta de Calculo de Importação v29.69</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 
     <style>
         :root {
@@ -212,17 +214,18 @@
             display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;
             color: var(--theme-text-secondary);
         }
-        .grid-item input[type="text"], .grid-item input[type="number"], .grid-item input[type="date"], .grid-item select {
+        .grid-item input[type="text"], .grid-item input[type="number"], .grid-item input[type="date"], .grid-item select, .grid-item textarea {
             width: 100%; padding: 10px 12px; font-size: 14px; box-sizing: border-box;
             background-color: var(--input-bg); color: var(--input-text);
             border: 1px solid var(--input-border); border-radius: 6px;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
         }
-        .grid-item input[type="text"]:focus, .grid-item input[type="number"]:focus, .grid-item input[type="date"]:focus, .grid-item select:focus {
+        .grid-item input[type="text"]:focus, .grid-item input[type="number"]:focus, .grid-item input[type="date"]:focus, .grid-item select:focus, .grid-item textarea:focus {
             border-color: var(--input-focus-border);
             box-shadow: 0 0 0 3px rgba(var(--input-focus-border), .25), 0 0 8px var(--theme-glow-blue);
             outline: none; background-color: var(--input-focus-bg);
         }
+        .grid-item textarea { min-height: 80px; resize: vertical; }
         .field-description { display: block; font-size: 11px; color: var(--theme-text-secondary); opacity: 0.8; margin-top: 5px; line-height: 1.3; }
         
         .currency-buttons-group { margin-top: 10px; }
@@ -491,7 +494,7 @@
 
 
        .action-buttons { margin-top: 25px; margin-bottom: 20px; text-align: center; }
-        button.main-calculate-button, button.pdf-button, button.clear-button { 
+        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button { 
             color: white; padding: 12px 20px; font-size: 16px; font-weight: bold;
             display: inline-block; width: auto; margin: 5px 10px; border: none;
             border-radius: 8px; cursor: pointer;
@@ -511,6 +514,16 @@
         button.clear-button:hover {
             background-color: #c0392b; 
             transform: translateY(-2px); box-shadow: 0 4px 10px var(--theme-shadow-color), var(--theme-glow-red);
+        }
+        button.whatsapp-button { background-color: #25D366; box-shadow: 0 2px 5px var(--theme-shadow-color); }
+        button.whatsapp-button:hover {
+            background-color: #1DA851;
+            transform: translateY(-2px); box-shadow: 0 4px 10px var(--theme-shadow-color), 0 0 8px rgba(37, 211, 102, 0.4);
+        }
+        button.csv-button { background-color: var(--theme-accent-orange); box-shadow: 0 2px 5px var(--theme-shadow-color); }
+        button.csv-button:hover {
+            background-color: var(--theme-accent-orange-darker);
+            transform: translateY(-2px); box-shadow: 0 4px 10px var(--theme-shadow-color), var(--theme-glow-orange);
         }
         
        .total-geral { font-weight: bold; font-size: 16px !important; color: var(--theme-accent-orange) !important; }
@@ -773,6 +786,61 @@
         body.theme-dark .chart-container {
              background-color: var(--theme-bg-secondary); /* Fundo mais escuro para o container do gráfico no tema dark */
         }
+        /* Modal para compartilhar imagem */
+        #shareImageModal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1060;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+        }
+        #shareImageModalContent {
+            background-color: var(--theme-bg-secondary);
+            margin: auto;
+            padding: 20px;
+            border: 1px solid var(--theme-border-primary);
+            border-radius: var(--theme-card-border-radius);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 5px 15px var(--theme-shadow-color);
+        }
+        #shareImageModalContent img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border: 1px solid var(--theme-border-secondary);
+            border-radius: 6px;
+        }
+        #shareImageModalContent p {
+            font-size: 0.9em;
+            color: var(--theme-text-secondary);
+            margin-bottom: 15px;
+        }
+        #shareImageModalContent button, #shareImageModalContent a.button {
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        #shareImageModalContent button.close-modal-btn {
+            background-color: var(--theme-accent-red);
+            color: white;
+            border: none;
+        }
+        #shareImageModalContent a.whatsapp-link-btn {
+            background-color: var(--theme-accent-green);
+            color: white;
+            border: none;
+        }
 
 
     </style>
@@ -888,6 +956,13 @@
                         <div class="grid-item"><label for="aliquotaAFRMM" data-translate-key="labelAliquotaAFRMM">Alíquota AFRMM Global (%):</label><input type="number" id="aliquotaAFRMM" step="0.01" value="0"><small class="field-description" data-translate-key="descAliquotaAFRMM">Padrão 25% para Longo Curso. Ajuste se Cabotagem (10%).</small></div> 
                     </div>
                 </section>
+                <section aria-labelledby="headingObservacoesGerais" style="margin-top: 20px;">
+                    <h3 id="headingObservacoesGerais" data-translate-key="headingObservacoesGerais">Observações Gerais</h3>
+                    <div class="grid-item" style="grid-column: 1 / -1;">
+                        <textarea id="observacoesGerais" placeholder="Insira aqui quaisquer notas ou comentários relevantes sobre este cálculo..." aria-describedby="observacoesGeraisDesc"></textarea>
+                        <small class="field-description" id="observacoesGeraisDesc" data-translate-key="descObservacoesGerais">Este campo é para suas anotações e não afeta os cálculos.</small>
+                    </div>
+                </section>
             </section>
 
             <section class="data-section item-inputs" aria-labelledby="headingItensEmbarque">
@@ -922,6 +997,9 @@
             <div class="action-buttons">
                 <button class="main-calculate-button" onclick="calcularCustosMultiItem()" data-translate-key="btnCalcular">Calcular Custos, Lucro e Indicadores</button>
                 <button type="button" class="pdf-button" onclick="gerarPDF()" data-translate-key="btnGerarPDF">Gerar PDF do Relatório</button>
+                <button type="button" class="csv-button" onclick="exportTableToCSV('resultados_importacao.csv')" data-translate-key="btnExportarCSV">
+                    <i class="fas fa-file-csv"></i> Exportar para CSV
+                </button>
                 <button type="button" class="clear-button" onclick="limparTodosOsCampos()" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
             </div>
         </section> 
@@ -994,84 +1072,91 @@
             <section id="dashboardContainer" class="dashboard-section" aria-labelledby="headingIndicadoresChave" aria-live="polite" aria-atomic="true">
                 <h2 id="headingIndicadoresChave" data-translate-key="headingIndicadoresChave">Indicadores Chave do Embarque</h2>
                 
-                <div id="prominentProfitCard" class="prominent-profit-indicator" style="display: none;">
-                    <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
-                    <strong id="dbProminentLucroTotalPedidoPerc" role="status" aria-live="polite"></strong>
-                </div>
+                <div id="dashboardScreenshotArea">
+                    <div id="prominentProfitCard" class="prominent-profit-indicator" style="display: none;">
+                        <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
+                        <strong id="dbProminentLucroTotalPedidoPerc" role="status" aria-live="polite"></strong>
+                    </div>
 
-                <div class="dashboard-kpi-grid"> 
-                    <article class="dashboard-kpi"> 
-                        <div class="kpi-icon-container"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelValorPedidoME">Valor Pedido (ME):</span>
-                            <strong id="dbValorPedidoME"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi"> 
-                        <div class="kpi-icon-container"><i class="fas fa-dollar-sign" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelCustoTotalEmbarque">Custo Total Embarque (R$):</span>
-                            <strong id="dbTotalCustoImp"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi">
-                        <div class="kpi-icon-container"><i class="fas fa-cash-register" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelReceitaTotalBrasil">Receita Total Brasil (R$):</span>
-                            <strong id="dbReceitaTotalBrasil"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi">
-                        <div class="kpi-icon-container"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelLucroTotalPedidoRS">Lucro Total Pedido (R$):</span>
-                            <strong id="dbLucroTotalPedidoRS"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi">
-                        <div class="kpi-icon-container"><i class="fas fa-percent" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
-                            <strong id="dbLucroTotalPedidoPerc"></strong>
-                        </div>
-                    </article>
+                    <div class="dashboard-kpi-grid"> 
+                        <article class="dashboard-kpi"> 
+                            <div class="kpi-icon-container"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelValorPedidoME">Valor Pedido (ME):</span>
+                                <strong id="dbValorPedidoME"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi"> 
+                            <div class="kpi-icon-container"><i class="fas fa-dollar-sign" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelCustoTotalEmbarque">Custo Total Embarque (R$):</span>
+                                <strong id="dbTotalCustoImp"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi">
+                            <div class="kpi-icon-container"><i class="fas fa-cash-register" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelReceitaTotalBrasil">Receita Total Brasil (R$):</span>
+                                <strong id="dbReceitaTotalBrasil"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi">
+                            <div class="kpi-icon-container"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelLucroTotalPedidoRS">Lucro Total Pedido (R$):</span>
+                                <strong id="dbLucroTotalPedidoRS"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi">
+                            <div class="kpi-icon-container"><i class="fas fa-percent" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
+                                <strong id="dbLucroTotalPedidoPerc"></strong>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="dashboard-kpi-grid" style="margin-top: 15px;">
+                        <article class="dashboard-kpi">
+                            <div class="kpi-icon-container"><i class="fas fa-ship" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelValorFOBTotal">Valor FOB Total (R$):</span>
+                                <strong id="dbTotalFOB_BRL"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi">
+                            <div class="kpi-icon-container"><i class="fas fa-truck-loading" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelFreteIntlTotal">Frete Intl. Total (R$):</span>
+                                <strong id="dbFreteTotalBRL"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi">
+                            <div class="kpi-icon-container"><i class="fas fa-percentage" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelFreteIntlFOB">Frete Intl. / FOB (%):</span>
+                                <strong id="dbPercFreteSobreFOB"></strong>
+                            </div>
+                        </article>
+                         <article class="dashboard-kpi">
+                             <div class="kpi-icon-container"><i class="fas fa-receipt" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelTotalImpostosBruto">Total Impostos Pagos (Bruto R$):</span>
+                                <strong id="dbTotalImpostosBruto"></strong>
+                            </div>
+                        </article>
+                        <article class="dashboard-kpi">
+                             <div class="kpi-icon-container"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label" data-translate-key="labelTotalImpostosEfetivos">Total Impostos Efetivos (R$):</span>
+                                <strong id="dbTotalImpostosEfetivos"></strong>
+                            </div>
+                        </article>
+                    </div>
                 </div>
-                <div class="dashboard-kpi-grid" style="margin-top: 15px;">
-                    <article class="dashboard-kpi">
-                        <div class="kpi-icon-container"><i class="fas fa-ship" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelValorFOBTotal">Valor FOB Total (R$):</span>
-                            <strong id="dbTotalFOB_BRL"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi">
-                        <div class="kpi-icon-container"><i class="fas fa-truck-loading" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelFreteIntlTotal">Frete Intl. Total (R$):</span>
-                            <strong id="dbFreteTotalBRL"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi">
-                        <div class="kpi-icon-container"><i class="fas fa-percentage" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelFreteIntlFOB">Frete Intl. / FOB (%):</span>
-                            <strong id="dbPercFreteSobreFOB"></strong>
-                        </div>
-                    </article>
-                     <article class="dashboard-kpi">
-                         <div class="kpi-icon-container"><i class="fas fa-receipt" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelTotalImpostosBruto">Total Impostos Pagos (Bruto R$):</span>
-                            <strong id="dbTotalImpostosBruto"></strong>
-                        </div>
-                    </article>
-                    <article class="dashboard-kpi">
-                         <div class="kpi-icon-container"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label" data-translate-key="labelTotalImpostosEfetivos">Total Impostos Efetivos (R$):</span>
-                            <strong id="dbTotalImpostosEfetivos"></strong>
-                        </div>
-                    </article>
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button type="button" class="whatsapp-button" onclick="shareDashboardViaWhatsApp()" data-translate-key="btnShareWhatsApp">
+                        <i class="fab fa-whatsapp"></i> Compartilhar Dashboard
+                    </button>
                 </div>
 
                 <section aria-labelledby="headingDistribuicaoCusto" class="cost-distribution-section"> 
@@ -1179,6 +1264,24 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Modal para compartilhar imagem -->
+        <div id="shareImageModal" class="modal-overlay">
+            <div id="shareImageModalContent">
+                <h3 data-translate-key="shareModalTitle">Compartilhar Dashboard</h3>
+                <p data-translate-key="shareModalInstructions">
+                    1. Clique com o botão direito na imagem abaixo e selecione "Copiar Imagem".<br>
+                    2. Cole na sua conversa do WhatsApp.<br>
+                    (Ou salve a imagem e anexe no WhatsApp)
+                </p>
+                <img id="dashboardScreenshot" src="" alt="Captura de Tela do Dashboard">
+                <a href="https://wa.me/?text=Veja%20o%20dashboard%20da%20importação:" target="_blank" class="button whatsapp-link-btn" data-translate-key="shareModalOpenWhatsApp">
+                    <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+                </a>
+                <button type="button" id="closeShareModalBtn" class="button close-modal-btn" data-translate-key="shareModalClose">Fechar</button>
+            </div>
+        </div>
+
 
     </main>
 
@@ -1321,7 +1424,7 @@
         }
     }
 
-    function generateItemInputRows() {
+    function generateItemInputRows(isClearing = false) {
         const tbody = geId('itemInputTable')?.getElementsByTagName('tbody')[0];
         if (!tbody) { console.error("generateItemInputRows: tbody não encontrado"); return; }
         tbody.innerHTML = ''; 
@@ -1334,21 +1437,21 @@
 
         for (let i = 0; i < NUM_ITEM_ROWS; i++) {
             const row = tbody.insertRow();
-            const itemData = preFilledItemsData[i]; 
+            const itemDataForThisRow = (!isClearing && preFilledItemsData[i]) ? preFilledItemsData[i] : null; 
+            const useDefaultForRowZero = (!isClearing && i === 0 && !preFilledItemsData[0]);
 
-            const descValue = itemData ? itemData.desc : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.desc : '');
-            const codInternoValue = itemData ? itemData.codInterno : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.codInterno : '');
-            const ncmValue = itemData ? (itemData.ncm || (i === 0 ? defaultFirstRow.ncm : '')) : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.ncm : '');
-            const qtdValue = itemData ? itemData.qtd : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.qtd : '');
-            const precoCustoUnitMEValue = itemData ? itemData.precoCustoUnitME : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.precoCustoUnitME : '');
-            const pesoUnitKGValue = itemData ? itemData.pesoUnitKG : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.pesoUnitKG : '');
-            const aliqIIValue = itemData ? itemData.aliqII : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.aliqII : '');
-            const aliqIPIValue = itemData ? itemData.aliqIPI : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.aliqIPI : '');
-            const aliqPISValue = itemData ? itemData.aliqPIS : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.aliqPIS : '');
-            const aliqCOFINSValue = itemData ? itemData.aliqCOFINS : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.aliqCOFINS : '');
-            const aliqICMSValue = itemData ? itemData.aliqICMS : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.aliqICMS : '');
-            const valVendaUnitBRValue = itemData ? itemData.valVendaUnitBR : (i === 0 && !preFilledItemsData[0] ? defaultFirstRow.valVendaUnitBR : '');
-
+            const descValue = itemDataForThisRow ? itemDataForThisRow.desc : (useDefaultForRowZero ? defaultFirstRow.desc : '');
+            const codInternoValue = itemDataForThisRow ? itemDataForThisRow.codInterno : (useDefaultForRowZero ? defaultFirstRow.codInterno : '');
+            const ncmValue = itemDataForThisRow ? (itemDataForThisRow.ncm || (useDefaultForRowZero ? defaultFirstRow.ncm : '')) : (useDefaultForRowZero ? defaultFirstRow.ncm : '');
+            const qtdValue = itemDataForThisRow ? itemDataForThisRow.qtd : (useDefaultForRowZero ? defaultFirstRow.qtd : '');
+            const precoCustoUnitMEValue = itemDataForThisRow ? itemDataForThisRow.precoCustoUnitME : (useDefaultForRowZero ? defaultFirstRow.precoCustoUnitME : '');
+            const pesoUnitKGValue = itemDataForThisRow ? itemDataForThisRow.pesoUnitKG : (useDefaultForRowZero ? defaultFirstRow.pesoUnitKG : '');
+            const aliqIIValue = itemDataForThisRow ? itemDataForThisRow.aliqII : (useDefaultForRowZero ? defaultFirstRow.aliqII : '');
+            const aliqIPIValue = itemDataForThisRow ? itemDataForThisRow.aliqIPI : (useDefaultForRowZero ? defaultFirstRow.aliqIPI : '');
+            const aliqPISValue = itemDataForThisRow ? itemDataForThisRow.aliqPIS : (useDefaultForRowZero ? defaultFirstRow.aliqPIS : '');
+            const aliqCOFINSValue = itemDataForThisRow ? itemDataForThisRow.aliqCOFINS : (useDefaultForRowZero ? defaultFirstRow.aliqCOFINS : '');
+            const aliqICMSValue = itemDataForThisRow ? itemDataForThisRow.aliqICMS : (useDefaultForRowZero ? defaultFirstRow.aliqICMS : '');
+            const valVendaUnitBRValue = itemDataForThisRow ? itemDataForThisRow.valVendaUnitBR : (useDefaultForRowZero ? defaultFirstRow.valVendaUnitBR : '');
 
             row.innerHTML = `
                 <td>${i + 1}</td>
@@ -1367,9 +1470,7 @@
                 <td><label class="sr-only" for="precoCustoTotalMEItem${i}">Preço Custo Total $ do Item ${i + 1}</label><input type="number" id="precoCustoTotalMEItem${i}" step="any" placeholder="0.00" readonly></td>
                 <td><label class="sr-only" for="pesoTotalKGItem${i}">Peso Total KG do Item ${i + 1}</label><input type="number" id="pesoTotalKGItem${i}" step="any" placeholder="0.000" readonly></td>
             `;
-             if (itemData) { 
-                updateItemCalculatedFields(i);
-            }
+             updateItemCalculatedFields(i); // Atualiza campos calculados (zerará se os inputs estiverem vazios)
         }
     }
 
@@ -1377,7 +1478,7 @@
         const qtdElem = geId(`qtdItem${index}`);
         const valUnitMEElem = geId(`precoCustoUnitMEItem${index}`);
         const pesoUnitKGElem = geId(`pesoUnitKGItem${index}`);
-        if (!qtdElem || !valUnitMEElem || !pesoUnitKGElem) { return; }
+        if (!qtdElem ||!valUnitMEElem ||!pesoUnitKGElem) { return; }
         const qtd = TxtToNum(qtdElem.value, false); 
         const valUnitME = TxtToNum(valUnitMEElem.value, false);
         const pesoUnitKG = TxtToNum(pesoUnitKGElem.value, false);
@@ -1394,7 +1495,7 @@
         const percCredIPIInput = geId('percCreditoIPI');
         const percCredICMSInput = geId('percCreditoICMS'); 
 
-        if(!percCredPISInput || !percCredCOFINSInput || !percCredIPIInput || !percCredICMSInput) {
+        if(!percCredPISInput ||!percCredCOFINSInput ||!percCredIPIInput ||!percCredICMSInput) {
             console.warn("Um ou mais campos de crédito não foram encontrados em handleRegimeChange.");
             return;
         }
@@ -2122,11 +2223,11 @@
         const globalInputs = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 
                               'moedaEstrangeira', 'taxaCambio', 'totalFreteME', 'totalSeguroME', 
                               'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 
-                              'freteNacionalBRL', 'aliquotaAFRMM'];
+                              'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais'];
         globalInputs.forEach(id => {
             const elem = geId(id);
             if (elem) {
-                if (elem.type === 'number' || elem.type === 'text') elem.value = '';
+                if (elem.type === 'number' || elem.type === 'text' || elem.tagName.toLowerCase() === 'textarea') elem.value = '';
                 if (id === 'moedaEstrangeira') elem.value = 'USD'; // Valor padrão
                 if (id === 'taxaCambio') elem.value = ''; // Limpar taxa de câmbio
             }
@@ -2140,23 +2241,8 @@
         geId('cotacaoInfo').textContent = '';
 
 
-        // Limpar tabela de itens
-        for (let i = 0; i < NUM_ITEM_ROWS; i++) {
-            geId(`descItem${i}`).value = '';
-            geId(`codInternoItem${i}`).value = '';
-            geId(`ncmItem${i}`).value = '';
-            geId(`qtdItem${i}`).value = '';
-            geId(`precoCustoUnitMEItem${i}`).value = '';
-            geId(`pesoUnitKGItem${i}`).value = '';
-            geId(`aliqIIItem${i}`).value = '';
-            geId(`aliqIPIItem${i}`).value = '';
-            geId(`aliqPISItem${i}`).value = '';
-            geId(`aliqCOFINSItem${i}`).value = '';
-            geId(`aliqICMSItem${i}`).value = '';
-            geId(`valVendaUnitBRItem${i}`).value = '';
-            updateItemCalculatedFields(i); // Para limpar campos calculados
-        }
-        // Não repopular a primeira linha aqui, ela será preenchida no onload
+        // Limpar tabela de itens chamando generateItemInputRows com isClearing = true
+        generateItemInputRows(true);
 
 
         // Limpar resultados da tabela de resultados
@@ -2276,6 +2362,79 @@
         });
     }
 
+    async function shareDashboardViaWhatsApp() {
+        const dashboardArea = geId('dashboardScreenshotArea');
+        const shareModal = geId('shareImageModal');
+        const screenshotImg = geId('dashboardScreenshot');
+        
+        if (!dashboardArea || !shareModal || !screenshotImg ) {
+            console.error('Elementos do modal de compartilhamento não encontrados.');
+            return;
+        }
+
+        try {
+            const dashboardTab = geId('telaDashboardPanel');
+            const isDashboardVisible = dashboardTab && !dashboardTab.hidden;
+            if (!isDashboardVisible) {
+                showScreen('telaDashboardPanel'); 
+                await new Promise(resolve => setTimeout(resolve, 200)); // Aumentar ligeiramente o tempo de espera
+            }
+
+            const canvas = await html2canvas(dashboardArea, { 
+                backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff',
+                useCORS: true,
+                logging: true, // Habilitar logs do html2canvas para depuração
+                onclone: (clonedDoc) => { // Tentar garantir que estilos sejam aplicados no clone
+                    const prominentProfitElem = clonedDoc.getElementById('dbProminentLucroTotalPedidoPerc');
+                    if (prominentProfitElem) {
+                        const originalElem = geId('dbProminentLucroTotalPedidoPerc');
+                        if (originalElem) {
+                             prominentProfitElem.className = originalElem.className; // Copia as classes para garantir a cor
+                        }
+                    }
+                }
+            });
+            const imageDataUrl = canvas.toDataURL('image/png');
+            screenshotImg.src = imageDataUrl;
+            shareModal.style.display = 'flex';
+
+
+            // Tenta usar a API Web Share se disponível (para dispositivos móveis)
+            if (navigator.share && navigator.canShare({ files: [new File([await (await fetch(imageDataUrl)).blob()], "dashboard.png", { type: "image/png" })] })) {
+                try {
+                    await navigator.share({
+                        title: 'Dashboard de Importação',
+                        text: 'Veja o dashboard da importação:',
+                        files: [new File([await (await fetch(imageDataUrl)).blob()], "dashboard.png", { type: "image/png" })]
+                    });
+                    shareModal.style.display = 'none'; // Fecha o modal se o compartilhamento nativo for bem-sucedido
+                } catch (err) {
+                    console.error('Erro ao usar Web Share API:', err);
+                    // Se falhar, o modal com instruções manuais permanecerá visível
+                }
+            }
+
+        } catch (error) {
+            console.error('Erro ao capturar ou compartilhar dashboard:', error);
+            alert('Erro ao gerar imagem do dashboard. Tente novamente.');
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const closeShareModalBtn = geId('closeShareModalBtn');
+        const shareModal = geId('shareImageModal');
+        if (closeShareModalBtn && shareModal) {
+            closeShareModalBtn.onclick = () => {
+                shareModal.style.display = 'none';
+            };
+            shareModal.onclick = (event) => {
+                if (event.target === shareModal) {
+                    shareModal.style.display = 'none';
+                }
+            };
+        }
+    });
+
 
     function gerarPDF() {
         console.log("Iniciando gerarPDF...");
@@ -2372,13 +2531,49 @@
             if (itemsTable && typeof doc.autoTable === 'function') {
                 if (yPos > 150) { doc.addPage(); yPos = 20; } 
                 doc.setFontSize(11);
-                doc.text("Resultados Detalhados por Item:", leftMargin, yPos);
+                doc.text("Resultados Detalhados por Item (Principais Colunas):", leftMargin, yPos);
                 yPos += lineHeight * 1.5;
-                doc.autoTable({ html: '#itemResultTable', startY: yPos, theme: 'grid',
-                    styles: { fontSize: 5, cellPadding: 1, halign: 'center', overflow: 'hidden' }, 
-                    headStyles: { fillColor: [40, 50, 70], fontSize: 6, textColor: 240, fontStyle: 'bold', halign: 'center'},
+
+                const tableHead = [
+                    ['#', 'Cód. Int.', 'Descrição', 'Qtd', 'Custo Unit. Líq. (R$)', 'Pr. Venda Unit. (R$)', 'Lucro Unit. (R$)', 'Margem (%)']
+                ];
+                const tableBody = [];
+                const rows = itemsTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    // Corrigindo os índices para o PDF com base na estrutura da tabela de resultados
+                    if (cells.length >= 50) { 
+                        tableBody.push([
+                            cells[0].innerText,  // #
+                            cells[1].innerText,  // Cód. Interno
+                            cells[2].innerText,  // Descrição
+                            cells[4].innerText,  // Qtd
+                            cells[43].innerText, // CUSTO UNIT. R$ (Líquido)
+                            cells[45].innerText, // PREÇO VENDA UNIT. R$ Brasil
+                            cells[47].innerText, // LUCRO UNIT. (R$)
+                            cells[49].innerText  // MARGEM LUCRO UNIT. %
+                        ]);
+                    }
+                });
+
+                doc.autoTable({ 
+                    startY: yPos, 
+                    head: tableHead, 
+                    body: tableBody, 
+                    theme: 'grid',
+                    styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' }, 
+                    headStyles: { fillColor: [40, 50, 70], fontSize: 7, textColor: 240, fontStyle: 'bold', halign: 'center'},
+                    columnStyles: {
+                        0: { halign: 'center', cellWidth: 10 }, // #
+                        1: { cellWidth: 30 }, // Cód. Int.
+                        2: { cellWidth: 70 }, // Descrição
+                        3: { halign: 'right', cellWidth: 15 }, // Qtd
+                        4: { halign: 'right', cellWidth: 30 }, // Custo Unit. Líq.
+                        5: { halign: 'right', cellWidth: 30 }, // Pr. Venda Unit.
+                        6: { halign: 'right', cellWidth: 30 }, // Lucro Unit.
+                        7: { halign: 'right', cellWidth: 20 }  // Margem
+                    },
                     margin: { left: leftMargin, right: leftMargin },
-                    tableWidth: 'auto' 
                 });
             }
             doc.save(`Relatorio_Importacao_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`);
@@ -2387,6 +2582,42 @@
             console.error("Erro detalhado ao gerar PDF:", e.stack);
             alert("Ocorreu um erro ao tentar gerar o PDF: " + e.message + ". Verifique o console para detalhes.");
         }
+    }
+
+    function exportTableToCSV(filename) {
+        const table = geId('itemResultTable');
+        if (!table) {
+            console.error("Tabela de resultados não encontrada para exportação CSV.");
+            alert("Não há dados na tabela de resultados para exportar.");
+            return;
+        }
+
+        let csv = [];
+        const rows = table.querySelectorAll("tr");
+        
+        for (let i = 0; i < rows.length; i++) {
+            const row = [], cols = rows[i].querySelectorAll("td, th");
+            
+            for (let j = 0; j < cols.length; j++) {
+                let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " "); // Remove quebras de linha e espaços extras
+                data = data.replace(/"/g, '""'); // Escapa aspas duplas
+                row.push('"' + data + '"');
+            }
+            csv.push(row.join(";")); // Usar ponto e vírgula como delimitador       
+        }
+
+        // Adiciona BOM para UTF-8 para melhor compatibilidade com Excel
+        const BOM = "\uFEFF";
+        const csvFile = new Blob([BOM + csv.join("\n")], {type: "text/csv;charset=utf-8;"});
+        
+        const downloadLink = document.createElement("a");
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        console.log("Tentativa de download do CSV: " + filename);
     }
 </script>
 </body>
