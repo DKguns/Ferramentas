@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.74</title>
+    <title>Ferramenta de Calculo de Importação v29.75</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -154,6 +154,15 @@
             text-align: left; 
         }
         h1 #appVersion { font-size: 0.5em; color: var(--theme-text-secondary); display: block; margin-top: 2px;}
+        /* NOVO: Estilo para o indicador de salvamento */
+        #saveStatus {
+            font-size: 0.6em;
+            font-weight: 500;
+            color: var(--theme-accent-green);
+            margin-left: 15px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
 
         h2 {
             color: var(--theme-text-primary); font-size: 22px; margin-top: 30px; margin-bottom: 15px;
@@ -606,7 +615,8 @@
             <img src="https://placehold.co/100x30/FFFFFF/000000?text=VEXOS&font=Inter" alt="Logo VEXOS" id="appLogo" 
                  onerror="this.onerror=null; this.src='https://placehold.co/100x30/E9ECEF/495057?text=Logo+Vexos+01.png&font=Inter';">
         </div>
-        <h1>Ferramenta de Calculo de Importação <span id="appVersion" style="font-size: 0.5em; color: var(--theme-text-secondary);"></span></h1>
+        <!-- NOVO: Adicionado span #saveStatus para mostrar o status do salvamento -->
+        <h1>Ferramenta de Calculo de Importação <span id="saveStatus"></span><span id="appVersion" style="font-size: 0.5em; color: var(--theme-text-secondary);"></span></h1>
         <div class="header-buttons">
             <button id="settingsBtn" aria-label="Abrir Configurações">
                 <i class="fas fa-cog" aria-hidden="true"></i>
@@ -1046,7 +1056,7 @@
     </main>
 
 <script>
-    // ALTERADO: A lista de dados pre-preenchidos agora está vazia para um início limpo.
+    // A lista de dados pre-preenchidos está vazia para um início limpo.
     const preFilledItemsData = [];
 
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
@@ -1203,6 +1213,7 @@
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const newIndex = tbody.rows.length;
         createItemInputRow(newIndex);
+        saveState(); // Salva o estado após adicionar uma linha
     }
     
     function removerLinhaItem(button) {
@@ -1210,6 +1221,7 @@
         if (row.parentElement.rows.length > 1) { 
             row.remove();
             renumerarLinhas();
+            saveState(); // Salva o estado após remover uma linha
         } else {
             alert("Não é possível remover a última linha.");
         }
@@ -1223,6 +1235,7 @@
         geId(`aliqPISItem${index}`).value = IMPOSTOS_PADRAO.aliqPIS;
         geId(`aliqCOFINSItem${index}`).value = IMPOSTOS_PADRAO.aliqCOFINS;
         geId(`aliqICMSItem${index}`).value = IMPOSTOS_PADRAO.aliqICMS;
+        saveState(); // Salva o estado após carregar os impostos
     }
     
     function renumerarLinhas() {
@@ -1316,46 +1329,104 @@
             tab.setAttribute('tabindex', isActive? '0' : '-1');
         });
     }
+
+    // NOVO: Funções para salvar e carregar o estado do formulário no localStorage.
+    function saveState() {
+        try {
+            const data = {
+                global: {},
+                items: []
+            };
+
+            const globalFields = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo', 'moedaEstrangeira', 'taxaCambio', 'incoterm', 'modalidadeTransporte', 'regimeTributario', 'percCreditoPIS', 'percCreditoCOFINS', 'percCreditoIPI', 'percCreditoICMS', 'totalFreteME', 'totalSeguroME', 'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais'];
+            globalFields.forEach(id => {
+                const elem = geId(id);
+                if (elem) {
+                    data.global[id] = elem.value;
+                }
+            });
+
+            const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
+            for (let i = 0; i < itemRows.length; i++) {
+                const itemData = {};
+                const itemFields = ['desc', 'codInterno', 'ncm', 'qtd', 'precoCustoUnitME', 'pesoUnitKG', 'aliqII', 'aliqIPI', 'aliqPIS', 'aliqCOFINS', 'aliqICMS', 'valVendaUnitBR'];
+                itemFields.forEach(field => {
+                    const elem = geId(`${field}Item${i}`);
+                    if (elem) {
+                        itemData[field] = elem.value;
+                    }
+                });
+                data.items.push(itemData);
+            }
+
+            localStorage.setItem('importCalculatorData', JSON.stringify(data));
+            
+            const statusElem = geId('saveStatus');
+            if (statusElem) {
+                statusElem.textContent = 'Salvando...';
+                statusElem.style.opacity = '1';
+                if (window.saveTimeout) {
+                    clearTimeout(window.saveTimeout);
+                }
+                window.saveTimeout = setTimeout(() => {
+                    statusElem.textContent = 'Salvo ✓';
+                    setTimeout(() => { statusElem.style.opacity = '0'; }, 2000);
+                }, 800);
+            }
+        } catch (e) {
+            console.error("Erro ao salvar o estado:", e);
+        }
+    }
+
+    function loadState() {
+        try {
+            const savedData = localStorage.getItem('importCalculatorData');
+            if (!savedData) {
+                limparTodosOsCampos(false); 
+                return;
+            }
+
+            const data = JSON.parse(savedData);
+
+            if (data.global) {
+                for (const id in data.global) {
+                    const elem = geId(id);
+                    if (elem) {
+                        elem.value = data.global[id];
+                    }
+                }
+            }
+
+            const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = ''; 
+            if (data.items && data.items.length > 0) {
+                data.items.forEach((item, index) => {
+                    createItemInputRow(index, item);
+                });
+            } else {
+                 createItemInputRow(0);
+            }
+            
+            handleRegimeChange();
+            updateCotacaoButtonLabel();
+            
+            console.log("Estado carregado do localStorage.");
+        } catch (e) {
+            console.error("Erro ao carregar o estado:", e);
+            limparTodosOsCampos(); 
+        }
+    }
     
-    // ALTERADO: A inicialização da aplicação foi atualizada para começar com campos limpos.
+    // ALTERADO: A inicialização da aplicação agora carrega os dados salvos.
     window.onload = function() { 
-        // Limpa os campos globais, deixando apenas alguns padrões sensíveis
-        geId('nomeUsuario').value = "";
-        geId('nomeFornecedor').value = "";
-        geId('refInterna').value = "";
-        geId('numeroPI').value = "";
-        geId('diProcesso').value = "";
-        geId('dataCalculo').valueAsDate = new Date(); 
+        loadState();
         
-        geId('moedaEstrangeira').value = "USD";
-        geId('taxaCambio').value = "";
-        geId('incoterm').value = "CPT";
-        geId('modalidadeTransporte').value = "Aereo";
-
-        // Limpa campos de custos globais
-        geId('totalFreteME').value = "";
-        geId('totalSeguroME').value = "";
-        geId('totalOutrasDespesasME').value = "";
-        geId('taxaSiscomexBRL').value = "";
-        geId('despesasAduaneirasBRL').value = "";
-        geId('freteNacionalBRL').value = "";
-        geId('aliquotaAFRMM').value = "";
-
-        // Define valores padrão para margens de lucro no modal
-        geId('modalLucroAltoMin').value = "40";
-        geId('modalLucroMedioMin').value = "30";
-        geId('modalLucroBaixoMin').value = "20";
-
-        // Inicia a tabela com uma única linha em branco.
-        createItemInputRow(0);
-
-        // Adiciona o event listener ao botão "Adicionar Novo Item".
+        geId('appContainer').addEventListener('input', saveState);
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         
         updateCotacaoButtonLabel(); 
         handleRegimeChange(); 
         
-        // --- O restante da lógica de inicialização (tema, modais, etc.) permanece o mesmo ---
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsModal = document.getElementById('settingsModal');
@@ -1992,8 +2063,14 @@
         }
     }
 
-    function limparTodosOsCampos() {
-        // Limpar campos globais
+    function limparTodosOsCampos(clearStorage = true) {
+        if (clearStorage) {
+            localStorage.removeItem('importCalculatorData');
+            const statusElem = geId('saveStatus');
+            if(statusElem) statusElem.style.opacity = '0';
+            console.log("Dados salvos foram removidos.");
+        }
+
         const globalInputs = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 
                               'moedaEstrangeira', 'taxaCambio', 'totalFreteME', 'totalSeguroME', 
                               'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 
@@ -2002,32 +2079,28 @@
             const elem = geId(id);
             if (elem) {
                 if (elem.type === 'number' || elem.type === 'text' || elem.tagName.toLowerCase() === 'textarea') elem.value = '';
-                if (id === 'moedaEstrangeira') elem.value = 'USD'; // Valor padrão
-                if (id === 'taxaCambio') elem.value = ''; // Limpar taxa de câmbio
+                if (id === 'moedaEstrangeira') elem.value = 'USD';
+                if (id === 'taxaCambio') elem.value = ''; 
             }
         });
-        geId('dataCalculo').valueAsDate = new Date(); // Data atual
-        geId('incoterm').value = 'CPT'; // Valor padrão
-        geId('modalidadeTransporte').value = 'Aereo'; // Valor padrão
-        geId('regimeTributario').value = 'Lucro Real'; // Valor padrão
-        handleRegimeChange(); // Atualiza campos de crédito
+        geId('dataCalculo').valueAsDate = new Date(); 
+        geId('incoterm').value = 'CPT'; 
+        geId('modalidadeTransporte').value = 'Aereo'; 
+        geId('regimeTributario').value = 'Lucro Real'; 
+        handleRegimeChange(); 
         updateCotacaoButtonLabel();
         geId('cotacaoInfo').textContent = '';
 
-        // Limpa o corpo da tabela e adiciona uma única linha inicial.
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         if (tbody) tbody.innerHTML = '';
         createItemInputRow(0);
 
-        // Limpar resultados da tabela de resultados
         const resultTbody = geId('itemResultTable')?.getElementsByTagName('tbody')[0];
         if (resultTbody) resultTbody.innerHTML = '';
 
-        // Limpar resumo geral
         const summaryDiv = geId('resultsSummary');
         if (summaryDiv) summaryDiv.innerHTML = '';
 
-        // Limpar KPIs do dashboard
         const kpiIds = ['dbValorPedidoME', 'dbTotalCustoImp', 'dbReceitaTotalBrasil', 'dbLucroTotalPedidoRS', 
                         'dbProminentLucroTotalPedidoPerc', 'dbLucroTotalPedidoPerc', 
                         'dbTotalFOB_BRL', 'dbFreteTotalBRL', 'dbPercFreteSobreFOB', 
@@ -2050,15 +2123,13 @@
         const topMenosLucrativosList = geId('topMenosLucrativosList');
         if(topMenosLucrativosList) topMenosLucrativosList.innerHTML = '';
 
-        // Destruir o gráfico de pizza se existir
         if (custoTotalChartInstance) {
             custoTotalChartInstance.destroy();
             custoTotalChartInstance = null;
         }
 
-        // Voltar para a primeira aba
         showScreen('telaEntradaPanel');
-        console.log("Todos os campos foram limpos.");
+        console.log("Todos os campos foram limpos para um novo cálculo.");
     }
 
     function renderizarGraficoCustos(data, labels) {
@@ -2078,20 +2149,20 @@
 
 
         custoTotalChartInstance = new Chart(ctx, {
-            type: 'doughnut', // ou 'pie'
+            type: 'doughnut', 
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'Composição do Custo',
                     data: data,
                     backgroundColor: [
-                        'rgba(0, 123, 255, 0.7)',  // Azul
-                        'rgba(253, 126, 20, 0.7)', // Laranja
-                        'rgba(220, 53, 69, 0.7)',  // Vermelho
-                        'rgba(40, 167, 69, 0.7)',  // Verde
-                        'rgba(255, 193, 7, 0.7)',  // Amarelo
-                        'rgba(108, 117, 125, 0.7)',// Cinza
-                        'rgba(23, 162, 184, 0.7)'  // Ciano
+                        'rgba(0, 123, 255, 0.7)',
+                        'rgba(253, 126, 20, 0.7)',
+                        'rgba(220, 53, 69, 0.7)',
+                        'rgba(40, 167, 69, 0.7)',
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(108, 117, 125, 0.7)',
+                        'rgba(23, 162, 184, 0.7)'
                     ],
                     borderColor: [
                         'rgba(0, 123, 255, 1)',
@@ -2150,19 +2221,19 @@
             const isDashboardVisible = dashboardTab && !dashboardTab.hidden;
             if (!isDashboardVisible) {
                 showScreen('telaDashboardPanel'); 
-                await new Promise(resolve => setTimeout(resolve, 200)); // Aumentar ligeiramente o tempo de espera
+                await new Promise(resolve => setTimeout(resolve, 200)); 
             }
 
             const canvas = await html2canvas(dashboardArea, { 
                 backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff',
                 useCORS: true,
-                logging: true, // Habilitar logs do html2canvas para depuração
-                onclone: (clonedDoc) => { // Tentar garantir que estilos sejam aplicados no clone
+                logging: true,
+                onclone: (clonedDoc) => {
                     const prominentProfitElem = clonedDoc.getElementById('dbProminentLucroTotalPedidoPerc');
                     if (prominentProfitElem) {
                         const originalElem = geId('dbProminentLucroTotalPedidoPerc');
                         if (originalElem) {
-                             prominentProfitElem.className = originalElem.className; // Copia as classes para garantir a cor
+                             prominentProfitElem.className = originalElem.className;
                         }
                     }
                 }
@@ -2172,7 +2243,6 @@
             shareModal.style.display = 'flex';
 
 
-            // Tenta usar a API Web Share se disponível (para dispositivos móveis)
             if (navigator.share && navigator.canShare({ files: [new File([await (await fetch(imageDataUrl)).blob()], "dashboard.png", { type: "image/png" })] })) {
                 try {
                     await navigator.share({
@@ -2180,10 +2250,9 @@
                         text: 'Veja o dashboard da importação:',
                         files: [new File([await (await fetch(imageDataUrl)).blob()], "dashboard.png", { type: "image/png" })]
                     });
-                    shareModal.style.display = 'none'; // Fecha o modal se o compartilhamento nativo for bem-sucedido
+                    shareModal.style.display = 'none';
                 } catch (err) {
                     console.error('Erro ao usar Web Share API:', err);
-                    // Se falhar, o modal com instruções manuais permanecerá visível
                 }
             }
 
