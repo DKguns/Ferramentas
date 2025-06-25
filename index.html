@@ -712,12 +712,12 @@
                 <div class="section-separator section-separator-infoOrg" data-translate-key="sepInfoOrganizacionais"></div>
                 <section aria-labelledby="headingInfoOrganizacionais">
                     <div class="grid-container">
-                        <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome"><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
-                        <div class="grid-item"><label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional"><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small></div>
-                        <div class="grid-item"><label for="refInterna" data-translate-key="labelRefInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle"><small class="field-description" data-translate-key="descRefInterna">Código/nome para seu controle interno ou OC.</small></div>
-                        <div class="grid-item"><label for="numeroPI" data-translate-key="labelNumeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice"><small class="field-description" data-translate-key="descNumeroPI">Número da Fatura Proforma.</small></div>
-                        <div class="grid-item"><label for="diProcesso" data-translate-key="labelDiProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo"><small class="field-description" data-translate-key="descDiProcesso">Identificador da DI ou do processo.</small></div>
-                        <div class="grid-item"><label for="dataCalculo" data-translate-key="labelDataCalculo">Data do Cálculo/Embarque:</label><input type="date" id="dataCalculo"><small class="field-description" data-translate-key="descDataCalculo">Data relevante para este cálculo.</small></div>
+                        <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome"><span class="error-message" id="nomeUsuarioError">Campo obrigatório</span><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
+                        <div class="grid-item"><label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional"><span class="error-message" id="nomeFornecedorError">Campo obrigatório</span><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small></div>
+                        <div class="grid-item"><label for="refInterna" data-translate-key="labelRefInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle"><span class="error-message" id="refInternaError">Campo obrigatório</span><small class="field-description" data-translate-key="descRefInterna">Código/nome para seu controle interno ou OC.</small></div>
+                        <div class="grid-item"><label for="numeroPI" data-translate-key="labelNumeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice"><span class="error-message" id="numeroPIError">Campo obrigatório</span><small class="field-description" data-translate-key="descNumeroPI">Número da Fatura Proforma.</small></div>
+                        <div class="grid-item"><label for="diProcesso" data-translate-key="labelDiProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo"><span class="error-message" id="diProcessoError">Campo obrigatório</span><small class="field-description" data-translate-key="descDiProcesso">Identificador da DI ou do processo.</small></div>
+                        <div class="grid-item"><label for="dataCalculo" data-translate-key="labelDataCalculo">Data do Cálculo/Embarque:</label><input type="date" id="dataCalculo"><span class="error-message" id="dataCalculoError">Campo obrigatório</span><small class="field-description" data-translate-key="descDataCalculo">Data relevante para este cálculo.</small></div>
                     </div>
                 </section>
                 <div class="section-separator section-separator-detComLog" data-translate-key="sepDetalhesComerciais"></div>
@@ -732,7 +732,6 @@
                         <div class="grid-item"> 
                             <label for="taxaCambio" data-translate-key="labelTaxaCambio">Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):</label>
                             <input type="number" id="taxaCambio" step="0.0001" placeholder="Ex: 5.20">
-                            <!-- NOVO: Span para mensagem de erro de validação -->
                             <span class="error-message" id="taxaCambioError">Campo obrigatório</span> 
                             <small class="field-description" data-translate-key="descTaxaCambio">Insira manualmente ou use os botões abaixo.</small>
                             <div class="currency-buttons-group">
@@ -1245,6 +1244,8 @@
         infoSpan.textContent = "Buscando cotação...";
         infoSpan.classList.remove('error');
 
+        const startTime = Date.now();
+
         try {
             const response = await fetch(`https://economia.awesomeapi.com.br/json/last/${targetMoeda}-BRL`);
             if (!response.ok) { throw new Error(`API: ${response.statusText} (${response.status})`); }
@@ -1266,8 +1267,12 @@
             infoSpan.textContent = `Erro ao buscar ${targetMoeda}: ${error.message}`;
             infoSpan.classList.add('error');
         } finally {
-            button.classList.remove('button-loading');
-            button.disabled = false;
+            const duration = Date.now() - startTime;
+            const minDisplayTime = 500; // Meio segundo
+            setTimeout(() => {
+                button.classList.remove('button-loading');
+                button.disabled = false;
+            }, Math.max(0, minDisplayTime - duration));
         }
     }
 
@@ -1522,31 +1527,53 @@
     function validateForm() {
         let isValid = true;
         clearValidations();
-
-        const check = (elemId, errorId) => {
+    
+        const checkField = (elemId, isNumeric = true) => {
             const elem = geId(elemId);
-            if (elem && (elem.value.trim() === '' || parseFloat(elem.value.replace(',', '.')) < 0)) {
+            const errorMsgId = `${elemId}Error`;
+            const errorElem = geId(errorMsgId);
+    
+            let isInvalid = false;
+            if (isNumeric) {
+                // Para números, considera inválido se estiver vazio ou se não for um número válido (ou se for negativo)
+                const value = elem.value.trim();
+                if (value === '' || isNaN(parseFloat(value.replace(',', '.'))) || parseFloat(value.replace(',', '.')) < 0) {
+                    isInvalid = true;
+                }
+            } else {
+                // Para texto, considera inválido apenas se estiver vazio
+                if (elem.value.trim() === '') {
+                    isInvalid = true;
+                }
+            }
+    
+            if (isInvalid) {
                 elem.classList.add('invalid-field');
-                if (errorId && geId(errorId)) {
-                    geId(errorId).style.display = 'block';
+                if (errorElem) {
+                    errorElem.style.display = 'block';
                 }
                 isValid = false;
             }
         };
-
-        check('taxaCambio', 'taxaCambioError');
-        
+    
+        // Validação dos campos organizacionais
+        ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo'].forEach(id => checkField(id, false));
+    
+        // Validação dos campos de custos globais e câmbio
+        ['taxaCambio', 'totalFreteME', 'taxaSiscomexBRL'].forEach(id => checkField(id, true));
+    
+        // Validação dos itens na tabela
         const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
         for (let i = 0; i < itemRows.length; i++) {
-             const qtd = geId(`qtdItem${i}`).value.trim();
-             const preco = geId(`precoCustoUnitMEItem${i}`).value.trim();
-             if (qtd || preco) {
+            const qtd = geId(`qtdItem${i}`).value.trim();
+            const preco = geId(`precoCustoUnitMEItem${i}`).value.trim();
+            if (qtd || preco) {
                 ['qtd', 'precoCustoUnitME', 'aliqII', 'aliqIPI', 'aliqPIS', 'aliqCOFINS', 'aliqICMS'].forEach(field => {
-                    check(`${field}Item${i}`, `${field}Item${i}Error`);
+                    checkField(`${field}Item${i}`, true);
                 });
-             }
+            }
         }
-        
+    
         return isValid;
     }
 
@@ -1663,7 +1690,7 @@
 
     function calcularCustosMultiItem() { 
         if (!validateForm()) {
-            showToast("Por favor, corrija os campos inválidos.", 'error');
+            showToast("Por favor, corrija os campos obrigatórios.", 'error');
             return;
         }
 
