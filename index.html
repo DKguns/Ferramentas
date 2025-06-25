@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.75</title>
+    <title>Ferramenta de Calculo de Importação v29.76</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -154,7 +154,6 @@
             text-align: left; 
         }
         h1 #appVersion { font-size: 0.5em; color: var(--theme-text-secondary); display: block; margin-top: 2px;}
-        /* NOVO: Estilo para o indicador de salvamento */
         #saveStatus {
             font-size: 0.6em;
             font-weight: 500;
@@ -233,18 +232,80 @@
         .grid-item textarea { min-height: 80px; resize: vertical; }
         .field-description { display: block; font-size: 11px; color: var(--theme-text-secondary); opacity: 0.8; margin-top: 5px; line-height: 1.3; }
         
+        /* NOVO: Estilos para validação de campos */
+        .grid-item .error-message {
+            display: none;
+            font-size: 11px;
+            color: var(--theme-accent-red);
+            margin-top: 4px;
+        }
+        .grid-item input.invalid-field {
+            border-color: var(--theme-accent-red) !important;
+            box-shadow: 0 0 0 3px rgba(var(--theme-accent-red-rgb), .25), 0 0 8px var(--theme-glow-red) !important;
+        }
+
         .currency-buttons-group { margin-top: 10px; }
         .currency-buttons-group button {
             padding: 6px 12px; font-size: 12px; margin-right: 8px; margin-bottom: 8px;
             background-color: var(--theme-accent-blue-darker); color: white;
             border: 1px solid var(--theme-accent-blue); border-radius: 6px; cursor:pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+            min-width: 70px; /* Garante espaço para o spinner */
         }
         .currency-buttons-group button:hover { background-color: var(--theme-accent-blue); transform: translateY(-2px); }
         #cotacaoInfo { font-size: 12px; margin-top: 8px; display: block; transition: color 0.3s ease; }
         body.theme-dark #cotacaoInfo:not(.error) { color: var(--theme-accent-green); }
         body:not(.theme-dark) #cotacaoInfo:not(.error) { color: #28a745; }
         #cotacaoInfo.error { color: var(--theme-accent-red) !important; }
+
+        /* NOVO: Estilo do spinner */
+        .spinner {
+            display: none;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: auto;
+        }
+        .button-loading .spinner { display: block; }
+        .button-loading .button-text { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* NOVO: Container e estilos para notificações (toasts) */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background-color: var(--theme-surface-primary);
+            color: var(--theme-text-primary);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px var(--theme-shadow-color);
+            border-left: 5px solid;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateX(100%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast.toast-error { border-left-color: var(--theme-accent-red); }
+        .toast.toast-success { border-left-color: var(--theme-accent-green); }
+        .toast.toast-warning { border-left-color: var(--theme-accent-yellow); }
+
 
         #telaDashboardPanel { background-color: var(--theme-bg-secondary); color: var(--theme-text-primary); } 
         #telaDashboardPanel h2, #telaDashboardPanel h3 { color: var(--theme-text-primary); border-bottom-color: var(--theme-border-secondary); }
@@ -610,12 +671,14 @@
     </style>
 </head>
 <body>
+    <!-- NOVO: Container para as notificações (toasts) -->
+    <div id="toast-container"></div>
+
     <header class="app-header">
         <div class="logo-container">
             <img src="https://placehold.co/100x30/FFFFFF/000000?text=VEXOS&font=Inter" alt="Logo VEXOS" id="appLogo" 
                  onerror="this.onerror=null; this.src='https://placehold.co/100x30/E9ECEF/495057?text=Logo+Vexos+01.png&font=Inter';">
         </div>
-        <!-- NOVO: Adicionado span #saveStatus para mostrar o status do salvamento -->
         <h1>Ferramenta de Calculo de Importação <span id="saveStatus"></span><span id="appVersion" style="font-size: 0.5em; color: var(--theme-text-secondary);"></span></h1>
         <div class="header-buttons">
             <button id="settingsBtn" aria-label="Abrir Configurações">
@@ -668,12 +731,14 @@
                         </div>
                         <div class="grid-item"> 
                             <label for="taxaCambio" data-translate-key="labelTaxaCambio">Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):</label>
-                            <input type="number" id="taxaCambio" step="0.0001" placeholder="Ex: 5.20"> 
+                            <input type="number" id="taxaCambio" step="0.0001" placeholder="Ex: 5.20">
+                            <!-- NOVO: Span para mensagem de erro de validação -->
+                            <span class="error-message" id="taxaCambioError">Campo obrigatório</span> 
                             <small class="field-description" data-translate-key="descTaxaCambio">Insira manualmente ou use os botões abaixo.</small>
                             <div class="currency-buttons-group">
-                                <button type="button" onclick="fetchCotacaoMoeda('USD')">USD-BRL</button>
-                                <button type="button" onclick="fetchCotacaoMoeda('EUR')">EUR-BRL</button>
-                                <button type="button" onclick="fetchCotacaoMoeda('CNY')">CNY-BRL</button>
+                                <button type="button" onclick="fetchCotacaoMoeda('USD')"><span class="button-text">USD-BRL</span><span class="spinner"></span></button>
+                                <button type="button" onclick="fetchCotacaoMoeda('EUR')"><span class="button-text">EUR-BRL</span><span class="spinner"></span></button>
+                                <button type="button" onclick="fetchCotacaoMoeda('CNY')"><span class="button-text">CNY-BRL</span><span class="spinner"></span></button>
                             </div>
                             <output id="cotacaoInfo" aria-live="polite"></output>
                         </div>
@@ -771,7 +836,7 @@
                 <button type="button" class="csv-button" onclick="exportTableToCSV('resultados_importacao.csv')" data-translate-key="btnExportarCSV">
                     <i class="fas fa-file-csv"></i> Exportar para CSV
                 </button>
-                <button type="button" class="clear-button" onclick="limparTodosOsCampos()" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
+                <button type="button" class="clear-button" onclick="limparTodosOsCampos(true)" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
             </div>
         </section> 
 
@@ -1056,14 +1121,47 @@
     </main>
 
 <script>
-    // A lista de dados pre-preenchidos está vazia para um início limpo.
-    const preFilledItemsData = [];
-
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
 
     let custoTotalChartInstance = null; 
+    let saveTimeout;
 
     function geId(id) { return document.getElementById(id); }
+
+    // NOVO: Função para exibir notificações "toast"
+    function showToast(message, type = 'error') {
+        const container = geId('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        const icon = document.createElement('i');
+        const icons = {
+            error: 'fas fa-times-circle',
+            success: 'fas fa-check-circle',
+            warning: 'fas fa-exclamation-triangle'
+        };
+        icon.className = icons[type] || icons.warning;
+        
+        const text = document.createElement('span');
+        text.textContent = message;
+
+        toast.appendChild(icon);
+        toast.appendChild(text);
+        container.appendChild(toast);
+
+        // Força o navegador a aplicar a classe inicial antes de adicionar a classe 'show' para a transição funcionar
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            // Remove o elemento do DOM após a animação de saída
+            toast.addEventListener('transitionend', () => {
+                toast.remove();
+            });
+        }, 4000);
+    }
 
     function TxtToNum(elementIdOrValue, isElement = true) {
         let valStr;
@@ -1129,20 +1227,11 @@
         const moedaEstrangeiraInput = geId('moedaEstrangeira');
         const infoSpan = geId('cotacaoInfo'); 
         const taxaCambioInput = geId('taxaCambio');
-        const buttons = document.querySelectorAll('.currency-buttons-group button');
+        const button = event.currentTarget;
 
-        if (!infoSpan || !taxaCambioInput) { 
-            console.error("Elementos de cotação não encontrados."); return; 
-        }
-        if (!targetMoeda) { 
-            infoSpan.textContent = "Moeda alvo não especificada."; 
-            infoSpan.classList.add('error');
-            return; 
-        }
-        
-        buttons.forEach(b => b.disabled = true); 
-        let clickedButton;
-        buttons.forEach(b => { if(b.textContent.includes(targetMoeda.substring(0,3))) { clickedButton = b; b.textContent = 'Buscando...';}});
+        button.classList.add('button-loading');
+        button.disabled = true;
+
         infoSpan.textContent = "Buscando cotação...";
         infoSpan.classList.remove('error');
 
@@ -1160,18 +1249,15 @@
                 const dataHoraCotacao = new Date(parseInt(data[cotacaoKey].timestamp) * 1000);
                 infoSpan.textContent = `Cotação (${data[cotacaoKey].name.split('/')[0]}): ${cotacao.toFixed(4)} em ${dataHoraCotacao.toLocaleDateString('pt-BR')} ${dataHoraCotacao.toLocaleTimeString('pt-BR')}`;
                 infoSpan.classList.remove('error');
+                saveState(); // Salva o estado após buscar cotação
             } else { throw new Error(`Cotação ${targetMoeda}-BRL não encontrada.`); }
         } catch (error) {
             console.error("Erro cotação:", error);
             infoSpan.textContent = `Erro ao buscar ${targetMoeda}: ${error.message}`;
             infoSpan.classList.add('error');
         } finally {
-            buttons.forEach(b => b.disabled = false); 
-            if(clickedButton) { 
-                if (targetMoeda === "USD") clickedButton.textContent = "USD-BRL";
-                else if (targetMoeda === "EUR") clickedButton.textContent = "EUR-BRL";
-                else if (targetMoeda === "CNY") clickedButton.textContent = "CNY-BRL";
-            }
+            button.classList.remove('button-loading');
+            button.disabled = false;
         }
     }
 
@@ -1190,8 +1276,16 @@
             <td><label class="sr-only" for="descItem${index}">Descrição do Item ${index + 1}</label><input type="text" id="descItem${index}" value="${data.desc}" placeholder="Descrição do Produto"></td>
             <td><label class="sr-only" for="codInternoItem${index}">Código Interno do Item ${index + 1}</label><input type="text" id="codInternoItem${index}" value="${data.codInterno}" placeholder="Cód."></td>
             <td><label class="sr-only" for="ncmItem${index}">NCM do Item ${index + 1}</label><input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM"></td>
-            <td><label class="sr-only" for="qtdItem${index}">Quantidade do Item ${index + 1}</label><input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" oninput="updateItemCalculatedFields(${index})"></td>
-            <td><label class="sr-only" for="precoCustoUnitMEItem${index}">Preço Custo Unit. $ do Item ${index + 1}</label><input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" oninput="updateItemCalculatedFields(${index})"></td>
+            <td>
+                <label class="sr-only" for="qtdItem${index}">Quantidade do Item ${index + 1}</label>
+                <input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" oninput="updateItemCalculatedFields(${index})">
+                <span class="error-message" id="qtdItem${index}Error">Campo obrigatório</span>
+            </td>
+            <td>
+                <label class="sr-only" for="precoCustoUnitMEItem${index}">Preço Custo Unit. $ do Item ${index + 1}</label>
+                <input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" oninput="updateItemCalculatedFields(${index})">
+                <span class="error-message" id="precoCustoUnitMEItem${index}Error">Campo obrigatório</span>
+            </td>
             <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG do Item ${index + 1}</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000" oninput="updateItemCalculatedFields(${index})"></td>
             <td><label class="sr-only" for="aliqIIItem${index}">Alíquota II (%) do Item ${index + 1}</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
             <td><label class="sr-only" for="aliqIPIItem${index}">Alíquota IPI (%) do Item ${index + 1}</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
@@ -1213,7 +1307,7 @@
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const newIndex = tbody.rows.length;
         createItemInputRow(newIndex);
-        saveState(); // Salva o estado após adicionar uma linha
+        saveState(); 
     }
     
     function removerLinhaItem(button) {
@@ -1221,9 +1315,9 @@
         if (row.parentElement.rows.length > 1) { 
             row.remove();
             renumerarLinhas();
-            saveState(); // Salva o estado após remover uma linha
+            saveState(); 
         } else {
-            alert("Não é possível remover a última linha.");
+            showToast("Não é possível remover a última linha.", 'warning');
         }
     }
     
@@ -1235,7 +1329,7 @@
         geId(`aliqPISItem${index}`).value = IMPOSTOS_PADRAO.aliqPIS;
         geId(`aliqCOFINSItem${index}`).value = IMPOSTOS_PADRAO.aliqCOFINS;
         geId(`aliqICMSItem${index}`).value = IMPOSTOS_PADRAO.aliqICMS;
-        saveState(); // Salva o estado após carregar os impostos
+        saveState();
     }
     
     function renumerarLinhas() {
@@ -1245,7 +1339,7 @@
             const row = rows[i];
             row.cells[0].textContent = i + 1;
             
-            row.querySelectorAll('input, label').forEach(elem => {
+            row.querySelectorAll('input, label, span.error-message').forEach(elem => {
                 if (elem.id) {
                     const idBase = elem.id.replace(/\d+$/, '');
                     elem.id = idBase + i;
@@ -1330,7 +1424,6 @@
         });
     }
 
-    // NOVO: Funções para salvar e carregar o estado do formulário no localStorage.
     function saveState() {
         try {
             const data = {
@@ -1365,16 +1458,15 @@
             if (statusElem) {
                 statusElem.textContent = 'Salvando...';
                 statusElem.style.opacity = '1';
-                if (window.saveTimeout) {
-                    clearTimeout(window.saveTimeout);
-                }
-                window.saveTimeout = setTimeout(() => {
+                if (saveTimeout) clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
                     statusElem.textContent = 'Salvo ✓';
                     setTimeout(() => { statusElem.style.opacity = '0'; }, 2000);
                 }, 800);
             }
         } catch (e) {
             console.error("Erro ao salvar o estado:", e);
+            showToast("Erro ao salvar dados no navegador.", 'error');
         }
     }
 
@@ -1413,11 +1505,47 @@
             console.log("Estado carregado do localStorage.");
         } catch (e) {
             console.error("Erro ao carregar o estado:", e);
-            limparTodosOsCampos(); 
+            limparTodosOsCampos(true); 
         }
     }
+
+    // NOVO: Função para validar o formulário antes de calcular.
+    function validateForm() {
+        let isValid = true;
+        clearValidations(); // Limpa validações anteriores
+
+        const checkField = (elemId, errorMsgId) => {
+            const elem = geId(elemId);
+            const errorElem = geId(errorMsgId);
+            if (!elem || TxtToNum(elemId) <= 0) {
+                if (elem) elem.classList.add('invalid-field');
+                if (errorElem) errorElem.style.display = 'block';
+                isValid = false;
+                return false;
+            }
+            return true;
+        };
+        
+        checkField('taxaCambio', 'taxaCambioError');
+
+        const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
+        for (let i = 0; i < itemRows.length; i++) {
+             const qtd = TxtToNum(`qtdItem${i}`);
+             const preco = TxtToNum(`precoCustoUnitMEItem${i}`);
+             if (qtd > 0 || preco > 0) { // Só valida se a linha parece estar em uso
+                checkField(`qtdItem${i}`, `qtdItem${i}Error`);
+                checkField(`precoCustoUnitMEItem${i}`, `precoCustoUnitMEItem${i}Error`);
+             }
+        }
+        
+        return isValid;
+    }
+
+    function clearValidations() {
+        document.querySelectorAll('.invalid-field').forEach(el => el.classList.remove('invalid-field'));
+        document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+    }
     
-    // ALTERADO: A inicialização da aplicação agora carrega os dados salvos.
     window.onload = function() { 
         loadState();
         
@@ -1525,6 +1653,12 @@
     }
 
     function calcularCustosMultiItem() { 
+        // ALTERADO: Adiciona a chamada de validação no início
+        if (!validateForm()) {
+            showToast("Por favor, corrija os campos inválidos.", 'error');
+            return;
+        }
+
         try {
             const lucroAltoMin = TxtToNum('modalLucroAltoMin') || 40; 
             const lucroMedioMin = TxtToNum('modalLucroMedioMin') || 30;
@@ -1545,7 +1679,8 @@
             const moedaLabel = moedaEstrangeiraElem ? (moedaEstrangeiraElem.value.toUpperCase() || "USD") : "USD";
             
             const taxaCambio = TxtToNum('taxaCambio');
-            if (taxaCambio <= 0) { alert("Taxa de Câmbio deve ser maior que zero."); return; }
+            // A validação agora é feita na função validateForm()
+            // if (taxaCambio <= 0) { alert("Taxa de Câmbio deve ser maior que zero."); return; }
 
             const totalFreteME_global = TxtToNum('totalFreteME');
             const totalSeguroME_global = TxtToNum('totalSeguroME');
@@ -1596,7 +1731,7 @@
                 }
             }
 
-            if (items.length === 0) { alert("Nenhum item válido foi inserido."); showScreen('telaEntradaPanel'); return; }
+            if (items.length === 0) { showToast("Nenhum item válido foi inserido.", "warning"); showScreen('telaEntradaPanel'); return; }
             
             const valorFOBTotalEmbarqueBRL = valorFOBTotalME * taxaCambio; 
 
@@ -2059,10 +2194,11 @@
 
         } catch (e) { 
             console.error("Erro detalhado em calcularCustosMultiItem:", e, e.stack);
-            alert("Ocorreu um erro crítico ao tentar calcular. Por favor, verifique os valores inseridos e tente novamente. Detalhes do erro foram enviados para o console do navegador (F12).");
+            showToast("Erro crítico ao calcular. Verifique os valores.", "error");
         }
     }
 
+    // ALTERADO: A função de limpar agora aceita um parâmetro para decidir se apaga o localStorage.
     function limparTodosOsCampos(clearStorage = true) {
         if (clearStorage) {
             localStorage.removeItem('importCalculatorData');
@@ -2070,6 +2206,8 @@
             if(statusElem) statusElem.style.opacity = '0';
             console.log("Dados salvos foram removidos.");
         }
+
+        clearValidations();
 
         const globalInputs = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 
                               'moedaEstrangeira', 'taxaCambio', 'totalFreteME', 'totalSeguroME', 
@@ -2145,8 +2283,6 @@
 
         const isDarkMode = document.body.classList.contains('theme-dark');
         const textColor = isDarkMode ? 'rgba(232, 232, 240, 0.8)' : 'rgba(73, 80, 87, 0.9)';
-        const gridColor = isDarkMode ? 'rgba(80, 80, 80, 0.3)' : 'rgba(222, 226, 230, 0.5)';
-
 
         custoTotalChartInstance = new Chart(ctx, {
             type: 'doughnut', 
@@ -2258,7 +2394,7 @@
 
         } catch (error) {
             console.error('Erro ao capturar ou compartilhar dashboard:', error);
-            alert('Erro ao gerar imagem do dashboard. Tente novamente.');
+            showToast('Erro ao gerar imagem do dashboard.', 'error');
         }
     }
     
@@ -2281,7 +2417,7 @@
         console.log("Iniciando gerarPDF...");
         try {
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
-                alert("Erro: A biblioteca jsPDF não parece estar carregada."); return;
+                showToast("Erro ao carregar biblioteca do PDF.", "error"); return;
             }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'landscape' });
@@ -2345,7 +2481,7 @@
             
             const summaryDataForPDF = [];
             const summaryItems = geId('resultsSummary')?.querySelectorAll('.summary-item');
-            if (summaryItems) {
+            if (summaryItems && summaryItems.length > 0) {
                 summaryItems.forEach(item => {
                     const labelElem = item.querySelector('strong');
                     const valueElem = item.querySelector('span');
@@ -2382,54 +2518,54 @@
                 const rows = itemsTable.querySelectorAll('tbody tr');
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td');
-                    // Corrigindo os índices para o PDF com base na estrutura da tabela de resultados
                     if (cells.length >= 50) { 
                         tableBody.push([
-                            cells[0].innerText,  // #
-                            cells[1].innerText,  // Cód. Interno
-                            cells[2].innerText,  // Descrição
-                            cells[4].innerText,  // Qtd
-                            cells[43].innerText, // CUSTO UNIT. R$ (Líquido)
-                            cells[45].innerText, // PREÇO VENDA UNIT. R$ Brasil
-                            cells[47].innerText, // LUCRO UNIT. (R$)
-                            cells[49].innerText  // MARGEM LUCRO UNIT. %
+                            cells[0].innerText,
+                            cells[1].innerText,
+                            cells[2].innerText,
+                            cells[4].innerText,
+                            cells[43].innerText,
+                            cells[45].innerText,
+                            cells[47].innerText,
+                            cells[49].innerText
                         ]);
                     }
                 });
 
-                doc.autoTable({ 
-                    startY: yPos, 
-                    head: tableHead, 
-                    body: tableBody, 
-                    theme: 'grid',
-                    styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' }, 
-                    headStyles: { fillColor: [40, 50, 70], fontSize: 7, textColor: 240, fontStyle: 'bold', halign: 'center'},
-                    columnStyles: {
-                        0: { halign: 'center', cellWidth: 10 }, // #
-                        1: { cellWidth: 30 }, // Cód. Int.
-                        2: { cellWidth: 70 }, // Descrição
-                        3: { halign: 'right', cellWidth: 15 }, // Qtd
-                        4: { halign: 'right', cellWidth: 30 }, // Custo Unit. Líq.
-                        5: { halign: 'right', cellWidth: 30 }, // Pr. Venda Unit.
-                        6: { halign: 'right', cellWidth: 30 }, // Lucro Unit.
-                        7: { halign: 'right', cellWidth: 20 }  // Margem
-                    },
-                    margin: { left: leftMargin, right: leftMargin },
-                });
+                if (tableBody.length > 0) {
+                    doc.autoTable({ 
+                        startY: yPos, 
+                        head: tableHead, 
+                        body: tableBody, 
+                        theme: 'grid',
+                        styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' }, 
+                        headStyles: { fillColor: [40, 50, 70], fontSize: 7, textColor: 240, fontStyle: 'bold', halign: 'center'},
+                        columnStyles: {
+                            0: { halign: 'center', cellWidth: 10 },
+                            1: { cellWidth: 30 },
+                            2: { cellWidth: 70 },
+                            3: { halign: 'right', cellWidth: 15 },
+                            4: { halign: 'right', cellWidth: 30 },
+                            5: { halign: 'right', cellWidth: 30 },
+                            6: { halign: 'right', cellWidth: 30 },
+                            7: { halign: 'right', cellWidth: 20 }
+                        },
+                        margin: { left: leftMargin, right: leftMargin },
+                    });
+                }
             }
             doc.save(`Relatorio_Importacao_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`);
             console.log("PDF gerado (ou tentativa).");
         } catch(e) {
             console.error("Erro detalhado ao gerar PDF:", e.stack);
-            alert("Ocorreu um erro ao tentar gerar o PDF: " + e.message + ". Verifique o console para detalhes.");
+            showToast("Erro ao gerar o PDF. Verifique o console.", "error");
         }
     }
 
     function exportTableToCSV(filename) {
         const table = geId('itemResultTable');
         if (!table) {
-            console.error("Tabela de resultados não encontrada para exportação CSV.");
-            alert("Não há dados na tabela de resultados para exportar.");
+            showToast("Tabela de resultados não encontrada para exportar.", "error");
             return;
         }
 
@@ -2440,14 +2576,13 @@
             const row = [], cols = rows[i].querySelectorAll("td, th");
             
             for (let j = 0; j < cols.length; j++) {
-                let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " "); // Remove quebras de linha e espaços extras
-                data = data.replace(/"/g, '""'); // Escapa aspas duplas
+                let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " ");
+                data = data.replace(/"/g, '""');
                 row.push('"' + data + '"');
             }
-            csv.push(row.join(";")); // Usar ponto e vírgula como delimitador       
+            csv.push(row.join(";"));
         }
 
-        // Adiciona BOM para UTF-8 para melhor compatibilidade com Excel
         const BOM = "\uFEFF";
         const csvFile = new Blob([BOM + csv.join("\n")], {type: "text/csv;charset=utf-8;"});
         
