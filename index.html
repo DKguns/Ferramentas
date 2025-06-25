@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.73</title>
+    <title>Ferramenta de Calculo de Importação v29.74</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -639,11 +639,11 @@
                 <div class="section-separator section-separator-infoOrg" data-translate-key="sepInfoOrganizacionais"></div>
                 <section aria-labelledby="headingInfoOrganizacionais">
                     <div class="grid-container">
-                        <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome" value="Diego Karloh"><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
-                        <div class="grid-item"><label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional" value="Hy Tech"><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small></div>
-                        <div class="grid-item"><label for="refInterna" data-translate-key="labelRefInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle" value="OC-0702"><small class="field-description" data-translate-key="descRefInterna">Código/nome para seu controle interno ou OC.</small></div>
-                        <div class="grid-item"><label for="numeroPI" data-translate-key="labelNumeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice" value="PO1256897"><small class="field-description" data-translate-key="descNumeroPI">Número da Fatura Proforma.</small></div>
-                        <div class="grid-item"><label for="diProcesso" data-translate-key="labelDiProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo" value="1111"><small class="field-description" data-translate-key="descDiProcesso">Identificador da DI ou do processo.</small></div>
+                        <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome"><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
+                        <div class="grid-item"><label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional"><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small></div>
+                        <div class="grid-item"><label for="refInterna" data-translate-key="labelRefInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle"><small class="field-description" data-translate-key="descRefInterna">Código/nome para seu controle interno ou OC.</small></div>
+                        <div class="grid-item"><label for="numeroPI" data-translate-key="labelNumeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice"><small class="field-description" data-translate-key="descNumeroPI">Número da Fatura Proforma.</small></div>
+                        <div class="grid-item"><label for="diProcesso" data-translate-key="labelDiProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo"><small class="field-description" data-translate-key="descDiProcesso">Identificador da DI ou do processo.</small></div>
                         <div class="grid-item"><label for="dataCalculo" data-translate-key="labelDataCalculo">Data do Cálculo/Embarque:</label><input type="date" id="dataCalculo"><small class="field-description" data-translate-key="descDataCalculo">Data relevante para este cálculo.</small></div>
                     </div>
                 </section>
@@ -658,7 +658,7 @@
                         </div>
                         <div class="grid-item"> 
                             <label for="taxaCambio" data-translate-key="labelTaxaCambio">Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):</label>
-                            <input type="number" id="taxaCambio" step="0.0001" value="5.71" placeholder="Ex: 5.20"> 
+                            <input type="number" id="taxaCambio" step="0.0001" placeholder="Ex: 5.20"> 
                             <small class="field-description" data-translate-key="descTaxaCambio">Insira manualmente ou use os botões abaixo.</small>
                             <div class="currency-buttons-group">
                                 <button type="button" onclick="fetchCotacaoMoeda('USD')">USD-BRL</button>
@@ -702,13 +702,13 @@
 
                 <section aria-labelledby="headingCustosGlobais">
                     <div class="grid-container">
-                        <div class="grid-item"><label for="totalFreteME" data-translate-key="labelTotalFreteME">Frete Int. TOTAL ($):</label><input type="number" id="totalFreteME" step="0.01" value="1657" placeholder="0.00"> <small class="field-description" data-translate-key="descTotalFreteME">Frete principal em Moeda Estrangeira.</small></div> 
-                        <div class="grid-item"><label for="totalSeguroME" data-translate-key="labelTotalSeguroME">Seguro Int. TOTAL ($):</label><input type="number" id="totalSeguroME" step="0.01" value="0"><small class="field-description" data-translate-key="descTotalSeguroME">Seguro da carga em Moeda Estrangeira.</small></div>
-                        <div class="grid-item"><label for="totalOutrasDespesasME" data-translate-key="labelTotalOutrasDespesasME">Outras Desp. Origem TOTAIS ($):</label><input type="number" id="totalOutrasDespesasME" step="0.01" value="0"><small class="field-description" data-translate-key="descTotalOutrasDespesasME">Ex: THC origem, docs, frete interno origem.</small></div>
-                        <div class="grid-item"><label for="taxaSiscomexBRL" data-translate-key="labelTaxaSiscomexBRL">Taxa Siscomex TOTAL (BRL):</label><input type="number" id="taxaSiscomexBRL" step="0.01" value="416.46" placeholder="Ex: 115.67"><small class="field-description" data-translate-key="descTaxaSiscomexBRL">Taxa de uso do Siscomex.</small></div>
-                        <div class="grid-item"><label for="despesasAduaneirasBRL" data-translate-key="labelDespesasAduaneirasBRL">Desp. Aduaneiras TOTAIS (BRL):</label><input type="number" id="despesasAduaneirasBRL" step="0.01" value="0"><small class="field-description" data-translate-key="descDespesasAduaneirasBRL">Ex: Despachante, Armazenagem, LI.</small></div>
-                        <div class="grid-item"><label for="freteNacionalBRL" data-translate-key="labelFreteNacionalBRL">Frete Nacional TOTAL (BRL):</label><input type="number" id="freteNacionalBRL" step="0.01" value="0"><small class="field-description" data-translate-key="descFreteNacionalBRL">Transporte no Brasil até destino final.</small></div>
-                        <div class="grid-item"><label for="aliquotaAFRMM" data-translate-key="labelAliquotaAFRMM">Alíquota AFRMM Global (%):</label><input type="number" id="aliquotaAFRMM" step="0.01" value="0"><small class="field-description" data-translate-key="descAliquotaAFRMM">Padrão 25% para Longo Curso. Ajuste se Cabotagem (10%).</small></div> 
+                        <div class="grid-item"><label for="totalFreteME" data-translate-key="labelTotalFreteME">Frete Int. TOTAL ($):</label><input type="number" id="totalFreteME" step="0.01" placeholder="0.00"> <small class="field-description" data-translate-key="descTotalFreteME">Frete principal em Moeda Estrangeira.</small></div> 
+                        <div class="grid-item"><label for="totalSeguroME" data-translate-key="labelTotalSeguroME">Seguro Int. TOTAL ($):</label><input type="number" id="totalSeguroME" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descTotalSeguroME">Seguro da carga em Moeda Estrangeira.</small></div>
+                        <div class="grid-item"><label for="totalOutrasDespesasME" data-translate-key="labelTotalOutrasDespesasME">Outras Desp. Origem TOTAIS ($):</label><input type="number" id="totalOutrasDespesasME" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descTotalOutrasDespesasME">Ex: THC origem, docs, frete interno origem.</small></div>
+                        <div class="grid-item"><label for="taxaSiscomexBRL" data-translate-key="labelTaxaSiscomexBRL">Taxa Siscomex TOTAL (BRL):</label><input type="number" id="taxaSiscomexBRL" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descTaxaSiscomexBRL">Taxa de uso do Siscomex.</small></div>
+                        <div class="grid-item"><label for="despesasAduaneirasBRL" data-translate-key="labelDespesasAduaneirasBRL">Desp. Aduaneiras TOTAIS (BRL):</label><input type="number" id="despesasAduaneirasBRL" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descDespesasAduaneirasBRL">Ex: Despachante, Armazenagem, LI.</small></div>
+                        <div class="grid-item"><label for="freteNacionalBRL" data-translate-key="labelFreteNacionalBRL">Frete Nacional TOTAL (BRL):</label><input type="number" id="freteNacionalBRL" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descFreteNacionalBRL">Transporte no Brasil até destino final.</small></div>
+                        <div class="grid-item"><label for="aliquotaAFRMM" data-translate-key="labelAliquotaAFRMM">Alíquota AFRMM Global (%):</label><input type="number" id="aliquotaAFRMM" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descAliquotaAFRMM">Padrão 25% para Longo Curso. Ajuste se Cabotagem (10%).</small></div> 
                     </div>
                 </section>
                 <section aria-labelledby="headingObservacoesGerais" style="margin-top: 20px;">
@@ -1046,34 +1046,12 @@
     </main>
 
 <script>
-    // ALTERADO: A constante NUM_ITEM_ROWS foi removida.
-    
-    const preFilledItemsData = [
-        { desc: "6ES7214-1AG40-0XB0", codInterno: "4271", pesoUnitKG: "0.34", qtd: "7.00", precoCustoUnitME: "243.00", aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "2250.66", ncm: "8537.10.90" },
-        { desc: "6ES7223-1BL32-0XB0", codInterno: "5399", pesoUnitKG: "0.29", qtd: "5.00", precoCustoUnitME: "174.00", aliqII: "10.80", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1442.60", ncm: "" },
-        { desc: "6ES7232-4HD32-0XB0", codInterno: "4275", pesoUnitKG: "0.18", qtd: "2.00", precoCustoUnitME: "229.00", aliqII: "10.80", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "2274.66", ncm: "" },
-        { desc: "6ES7223-1BH32-0XB0", codInterno: "4272", pesoUnitKG: "0.20", qtd: "3.00", precoCustoUnitME: "115.00", aliqII: "10.80", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1045.23", ncm: "" },
-        { desc: "MT8106IP",               codInterno: "6005", pesoUnitKG: "1.00", qtd: "3.00", precoCustoUnitME: "166.00", aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "3590.00", ncm: "" },
-        { desc: "MT8072IP",               codInterno: "4187", pesoUnitKG: "1.00", qtd: "10.00", precoCustoUnitME: "96.00",  aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1390.00", ncm: "" },
-        { desc: "6SL3210-5BE21-1UV0",   codInterno: "4473", pesoUnitKG: "0.99", qtd: "6.00", precoCustoUnitME: "110.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1275.45", ncm: "" },
-        { desc: "6SL3210-5BE23-0UV0",   codInterno: "4475", pesoUnitKG: "1.61", qtd: "5.00", precoCustoUnitME: "161.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1856.88", ncm: "" },
-        { desc: "6SL3210-5BE31-8UV0",   codInterno: "4999", pesoUnitKG: "3.79", qtd: "1.00", precoCustoUnitME: "465.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "5996.35", ncm: "" }, 
-        { desc: "6GK1901-1BB10-2AE0",   codInterno: "5699", pesoUnitKG: "6.45", qtd: "4.00", precoCustoUnitME: "374.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "4931.39", ncm: "" },
-        { desc: "6AV2123-2JB03-0AX0",   codInterno: "4611", pesoUnitKG: "1.38", qtd: "2.00", precoCustoUnitME: "494.00", aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "6932.32", ncm: "" },
-        { desc: "6SL3210-1KE21-7UF1",   codInterno: "4616", pesoUnitKG: "2.70", qtd: "2.00", precoCustoUnitME: "329.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "4392.10", ncm: "" },
-        { desc: "6SL3210-1KE18-8UF1",   codInterno: "4614", pesoUnitKG: "2.10", qtd: "6.00", precoCustoUnitME: "265.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "3294.01", ncm: "" },
-        { desc: "6SL3210-1KE27-0UF1",   codInterno: "5859", pesoUnitKG: "18.00", qtd: "1.00", precoCustoUnitME: "1020.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "13741.91", ncm: "" },
-        { desc: "6SL3210-1KE22-6UF1",   codInterno: "4613", pesoUnitKG: "5.20", qtd: "1.00", precoCustoUnitME: "408.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "4968.87", ncm: "" },
-        { desc: "6SL3210-1KE23-2UF1",   codInterno: "5860", pesoUnitKG: "5.20", qtd: "2.00", precoCustoUnitME: "509.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "6424.58", ncm: "" },
-        { desc: "6SL3210-1KE13-2UF2",   codInterno: "4612", pesoUnitKG: "1.20", qtd: "2.00", precoCustoUnitME: "210.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "2304.10", ncm: "" },
-        { desc: "6SL3210-1KE15-8UF2",   codInterno: "4617", pesoUnitKG: "1.20", qtd: "1.00", precoCustoUnitME: "221.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "2720.81", ncm: "" },
-        { desc: "6SL3210-1KE26-0UF1",   codInterno: "9999", pesoUnitKG: "17.00", qtd: "1.00", precoCustoUnitME: "860.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "11614.56", ncm: "" }
-    ];
+    // ALTERADO: A lista de dados pre-preenchidos agora está vazia para um início limpo.
+    const preFilledItemsData = [];
 
-    // NOVO: Constante para os impostos padrão. Facilita a manutenção.
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
 
-    let custoTotalChartInstance = null; // Variável global para a instância do gráfico
+    let custoTotalChartInstance = null; 
 
     function geId(id) { return document.getElementById(id); }
 
@@ -1187,7 +1165,6 @@
         }
     }
 
-    // ALTERADO: Função para criar uma única linha, substituindo a antiga generateItemInputRows.
     function createItemInputRow(index, itemData = null) {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const row = tbody.insertRow();
@@ -1222,17 +1199,15 @@
         updateItemCalculatedFields(index);
     }
 
-    // NOVO: Adiciona uma nova linha em branco.
     function adicionarLinhaItem() {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const newIndex = tbody.rows.length;
         createItemInputRow(newIndex);
     }
     
-    // NOVO: Remove uma linha específica.
     function removerLinhaItem(button) {
         const row = button.closest('tr');
-        if (row.parentElement.rows.length > 1) { // Impede a remoção da última linha
+        if (row.parentElement.rows.length > 1) { 
             row.remove();
             renumerarLinhas();
         } else {
@@ -1240,10 +1215,9 @@
         }
     }
     
-    // NOVO: Carrega os impostos padrão na linha.
     function carregarImpostosPadrao(button) {
         const row = button.closest('tr');
-        const index = Array.from(row.parentNode.children).indexOf(row); // Obtém o índice real da linha no tbody
+        const index = Array.from(row.parentNode.children).indexOf(row); 
         geId(`aliqIIItem${index}`).value = IMPOSTOS_PADRAO.aliqII;
         geId(`aliqIPIItem${index}`).value = IMPOSTOS_PADRAO.aliqIPI;
         geId(`aliqPISItem${index}`).value = IMPOSTOS_PADRAO.aliqPIS;
@@ -1251,7 +1225,6 @@
         geId(`aliqICMSItem${index}`).value = IMPOSTOS_PADRAO.aliqICMS;
     }
     
-    // NOVO: Renumera todas as linhas e atualiza os IDs e funções.
     function renumerarLinhas() {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const rows = tbody.rows;
@@ -1344,41 +1317,45 @@
         });
     }
     
-    // ALTERADO: A inicialização da aplicação foi atualizada.
+    // ALTERADO: A inicialização da aplicação foi atualizada para começar com campos limpos.
     window.onload = function() { 
-        // Definir valores padrão dos campos conforme imagem
-        geId('nomeUsuario').value = "Diego Karloh";
-        geId('nomeFornecedor').value = "Hy Tech";
-        geId('refInterna').value = "OC-0702";
-        geId('numeroPI').value = "PO1256897";
-        geId('diProcesso').value = "1111";
-        geId('dataCalculo').value = "2025-06-02"; 
+        // Limpa os campos globais, deixando apenas alguns padrões sensíveis
+        geId('nomeUsuario').value = "";
+        geId('nomeFornecedor').value = "";
+        geId('refInterna').value = "";
+        geId('numeroPI').value = "";
+        geId('diProcesso').value = "";
+        geId('dataCalculo').valueAsDate = new Date(); 
         
         geId('moedaEstrangeira').value = "USD";
-        geId('taxaCambio').value = "5.71";
+        geId('taxaCambio').value = "";
         geId('incoterm').value = "CPT";
         geId('modalidadeTransporte').value = "Aereo";
 
-        // Definir valores padrão para margens de lucro no modal
+        // Limpa campos de custos globais
+        geId('totalFreteME').value = "";
+        geId('totalSeguroME').value = "";
+        geId('totalOutrasDespesasME').value = "";
+        geId('taxaSiscomexBRL').value = "";
+        geId('despesasAduaneirasBRL').value = "";
+        geId('freteNacionalBRL').value = "";
+        geId('aliquotaAFRMM').value = "";
+
+        // Define valores padrão para margens de lucro no modal
         geId('modalLucroAltoMin').value = "40";
         geId('modalLucroMedioMin').value = "30";
         geId('modalLucroBaixoMin').value = "20";
 
-        // ALTERADO: Carrega os dados pre-preenchidos ou inicia com uma linha em branco.
-        if (preFilledItemsData && preFilledItemsData.length > 0) {
-            preFilledItemsData.forEach((itemData, index) => {
-                createItemInputRow(index, itemData);
-            });
-        } else {
-            createItemInputRow(0); // Começa com uma linha vazia se não houver dados
-        }
+        // Inicia a tabela com uma única linha em branco.
+        createItemInputRow(0);
 
-        // NOVO: Adiciona o event listener ao botão "Adicionar Novo Item".
+        // Adiciona o event listener ao botão "Adicionar Novo Item".
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         
         updateCotacaoButtonLabel(); 
         handleRegimeChange(); 
         
+        // --- O restante da lógica de inicialização (tema, modais, etc.) permanece o mesmo ---
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsModal = document.getElementById('settingsModal');
@@ -1476,7 +1453,6 @@
         return `class="${styleClass}"`;
     }
 
-    // ALTERADO: Loop principal agora lê o número de linhas da tabela.
     function calcularCustosMultiItem() { 
         try {
             const lucroAltoMin = TxtToNum('modalLucroAltoMin') || 40; 
@@ -1514,7 +1490,6 @@
             let valorTotalVendaBrasil = 0; 
             let somaTotalPesosUnitariosKG = 0; 
 
-            // ALTERADO: O loop agora itera sobre as linhas da tabela, não um número fixo.
             const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
             for (let i = 0; i < itemRows.length; i++) {
                 const qtd = TxtToNum(`qtdItem${i}`);
@@ -2017,7 +1992,6 @@
         }
     }
 
-    // ALTERADO: Função de limpar agora reseta a tabela para uma linha em branco.
     function limparTodosOsCampos() {
         // Limpar campos globais
         const globalInputs = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 
