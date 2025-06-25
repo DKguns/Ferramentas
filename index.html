@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v29.72</title>
+    <title>Ferramenta de Calculo de Importação v29.73</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 
     <style>
         :root {
@@ -28,7 +27,6 @@
             --theme-separator-bg-color: #e9ecef; 
             --theme-separator-text-color: var(--theme-text-secondary); 
 
-
             --theme-accent-blue: #007bff;
             --theme-accent-blue-darker: #0056b3;
             --theme-accent-orange: #fd7e14;
@@ -37,7 +35,6 @@
             --theme-accent-yellow: #ffc107; /* Amarelo para lucro médio */
             --theme-accent-light-orange: #fd7e14; /* Laranja para lucro baixo */
             --theme-accent-red: #dc3545; /* Vermelho para prejuízo */
-
 
             --theme-glow-blue: 0 0 8px rgba(0, 123, 255, 0.25);
             --theme-glow-orange: 0 0 8px rgba(253, 126, 20, 0.25);
@@ -75,7 +72,6 @@
             
             --theme-separator-bg-color: #18181b; 
             --theme-separator-text-color: #9ca3af; 
-
 
             --theme-accent-blue: #00aaff;
             --theme-accent-blue-darker: #0077cc;
@@ -191,8 +187,8 @@
         }
 
         section[role="tabpanel"] { 
-             display: none; 
-             animation: fadeInScreen 0.4s ease-out; 
+            display: none; 
+            animation: fadeInScreen 0.4s ease-out; 
         } 
         section[role="tabpanel"]:not([hidden]) { 
             display: block; 
@@ -274,7 +270,7 @@
             transform: translateY(-2px) scale(1.005); 
             border-color: var(--theme-accent-blue);
             box-shadow: 0 6px 15px var(--theme-shadow-color),
-                            inset 0 0 0 1.5px var(--theme-accent-blue), var(--theme-glow-blue);
+                          inset 0 0 0 1.5px var(--theme-accent-blue), var(--theme-glow-blue);
         }
         .dashboard-kpi:hover::before { background: linear-gradient(135deg, var(--theme-accent-blue), var(--theme-accent-orange)); }
         .dashboard-kpi p { margin: 0; position: relative; z-index: 1; }
@@ -485,15 +481,13 @@
             min-width: 80px; 
         }
 
-
-       .item-table-input input[type="number"] { text-align: right; }
-       .results-table td { white-space: nowrap; } 
-       .results-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)) { 
+        .item-table-input input[type="number"] { text-align: right; }
+        .results-table td { white-space: nowrap; } 
+        .results-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)) { 
             text-align: right; 
-       }
+        }
 
-
-       .action-buttons { margin-top: 25px; margin-bottom: 20px; text-align: center; }
+        .action-buttons { margin-top: 25px; margin-bottom: 20px; text-align: center; }
         button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button { 
             color: white; padding: 12px 20px; font-size: 16px; font-weight: bold;
             display: inline-block; width: auto; margin: 5px 10px; border: none;
@@ -526,322 +520,83 @@
             transform: translateY(-2px); box-shadow: 0 4px 10px var(--theme-shadow-color), var(--theme-glow-orange);
         }
         
-       .total-geral { font-weight: bold; font-size: 16px !important; color: var(--theme-accent-orange) !important; }
-       .app-footer { 
+        .total-geral { font-weight: bold; font-size: 16px !important; color: var(--theme-accent-orange) !important; }
+        .app-footer { 
             font-size: 12px; color: var(--theme-text-secondary); opacity: 0.8; margin-top: 20px; text-align: center;
             padding: 10px 0; border-top: 1px solid var(--theme-border-secondary);
         }
-       .currency-note {font-size: 12px; color: var(--theme-text-secondary); opacity: 0.8; margin-bottom: 10px;}
+        .currency-note {font-size: 12px; color: var(--theme-text-secondary); opacity: 0.8; margin-bottom: 10px;}
         
-       .profit-high { background-color: rgba(var(--theme-accent-green-rgb), 0.15) !important; color: var(--theme-accent-green) !important; border-left: 3px solid var(--theme-accent-green); }
-       .profit-medium { background-color: rgba(var(--theme-accent-yellow-rgb), 0.15) !important; color: var(--theme-accent-yellow) !important; border-left: 3px solid var(--theme-accent-yellow); }
-       .profit-low { background-color: rgba(var(--theme-accent-light-orange-rgb), 0.15) !important; color: var(--theme-accent-light-orange) !important; border-left: 3px solid var(--theme-accent-light-orange); } 
-       .profit-loss { background-color: rgba(var(--theme-accent-red-rgb), 0.1) !important; color: var(--theme-accent-red) !important; border-left: 3px solid var(--theme-accent-red); }
+        .profit-high { background-color: rgba(var(--theme-accent-green-rgb), 0.15) !important; color: var(--theme-accent-green) !important; border-left: 3px solid var(--theme-accent-green); }
+        .profit-medium { background-color: rgba(var(--theme-accent-yellow-rgb), 0.15) !important; color: var(--theme-accent-yellow) !important; border-left: 3px solid var(--theme-accent-yellow); }
+        .profit-low { background-color: rgba(var(--theme-accent-light-orange-rgb), 0.15) !important; color: var(--theme-accent-light-orange) !important; border-left: 3px solid var(--theme-accent-light-orange); } 
+        .profit-loss { background-color: rgba(var(--theme-accent-red-rgb), 0.1) !important; color: var(--theme-accent-red) !important; border-left: 3px solid var(--theme-accent-red); }
 
         body.theme-dark .profit-high { background-color: rgba(var(--theme-accent-green-rgb), 0.25) !important; }
         body.theme-dark .profit-medium { background-color: rgba(var(--theme-accent-yellow-rgb), 0.25) !important; color: var(--theme-accent-yellow) !important; }
         body.theme-dark .profit-low { background-color: rgba(var(--theme-accent-light-orange-rgb), 0.25) !important; color: var(--theme-accent-light-orange) !important; }
         body.theme-dark .profit-loss { background-color: rgba(var(--theme-accent-red-rgb), 0.25) !important; }
         
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-        .top-items-section, .cost-components-section {
-            margin-top: 30px; 
-        }
-
-        .top-items-section h3, .cost-components-section h3 {
-            margin-top: 0; 
-            margin-bottom: 20px;
-            font-size: 1.1em;
-            color: var(--theme-text-primary);
-            border-bottom: 1px solid var(--theme-border-secondary);
-            padding-bottom: 10px;
-        }
+        .top-items-section, .cost-components-section { margin-top: 30px; }
+        .top-items-section h3, .cost-components-section h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.1em; color: var(--theme-text-primary); border-bottom: 1px solid var(--theme-border-secondary); padding-bottom: 10px; }
         
-        .top-items-grid-container { 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Ajustado para melhor responsividade */
-            gap: 25px; 
-            margin-bottom: 25px;
-        }
-
-        .top-items-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .top-items-list li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 0.95em;
-        }
-
-        .top-items-list .item-name {
-            flex-basis: 35%; 
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-right: 10px;
-            color: var(--theme-text-secondary);
-        }
-
-        .top-items-list .item-bar-container {
-            flex-grow: 1;
-            height: 20px; 
-            background-color: var(--input-bg);
-            border-radius: 4px;
-            border: 1px solid var(--theme-border-secondary);
-            overflow: hidden;
-            margin-right: 10px;
-            position: relative; 
-        }
-
-        .top-items-list .item-bar {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease-in-out;
-            display: flex; 
-            align-items: center;
-            justify-content: flex-end; 
-            padding-right: 5px;
-            box-sizing: border-box;
-        }
+        .top-items-grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; margin-bottom: 25px; }
+        .top-items-list { list-style: none; padding: 0; margin: 0; }
+        .top-items-list li { display: flex; align-items: center; margin-bottom: 15px; font-size: 0.95em; }
+        .top-items-list .item-name { flex-basis: 35%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; color: var(--theme-text-secondary); }
+        .top-items-list .item-bar-container { flex-grow: 1; height: 20px; background-color: var(--input-bg); border-radius: 4px; border: 1px solid var(--theme-border-secondary); overflow: hidden; margin-right: 10px; position: relative; }
+        .top-items-list .item-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease-in-out; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; box-sizing: border-box; }
         .top-items-list .item-bar.profit-high { background: linear-gradient(90deg, var(--theme-accent-green), #1ca580); }
         .top-items-list .item-bar.profit-medium { background: linear-gradient(90deg, var(--theme-accent-yellow), #e6ac00); color: #333; }
         .top-items-list .item-bar.profit-low { background: linear-gradient(90deg, var(--theme-accent-light-orange), #d9660b); }
         .top-items-list .item-bar.profit-loss { background: linear-gradient(90deg, var(--theme-accent-red), #b02a37); }
-        .top-items-list .item-bar:not(.profit-high):not(.profit-medium):not(.profit-low):not(.profit-loss) {
-            background: linear-gradient(90deg, var(--theme-accent-blue), var(--theme-accent-blue-darker));
-        }
+        .top-items-list .item-bar:not(.profit-high):not(.profit-medium):not(.profit-low):not(.profit-loss) { background: linear-gradient(90deg, var(--theme-accent-blue), var(--theme-accent-blue-darker)); }
+        .top-items-list .item-value { flex-basis: 15%; text-align: right; font-weight: bold; color: var(--theme-text-primary); }
 
-
-        .top-items-list .item-value {
-            flex-basis: 15%; 
-            text-align: right;
-            font-weight: bold;
-            color: var(--theme-text-primary);
-        }
-
-        .cost-components-grid { 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-        }
-
-        .cost-component-item {
-            background-color: var(--theme-surface-primary);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid var(--theme-border-secondary);
-            box-shadow: 0 2px 6px var(--theme-shadow-color);
-        }
-
-        .cost-component-item .component-label {
-            display: block;
-            font-size: 0.9em;
-            color: var(--theme-text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .cost-component-item strong {
-            font-size: 1.8em;
-            font-weight: 700;
-        }
+        .cost-components-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .cost-component-item { background-color: var(--theme-surface-primary); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--theme-border-secondary); box-shadow: 0 2px 6px var(--theme-shadow-color); }
+        .cost-component-item .component-label { display: block; font-size: 0.9em; color: var(--theme-text-secondary); margin-bottom: 8px; }
+        .cost-component-item strong { font-size: 1.8em; font-weight: 700; }
         #compPercProduto { color: var(--theme-accent-green); }
         #compPercImpostos { color: var(--theme-accent-red); }
         #compPercOutros { color: var(--theme-accent-orange); }
 
-        .section-separator {
-            border: none; 
-            height: auto; 
-            background-color: var(--theme-separator-bg-color); 
-            width: calc(100% + (2 * var(--theme-element-padding))); 
-            margin-left: calc(-1 * var(--theme-element-padding));
-            margin-right: calc(-1 * var(--theme-element-padding));
-            margin-top: 30px; 
-            margin-bottom: 25px; 
-            border-radius: 0; 
-            display: flex;
-            align-items: center;
-            justify-content: flex-start; 
-            font-size: 0.9em; 
-            font-weight: 500; 
-            color: var(--theme-separator-text-color);
-            text-transform: none; 
-            letter-spacing: 0.2px; 
-            padding: 8px var(--theme-element-padding); 
-            box-sizing: border-box; 
-        }
-        .section-separator-infoOrg::before       { content: "Informações Organizacionais"; }
+        .section-separator { border: none; height: auto; background-color: var(--theme-separator-bg-color); width: calc(100% + (2 * var(--theme-element-padding))); margin-left: calc(-1 * var(--theme-element-padding)); margin-right: calc(-1 * var(--theme-element-padding)); margin-top: 30px; margin-bottom: 25px; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; font-size: 0.9em; font-weight: 500; color: var(--theme-separator-text-color); text-transform: none; letter-spacing: 0.2px; padding: 8px var(--theme-element-padding); box-sizing: border-box; }
+        .section-separator-infoOrg::before     { content: "Informações Organizacionais"; }
         .section-separator-detComLog::before     { content: "Detalhes Comerciais e Logísticos"; }
         .section-separator-regTribCred::before   { content: "Regime Tributário e Créditos"; }
         .section-separator-custosGlobais::before { content: "Custos Globais (Rateados entre os itens)"; }
 
         /* Estilos para o Modal de Configurações */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: none; /* Começa oculto */
-            justify-content: center;
-            align-items: center;
-            z-index: 1050;
-            backdrop-filter: blur(5px);
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-content {
-            background-color: var(--theme-bg-secondary);
-            padding: 30px;
-            border-radius: var(--theme-card-border-radius);
-            box-shadow: 0 10px 30px var(--theme-shadow-color);
-            width: 90%;
-            max-width: 600px;
-            border: 1px solid var(--theme-border-primary);
-            position: relative;
-            animation: slideInModal 0.3s ease-out;
-        }
-        @keyframes slideInModal {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-content h2 {
-            margin-top: 0;
-            color: var(--theme-accent-blue);
-            border-bottom: 1px solid var(--theme-border-secondary);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .modal-close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: transparent;
-            border: none;
-            font-size: 1.8em;
-            color: var(--theme-text-secondary);
-            cursor: pointer;
-            padding: 5px;
-            line-height: 1;
-        }
-        .modal-close-btn:hover {
-            color: var(--theme-accent-red);
-        }
-        .modal-section {
-            margin-bottom: 25px;
-        }
-        .modal-section h3 {
-            font-size: 1.1em;
-            color: var(--theme-text-primary);
-            margin-bottom: 12px;
-            border-bottom: 1px dashed var(--theme-border-secondary);
-            padding-bottom: 8px;
-        }
-        .modal-actions {
-            text-align: right;
-            margin-top: 30px;
-        }
-        .modal-actions button {
-            padding: 10px 18px;
-            font-size: 1em;
-            margin-left: 10px;
-        }
-        .profit-color-indicator {
-            display: inline-block;
-            width: 14px; 
-            height: 14px; 
-            border-radius: 3px;
-            margin-right: 6px; 
-            vertical-align: middle;
-            border: 1px solid var(--theme-border-secondary);
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; /* Começa oculto */ justify-content: center; align-items: center; z-index: 1050; backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background-color: var(--theme-bg-secondary); padding: 30px; border-radius: var(--theme-card-border-radius); box-shadow: 0 10px 30px var(--theme-shadow-color); width: 90%; max-width: 600px; border: 1px solid var(--theme-border-primary); position: relative; animation: slideInModal 0.3s ease-out; }
+        @keyframes slideInModal { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-content h2 { margin-top: 0; color: var(--theme-accent-blue); border-bottom: 1px solid var(--theme-border-secondary); padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-close-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 1.8em; color: var(--theme-text-secondary); cursor: pointer; padding: 5px; line-height: 1; }
+        .modal-close-btn:hover { color: var(--theme-accent-red); }
+        .modal-section { margin-bottom: 25px; }
+        .modal-section h3 { font-size: 1.1em; color: var(--theme-text-primary); margin-bottom: 12px; border-bottom: 1px dashed var(--theme-border-secondary); padding-bottom: 8px; }
+        .modal-actions { text-align: right; margin-top: 30px; }
+        .modal-actions button { padding: 10px 18px; font-size: 1em; margin-left: 10px; }
+        .profit-color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px; vertical-align: middle; border: 1px solid var(--theme-border-secondary); }
         .profit-color-indicator.green { background-color: var(--theme-accent-green); }
         .profit-color-indicator.yellow { background-color: var(--theme-accent-yellow); }
         .profit-color-indicator.orange { background-color: var(--theme-accent-light-orange); }
 
-        .chart-container {
-            width: 100%;
-            max-width: 450px; /* Limita a largura máxima do gráfico */
-            margin: 20px auto; /* Centraliza o gráfico */
-            padding: 15px;
-            background-color: var(--theme-surface-primary);
-            border-radius: var(--theme-card-border-radius);
-            box-shadow: 0 4px 12px var(--theme-shadow-color);
-        }
-        body.theme-dark .chart-container {
-             background-color: var(--theme-bg-secondary); /* Fundo mais escuro para o container do gráfico no tema dark */
-        }
+        .chart-container { width: 100%; max-width: 450px; margin: 20px auto; padding: 15px; background-color: var(--theme-surface-primary); border-radius: var(--theme-card-border-radius); box-shadow: 0 4px 12px var(--theme-shadow-color); }
+        body.theme-dark .chart-container { background-color: var(--theme-bg-secondary); }
+        
         /* Modal para compartilhar imagem */
-        #shareImageModal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1060;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
-            align-items: center;
-            justify-content: center;
-        }
-        #shareImageModalContent {
-            background-color: var(--theme-bg-secondary);
-            margin: auto;
-            padding: 20px;
-            border: 1px solid var(--theme-border-primary);
-            border-radius: var(--theme-card-border-radius);
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 5px 15px var(--theme-shadow-color);
-        }
-        #shareImageModalContent img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 15px;
-            border: 1px solid var(--theme-border-secondary);
-            border-radius: 6px;
-        }
-        #shareImageModalContent p {
-            font-size: 0.9em;
-            color: var(--theme-text-secondary);
-            margin-bottom: 15px;
-        }
-        #shareImageModalContent button, #shareImageModalContent a.button {
-            padding: 10px 15px;
-            margin: 5px;
-            border-radius: 6px;
-            text-decoration: none;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        #shareImageModalContent button.close-modal-btn {
-            background-color: var(--theme-accent-red);
-            color: white;
-            border: none;
-        }
-        #shareImageModalContent a.whatsapp-link-btn {
-            background-color: var(--theme-accent-green);
-            color: white;
-            border: none;
-        }
-
+        #shareImageModal { display: none; position: fixed; z-index: 1060; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+        #shareImageModalContent { background-color: var(--theme-bg-secondary); margin: auto; padding: 20px; border: 1px solid var(--theme-border-primary); border-radius: var(--theme-card-border-radius); width: 80%; max-width: 500px; text-align: center; box-shadow: 0 5px 15px var(--theme-shadow-color); }
+        #shareImageModalContent img { max-width: 100%; height: auto; margin-bottom: 15px; border: 1px solid var(--theme-border-secondary); border-radius: 6px; }
+        #shareImageModalContent p { font-size: 0.9em; color: var(--theme-text-secondary); margin-bottom: 15px; }
+        #shareImageModalContent button, #shareImageModalContent a.button { padding: 10px 15px; margin: 5px; border-radius: 6px; text-decoration: none; cursor: pointer; font-weight: 500; }
+        #shareImageModalContent button.close-modal-btn { background-color: var(--theme-accent-red); color: white; border: none; }
+        #shareImageModalContent a.whatsapp-link-btn { background-color: var(--theme-accent-green); color: white; border: none; }
 
     </style>
 </head>
@@ -967,7 +722,7 @@
 
             <section class="item-inputs" aria-labelledby="headingItensEmbarque">
                 <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque">Itens do Embarque</h2>
-                <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. A primeira linha tem valores de exemplo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.</p>
+                <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.</p>
                 <div class="table-wrapper">
                     <table id="itemInputTable" class="item-table-input" aria-labelledby="headingItensEmbarque">
                         <thead>
@@ -987,10 +742,16 @@
                                 <th scope="col" data-translate-key="thPrecoVendaUnitBR">Pr. Venda Unit. R$ Brasil</th>
                                 <th scope="col" data-translate-key="thPrecoCustoTotalME">Pr. Custo Total $</th>
                                 <th scope="col" data-translate-key="thPesoTotalKG">Peso Total KG</th>
+                                <th scope="col" data-translate-key="thAcoes" style="min-width: 140px;">Ações</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button type="button" id="adicionarItemBtn" class="main-calculate-button" style="font-size: 14px; padding: 8px 15px; background-color: var(--theme-accent-green);">
+                        <i class="fas fa-plus"></i> Adicionar Novo Item
+                    </button>
                 </div>
             </section>
             
@@ -1282,19 +1043,18 @@
             </div>
         </div>
 
-
     </main>
 
 <script>
-    const NUM_ITEM_ROWS = 20; 
-
+    // ALTERADO: A constante NUM_ITEM_ROWS foi removida.
+    
     const preFilledItemsData = [
         { desc: "6ES7214-1AG40-0XB0", codInterno: "4271", pesoUnitKG: "0.34", qtd: "7.00", precoCustoUnitME: "243.00", aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "2250.66", ncm: "8537.10.90" },
         { desc: "6ES7223-1BL32-0XB0", codInterno: "5399", pesoUnitKG: "0.29", qtd: "5.00", precoCustoUnitME: "174.00", aliqII: "10.80", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1442.60", ncm: "" },
         { desc: "6ES7232-4HD32-0XB0", codInterno: "4275", pesoUnitKG: "0.18", qtd: "2.00", precoCustoUnitME: "229.00", aliqII: "10.80", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "2274.66", ncm: "" },
         { desc: "6ES7223-1BH32-0XB0", codInterno: "4272", pesoUnitKG: "0.20", qtd: "3.00", precoCustoUnitME: "115.00", aliqII: "10.80", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1045.23", ncm: "" },
-        { desc: "MT8106IP",             codInterno: "6005", pesoUnitKG: "1.00", qtd: "3.00", precoCustoUnitME: "166.00", aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "3590.00", ncm: "" },
-        { desc: "MT8072IP",             codInterno: "4187", pesoUnitKG: "1.00", qtd: "10.00", precoCustoUnitME: "96.00",  aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1390.00", ncm: "" },
+        { desc: "MT8106IP",               codInterno: "6005", pesoUnitKG: "1.00", qtd: "3.00", precoCustoUnitME: "166.00", aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "3590.00", ncm: "" },
+        { desc: "MT8072IP",               codInterno: "4187", pesoUnitKG: "1.00", qtd: "10.00", precoCustoUnitME: "96.00",  aliqII: "16.00", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1390.00", ncm: "" },
         { desc: "6SL3210-5BE21-1UV0",   codInterno: "4473", pesoUnitKG: "0.99", qtd: "6.00", precoCustoUnitME: "110.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1275.45", ncm: "" },
         { desc: "6SL3210-5BE23-0UV0",   codInterno: "4475", pesoUnitKG: "1.61", qtd: "5.00", precoCustoUnitME: "161.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17", valVendaUnitBR: "1856.88", ncm: "" },
         { desc: "6SL3210-5BE31-8UV0",   codInterno: "4999", pesoUnitKG: "3.79", qtd: "1.00", precoCustoUnitME: "465.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "5996.35", ncm: "" }, 
@@ -1309,6 +1069,9 @@
         { desc: "6SL3210-1KE15-8UF2",   codInterno: "4617", pesoUnitKG: "1.20", qtd: "1.00", precoCustoUnitME: "221.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "2720.81", ncm: "" },
         { desc: "6SL3210-1KE26-0UF1",   codInterno: "9999", pesoUnitKG: "17.00", qtd: "1.00", precoCustoUnitME: "860.00", aliqII: "11.20", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "9.65", aliqICMS: "17", valVendaUnitBR: "11614.56", ncm: "" }
     ];
+
+    // NOVO: Constante para os impostos padrão. Facilita a manutenção.
+    const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
 
     let custoTotalChartInstance = null; // Variável global para a instância do gráfico
 
@@ -1368,8 +1131,8 @@
         if(itemResultTableHead) {
             const ths = itemResultTableHead.querySelectorAll('th');
             if(ths.length > 10) { 
-                 if(ths[9]) ths[9].innerText = `Pr. Custo Unit. ${currencySymbol}`; 
-                 if(ths[10]) ths[10].innerText = `Pr. Custo Total ${currencySymbol}`; 
+                if(ths[9]) ths[9].innerText = `Pr. Custo Unit. ${currencySymbol}`; 
+                if(ths[10]) ths[10].innerText = `Pr. Custo Total ${currencySymbol}`; 
             }
         }
     }
@@ -1424,56 +1187,95 @@
         }
     }
 
-    function generateItemInputRows(isClearing = false) {
-        const tbody = geId('itemInputTable')?.getElementsByTagName('tbody')[0];
-        if (!tbody) { console.error("generateItemInputRows: tbody não encontrado"); return; }
-        tbody.innerHTML = ''; 
+    // ALTERADO: Função para criar uma única linha, substituindo a antiga generateItemInputRows.
+    function createItemInputRow(index, itemData = null) {
+        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+        const row = tbody.insertRow();
         
-        const defaultFirstRow = { 
-            desc: "Exemplo Produto", codInterno: "EX001", ncm: "0000.00.00", qtd: "1", precoCustoUnitME: "100", 
-            pesoUnitKG: "1", aliqII: "10", aliqIPI: "5", aliqPIS: "2.1", aliqCOFINS: "10.65", 
-            aliqICMS: "17", valVendaUnitBR: "1000"
+        const defaultRowData = {
+             desc: "", codInterno: "", ncm: "", qtd: "", precoCustoUnitME: "", pesoUnitKG: "",
+             aliqII: "", aliqIPI: "", aliqPIS: "", aliqCOFINS: "", aliqICMS: "", valVendaUnitBR: ""
         };
+        const data = itemData || defaultRowData;
 
-        for (let i = 0; i < NUM_ITEM_ROWS; i++) {
-            const row = tbody.insertRow();
-            const itemDataForThisRow = (!isClearing && preFilledItemsData[i]) ? preFilledItemsData[i] : null; 
-            const useDefaultForRowZero = (!isClearing && i === 0 && !preFilledItemsData[0]);
-
-            const descValue = itemDataForThisRow ? itemDataForThisRow.desc : (useDefaultForRowZero ? defaultFirstRow.desc : '');
-            const codInternoValue = itemDataForThisRow ? itemDataForThisRow.codInterno : (useDefaultForRowZero ? defaultFirstRow.codInterno : '');
-            const ncmValue = itemDataForThisRow ? (itemDataForThisRow.ncm || (useDefaultForRowZero ? defaultFirstRow.ncm : '')) : (useDefaultForRowZero ? defaultFirstRow.ncm : '');
-            const qtdValue = itemDataForThisRow ? itemDataForThisRow.qtd : (useDefaultForRowZero ? defaultFirstRow.qtd : '');
-            const precoCustoUnitMEValue = itemDataForThisRow ? itemDataForThisRow.precoCustoUnitME : (useDefaultForRowZero ? defaultFirstRow.precoCustoUnitME : '');
-            const pesoUnitKGValue = itemDataForThisRow ? itemDataForThisRow.pesoUnitKG : (useDefaultForRowZero ? defaultFirstRow.pesoUnitKG : '');
-            const aliqIIValue = itemDataForThisRow ? itemDataForThisRow.aliqII : (useDefaultForRowZero ? defaultFirstRow.aliqII : '');
-            const aliqIPIValue = itemDataForThisRow ? itemDataForThisRow.aliqIPI : (useDefaultForRowZero ? defaultFirstRow.aliqIPI : '');
-            const aliqPISValue = itemDataForThisRow ? itemDataForThisRow.aliqPIS : (useDefaultForRowZero ? defaultFirstRow.aliqPIS : '');
-            const aliqCOFINSValue = itemDataForThisRow ? itemDataForThisRow.aliqCOFINS : (useDefaultForRowZero ? defaultFirstRow.aliqCOFINS : '');
-            const aliqICMSValue = itemDataForThisRow ? itemDataForThisRow.aliqICMS : (useDefaultForRowZero ? defaultFirstRow.aliqICMS : '');
-            const valVendaUnitBRValue = itemDataForThisRow ? itemDataForThisRow.valVendaUnitBR : (useDefaultForRowZero ? defaultFirstRow.valVendaUnitBR : '');
-
-            row.innerHTML = `
-                <td>${i + 1}</td>
-                <td><label class="sr-only" for="descItem${i}">Descrição do Item ${i + 1}</label><input type="text" id="descItem${i}" value="${descValue}" placeholder="Produto ${i + 1}"></td>
-                <td><label class="sr-only" for="codInternoItem${i}">Código Interno do Item ${i + 1}</label><input type="text" id="codInternoItem${i}" value="${codInternoValue}" placeholder="Cód. Interno"></td>
-                <td><label class="sr-only" for="ncmItem${i}">NCM do Item ${i + 1}</label><input type="text" id="ncmItem${i}" value="${ncmValue}" placeholder="NCM"></td>
-                <td><label class="sr-only" for="qtdItem${i}">Quantidade do Item ${i + 1}</label><input type="number" id="qtdItem${i}" value="${qtdValue}" min="0" step="any" placeholder="0" oninput="updateItemCalculatedFields(${i})"></td>
-                <td><label class="sr-only" for="precoCustoUnitMEItem${i}">Preço Custo Unit. $ do Item ${i + 1}</label><input type="number" id="precoCustoUnitMEItem${i}" value="${precoCustoUnitMEValue}" min="0" step="any" placeholder="0.00" oninput="updateItemCalculatedFields(${i})"></td>
-                <td><label class="sr-only" for="pesoUnitKGItem${i}">Peso Unit. KG do Item ${i + 1}</label><input type="number" id="pesoUnitKGItem${i}" value="${pesoUnitKGValue}" min="0" step="any" placeholder="0.000" oninput="updateItemCalculatedFields(${i})"></td>
-                <td><label class="sr-only" for="aliqIIItem${i}">Alíquota II (%) do Item ${i + 1}</label><input type="number" id="aliqIIItem${i}" value="${aliqIIValue}" min="0" step="any" placeholder="II%"></td>
-                <td><label class="sr-only" for="aliqIPIItem${i}">Alíquota IPI (%) do Item ${i + 1}</label><input type="number" id="aliqIPIItem${i}" value="${aliqIPIValue}" min="0" step="any" placeholder="IPI%"></td>
-                <td><label class="sr-only" for="aliqPISItem${i}">Alíquota PIS (%) do Item ${i + 1}</label><input type="number" id="aliqPISItem${i}" value="${aliqPISValue}" min="0" step="any" placeholder="PIS%"></td>
-                <td><label class="sr-only" for="aliqCOFINSItem${i}">Alíquota COFINS (%) do Item ${i + 1}</label><input type="number" id="aliqCOFINSItem${i}" value="${aliqCOFINSValue}" min="0" step="any" placeholder="COFINS%"></td>
-                <td><label class="sr-only" for="aliqICMSItem${i}">Alíquota ICMS (%) do Item ${i + 1}</label><input type="number" id="aliqICMSItem${i}" value="${aliqICMSValue}" min="0" step="any" placeholder="ICMS%"></td>
-                <td><label class="sr-only" for="valVendaUnitBRItem${i}">Preço Venda Unit. R$ Brasil do Item ${i + 1}</label><input type="number" id="valVendaUnitBRItem${i}" value="${valVendaUnitBRValue}" min="0" step="any" placeholder="0.00 (Unitário)"></td>
-                <td><label class="sr-only" for="precoCustoTotalMEItem${i}">Preço Custo Total $ do Item ${i + 1}</label><input type="number" id="precoCustoTotalMEItem${i}" step="any" placeholder="0.00" readonly></td>
-                <td><label class="sr-only" for="pesoTotalKGItem${i}">Peso Total KG do Item ${i + 1}</label><input type="number" id="pesoTotalKGItem${i}" step="any" placeholder="0.000" readonly></td>
-            `;
-             updateItemCalculatedFields(i); // Atualiza campos calculados (zerará se os inputs estiverem vazios)
-        }
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td><label class="sr-only" for="descItem${index}">Descrição do Item ${index + 1}</label><input type="text" id="descItem${index}" value="${data.desc}" placeholder="Descrição do Produto"></td>
+            <td><label class="sr-only" for="codInternoItem${index}">Código Interno do Item ${index + 1}</label><input type="text" id="codInternoItem${index}" value="${data.codInterno}" placeholder="Cód."></td>
+            <td><label class="sr-only" for="ncmItem${index}">NCM do Item ${index + 1}</label><input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM"></td>
+            <td><label class="sr-only" for="qtdItem${index}">Quantidade do Item ${index + 1}</label><input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" oninput="updateItemCalculatedFields(${index})"></td>
+            <td><label class="sr-only" for="precoCustoUnitMEItem${index}">Preço Custo Unit. $ do Item ${index + 1}</label><input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" oninput="updateItemCalculatedFields(${index})"></td>
+            <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG do Item ${index + 1}</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000" oninput="updateItemCalculatedFields(${index})"></td>
+            <td><label class="sr-only" for="aliqIIItem${index}">Alíquota II (%) do Item ${index + 1}</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
+            <td><label class="sr-only" for="aliqIPIItem${index}">Alíquota IPI (%) do Item ${index + 1}</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
+            <td><label class="sr-only" for="aliqPISItem${index}">Alíquota PIS (%) do Item ${index + 1}</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
+            <td><label class="sr-only" for="aliqCOFINSItem${index}">Alíquota COFINS (%) do Item ${index + 1}</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
+            <td><label class="sr-only" for="aliqICMSItem${index}">Alíquota ICMS (%) do Item ${index + 1}</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
+            <td><label class="sr-only" for="valVendaUnitBRItem${index}">Preço Venda Unit. R$ Brasil do Item ${index + 1}</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
+            <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Preço Custo Total $ do Item ${index + 1}</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
+            <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG do Item ${index + 1}</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
+            <td>
+                <button type="button" class="clear-button" onclick="removerLinhaItem(this)" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" aria-label="Remover Item"><i class="fas fa-trash-alt"></i></button>
+                <button type="button" class="pdf-button" onclick="carregarImpostosPadrao(this)" style="padding: 5px 10px; font-size: 12px;" aria-label="Carregar Impostos Padrão"><i class="fas fa-bolt"></i> Padrão</button>
+            </td>
+        `;
+        updateItemCalculatedFields(index);
     }
 
+    // NOVO: Adiciona uma nova linha em branco.
+    function adicionarLinhaItem() {
+        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+        const newIndex = tbody.rows.length;
+        createItemInputRow(newIndex);
+    }
+    
+    // NOVO: Remove uma linha específica.
+    function removerLinhaItem(button) {
+        const row = button.closest('tr');
+        if (row.parentElement.rows.length > 1) { // Impede a remoção da última linha
+            row.remove();
+            renumerarLinhas();
+        } else {
+            alert("Não é possível remover a última linha.");
+        }
+    }
+    
+    // NOVO: Carrega os impostos padrão na linha.
+    function carregarImpostosPadrao(button) {
+        const row = button.closest('tr');
+        const index = Array.from(row.parentNode.children).indexOf(row); // Obtém o índice real da linha no tbody
+        geId(`aliqIIItem${index}`).value = IMPOSTOS_PADRAO.aliqII;
+        geId(`aliqIPIItem${index}`).value = IMPOSTOS_PADRAO.aliqIPI;
+        geId(`aliqPISItem${index}`).value = IMPOSTOS_PADRAO.aliqPIS;
+        geId(`aliqCOFINSItem${index}`).value = IMPOSTOS_PADRAO.aliqCOFINS;
+        geId(`aliqICMSItem${index}`).value = IMPOSTOS_PADRAO.aliqICMS;
+    }
+    
+    // NOVO: Renumera todas as linhas e atualiza os IDs e funções.
+    function renumerarLinhas() {
+        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+        const rows = tbody.rows;
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            row.cells[0].textContent = i + 1;
+            
+            row.querySelectorAll('input, label').forEach(elem => {
+                if (elem.id) {
+                    const idBase = elem.id.replace(/\d+$/, '');
+                    elem.id = idBase + i;
+                }
+                if (elem.htmlFor) {
+                    const forBase = elem.htmlFor.replace(/\d+$/, '');
+                    elem.htmlFor = forBase + i;
+                }
+            });
+            
+            row.querySelectorAll('input[oninput*="updateItemCalculatedFields"]').forEach(input => {
+               input.setAttribute('oninput', `updateItemCalculatedFields(${i})`);
+            });
+        }
+    }
+    
     function updateItemCalculatedFields(index) {
         const qtdElem = geId(`qtdItem${index}`);
         const valUnitMEElem = geId(`precoCustoUnitMEItem${index}`);
@@ -1542,40 +1344,38 @@
         });
     }
     
+    // ALTERADO: A inicialização da aplicação foi atualizada.
     window.onload = function() { 
         // Definir valores padrão dos campos conforme imagem
-        const nomeUsuarioElem = geId('nomeUsuario');
-        if (nomeUsuarioElem) nomeUsuarioElem.value = "Diego Karloh";
-        const nomeFornecedorElem = geId('nomeFornecedor');
-        if (nomeFornecedorElem) nomeFornecedorElem.value = "Hy Tech";
-        const refInternaElem = geId('refInterna');
-        if (refInternaElem) refInternaElem.value = "OC-0702";
-        const numeroPIElem = geId('numeroPI');
-        if (numeroPIElem) numeroPIElem.value = "PO1256897";
-        const diProcessoElem = geId('diProcesso');
-        if (diProcessoElem) diProcessoElem.value = "1111";
-        const dataCalculoElem = geId('dataCalculo');
-        if (dataCalculoElem) dataCalculoElem.value = "2025-06-02"; 
+        geId('nomeUsuario').value = "Diego Karloh";
+        geId('nomeFornecedor').value = "Hy Tech";
+        geId('refInterna').value = "OC-0702";
+        geId('numeroPI').value = "PO1256897";
+        geId('diProcesso').value = "1111";
+        geId('dataCalculo').value = "2025-06-02"; 
         
-        const moedaEstrangeiraElem = geId('moedaEstrangeira');
-        if (moedaEstrangeiraElem) moedaEstrangeiraElem.value = "USD";
-        const taxaCambioElem = geId('taxaCambio');
-        if (taxaCambioElem) taxaCambioElem.value = "5.71";
-        const incotermElem = geId('incoterm');
-        if (incotermElem) incotermElem.value = "CPT";
-        const modalidadeTransporteElem = geId('modalidadeTransporte');
-        if (modalidadeTransporteElem) modalidadeTransporteElem.value = "Aereo";
+        geId('moedaEstrangeira').value = "USD";
+        geId('taxaCambio').value = "5.71";
+        geId('incoterm').value = "CPT";
+        geId('modalidadeTransporte').value = "Aereo";
 
         // Definir valores padrão para margens de lucro no modal
-        const modalLucroAltoMinElem = geId('modalLucroAltoMin');
-        if(modalLucroAltoMinElem) modalLucroAltoMinElem.value = "40";
-        const modalLucroMedioMinElem = geId('modalLucroMedioMin');
-        if(modalLucroMedioMinElem) modalLucroMedioMinElem.value = "30";
-        const modalLucroBaixoMinElem = geId('modalLucroBaixoMin');
-        if(modalLucroBaixoMinElem) modalLucroBaixoMinElem.value = "20";
+        geId('modalLucroAltoMin').value = "40";
+        geId('modalLucroMedioMin').value = "30";
+        geId('modalLucroBaixoMin').value = "20";
 
+        // ALTERADO: Carrega os dados pre-preenchidos ou inicia com uma linha em branco.
+        if (preFilledItemsData && preFilledItemsData.length > 0) {
+            preFilledItemsData.forEach((itemData, index) => {
+                createItemInputRow(index, itemData);
+            });
+        } else {
+            createItemInputRow(0); // Começa com uma linha vazia se não houver dados
+        }
 
-        generateItemInputRows(); 
+        // NOVO: Adiciona o event listener ao botão "Adicionar Novo Item".
+        geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
+        
         updateCotacaoButtonLabel(); 
         handleRegimeChange(); 
         
@@ -1639,7 +1439,6 @@
             });
         }
 
-
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
             if (!localStorage.getItem('theme_manually_set')) { 
                 const newColorScheme = event.matches ? "theme-dark" : "theme-light";
@@ -1647,7 +1446,6 @@
             }
         });
         
-        // Atualizar informações do rodapé
         const appVersionElem = geId('appVersion');
         if (appVersionElem) {
             const titleText = document.title;
@@ -1658,7 +1456,6 @@
         }
         const footerInfoElem = geId('footerInfo');
         if(footerInfoElem) footerInfoElem.textContent = `Criado por Diego Karloh | ${appVersionElem ? appVersionElem.textContent : 'Ferramenta de Calculo de Importação'}`;
-
 
         showScreen('telaEntradaPanel'); 
     };
@@ -1679,12 +1476,12 @@
         return `class="${styleClass}"`;
     }
 
+    // ALTERADO: Loop principal agora lê o número de linhas da tabela.
     function calcularCustosMultiItem() { 
         try {
             const lucroAltoMin = TxtToNum('modalLucroAltoMin') || 40; 
             const lucroMedioMin = TxtToNum('modalLucroMedioMin') || 30;
             const lucroBaixoMin = TxtToNum('modalLucroBaixoMin') || 20;
-
 
             const regimeTributario = geId('regimeTributario').value;
             let percCreditoPIS_dec = TxtToNum('percCreditoPIS') / 100;
@@ -1717,7 +1514,9 @@
             let valorTotalVendaBrasil = 0; 
             let somaTotalPesosUnitariosKG = 0; 
 
-            for (let i = 0; i < NUM_ITEM_ROWS; i++) {
+            // ALTERADO: O loop agora itera sobre as linhas da tabela, não um número fixo.
+            const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
+            for (let i = 0; i < itemRows.length; i++) {
                 const qtd = TxtToNum(`qtdItem${i}`);
                 const precoCustoUnitME = TxtToNum(`precoCustoUnitMEItem${i}`); 
 
@@ -1826,21 +1625,21 @@
                 
                 // Cálculo do ICMS Pago (aplicando a alíquota sobre a base já calculada)
                 item.icms_pago = item.baseCalcICMS_item * item.aliqICMS;
-                                
+                                      
                 item.icms_creditado = item.icms_pago * percCreditoICMS_dec;
                 item.icms_efetivo = item.icms_pago - item.icms_creditado;
                 
                 // Colunas "Custo Total Com Impostos" e "CUSTO UNIT Com Impostos"
                 item.custoTotalComTodosImpostos_BRL = item.valorTotalNF_BRL + 
-                                                     item.ipi_pago + 
-                                                     item.pis_pago + 
-                                                     item.cofins_pago + 
-                                                     item.icms_pago + 
-                                                     item.taxaSiscomexRateada_BRL_item + 
-                                                     item.valorAFRMM + 
-                                                     item.despesasAduaneirasBRL_item + 
-                                                     item.freteNacionalBRL_item +
-                                                     item.freteExibicaoPorPesoUnitarioBRL; 
+                                                      item.ipi_pago + 
+                                                      item.pis_pago + 
+                                                      item.cofins_pago + 
+                                                      item.icms_pago + 
+                                                      item.taxaSiscomexRateada_BRL_item + 
+                                                      item.valorAFRMM + 
+                                                      item.despesasAduaneirasBRL_item + 
+                                                      item.freteNacionalBRL_item +
+                                                      item.freteExibicaoPorPesoUnitarioBRL; 
 
                 item.custoUnitarioComTodosImpostos_BRL = item.quantidade > 0 ? item.custoTotalComTodosImpostos_BRL / item.quantidade : 0;
 
@@ -1854,10 +1653,10 @@
 
                 // Custo Total da Linha (Líquido de Créditos)
                 item.custoTotalLinha = item.CIF_Total_BRL + item.valorII + 
-                                        item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + 
-                                        item.valorAFRMM + item.taxaSiscomexRateada_BRL_item + 
-                                        item.despesasAduaneirasBRL_item + item.icms_efetivo + 
-                                        item.freteNacionalBRL_item;
+                                       item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + 
+                                       item.valorAFRMM + item.taxaSiscomexRateada_BRL_item + 
+                                       item.despesasAduaneirasBRL_item + item.icms_efetivo + 
+                                       item.freteNacionalBRL_item;
                 
                 item.custoUnitarioItem = item.quantidade > 0 ? item.custoTotalLinha / item.quantidade : item.custoUnitarioItem;
                 
@@ -1885,17 +1684,17 @@
                 acc.siscomex_BRL += item.taxaSiscomexRateada_BRL_item; 
             });
             
-            acc.despAduan_BRL = 0; acc.freteNac_BRL = 0;
-             items.forEach(item => {
-                acc.despAduan_BRL += item.despesasAduaneirasBRL_item;
-                acc.freteNac_BRL += item.freteNacionalBRL_item;
+             acc.despAduan_BRL = 0; acc.freteNac_BRL = 0;
+              items.forEach(item => {
+                 acc.despAduan_BRL += item.despesasAduaneirasBRL_item;
+                 acc.freteNac_BRL += item.freteNacionalBRL_item;
             });
 
 
             acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-            acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + 
-                                 acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL + 
-                                 acc.despAduan_BRL + acc.freteNac_BRL;
+            acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.ii_BRL + acc.ipi_efetivo_BRL + 
+                                   acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL + 
+                                   acc.despAduan_BRL + acc.freteNac_BRL;
             acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + taxaSiscomexBRL_global; 
             acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
 
@@ -1950,7 +1749,7 @@
                         <td>${formatCurrency(item.precoCustoTotalME, moedaLabel)}</td>
                         <td>${formatBRL(fobUnitarioBRL)}</td>
                         <td>${formatBRL(item.fobBRL_item)}</td> 
-                        <td>${formatBRL(item.fobPercent.toFixed(2))}%</td> 
+                        <td>${item.fobPercent.toFixed(2).replace('.',',')}%</td> 
                         <td>${formatBRL(seguroRateadoBRL)}</td>
                         <td>${formatBRL(outrasDespesasRateadasBRL)}</td>
                         <td>${formatBRL(item.CIF_Total_BRL)}</td> 
@@ -2031,13 +1830,13 @@
                 const elem = geId(id);
                 if (elem) {
                     if (id === 'dbValorPedidoME') {
-                         elem.textContent = formatCurrency(value, currencyCodeForME);
+                        elem.textContent = formatCurrency(value, currencyCodeForME);
                     } else {
                         elem.textContent = isCurrency ? formatBRL(value) : value;
                     }
                     elem.classList.remove('blue-highlight', 'orange-highlight', 'profit-positive', 'profit-negative'); 
                     if (highlightClass && id !== 'dbValorPedidoME') { 
-                         elem.classList.add(highlightClass); 
+                        elem.classList.add(highlightClass); 
                     } else if (id === 'dbValorPedidoME') { // Garante que não tenha highlight de cor
                         elem.style.color = 'var(--theme-text-primary)'; 
                         elem.style.textShadow = '0 0 5px var(--theme-shadow-color)'; 
@@ -2076,8 +1875,8 @@
             setInnerTextDashboard('dbValorPedidoME', valorFOBTotalME, true, moedaLabel); 
             setInnerTextDashboard('dbTotalCustoImp', acc.totalGeral_BRL, true);
             setInnerTextDashboard('dbReceitaTotalBrasil', valorTotalVendaBrasil, true);
-            setInnerTextDashboard('dbLucroTotalPedidoRS', lucroTotalPedidoRS, true, lucroTotalPedidoRS >= 0 ? 'profit-positive' : 'profit-negative');
-            setInnerTextDashboard('dbLucroTotalPedidoPerc', lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%', false, lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
+            setInnerTextDashboard('dbLucroTotalPedidoRS', lucroTotalPedidoRS, true, '', lucroTotalPedidoRS >= 0 ? 'profit-positive' : 'profit-negative');
+            setInnerTextDashboard('dbLucroTotalPedidoPerc', lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%', false, '', lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
             setInnerTextDashboard('dbTotalFOB_BRL', acc.fob_BRL, true);
             setInnerTextDashboard('dbFreteTotalBRL', acc.frete_BRL, true);
             const percFreteSobreFOB = acc.fob_BRL > 0 ? (acc.frete_BRL / acc.fob_BRL) * 100 : 0;
@@ -2218,6 +2017,7 @@
         }
     }
 
+    // ALTERADO: Função de limpar agora reseta a tabela para uma linha em branco.
     function limparTodosOsCampos() {
         // Limpar campos globais
         const globalInputs = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 
@@ -2240,10 +2040,10 @@
         updateCotacaoButtonLabel();
         geId('cotacaoInfo').textContent = '';
 
-
-        // Limpar tabela de itens chamando generateItemInputRows com isClearing = true
-        generateItemInputRows(true);
-
+        // Limpa o corpo da tabela e adiciona uma única linha inicial.
+        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+        if (tbody) tbody.innerHTML = '';
+        createItemInputRow(0);
 
         // Limpar resultados da tabela de resultados
         const resultTbody = geId('itemResultTable')?.getElementsByTagName('tbody')[0];
@@ -2281,7 +2081,6 @@
             custoTotalChartInstance.destroy();
             custoTotalChartInstance = null;
         }
-
 
         // Voltar para a primeira aba
         showScreen('telaEntradaPanel');
@@ -2435,7 +2234,6 @@
         }
     });
 
-
     function gerarPDF() {
         console.log("Iniciando gerarPDF...");
         try {
@@ -2509,8 +2307,8 @@
                     const labelElem = item.querySelector('strong');
                     const valueElem = item.querySelector('span');
                     if (labelElem && valueElem) {
-                         const label = labelElem.innerText.replace(':', '');
-                         const value = valueElem.innerText;
+                        const label = labelElem.innerText.replace(':', '');
+                        const value = valueElem.innerText;
                         summaryDataForPDF.push([label, value]);
                     }
                 });
