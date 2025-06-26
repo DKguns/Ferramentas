@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v31.0</title>
+    <title>Ferramenta de Calculo de Importação v31.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -624,7 +624,6 @@
         body.theme-dark .profit-low { background-color: rgba(var(--theme-accent-light-orange-rgb), 0.25) !important; color: var(--theme-accent-light-orange) !important; }
         body.theme-dark .profit-loss { background-color: rgba(var(--theme-accent-red-rgb), 0.25) !important; }
         
-        /* Adicionado para o resultado da simulação */
         #simNovoLucro.profit-positive { color: var(--theme-accent-green); text-shadow: 0 0 8px var(--theme-glow-green); }
         #simNovoLucro.profit-negative { color: var(--theme-accent-red); text-shadow: 0 0 8px var(--theme-glow-red); }
 
@@ -931,26 +930,22 @@
                     <table id="itemResultTable" class="results-table" aria-labelledby="headingResultadosDetalhados">
                         <thead>
                              <tr>
-                                 <th scope="col">#</th>
-                                 <th scope="col">Cód. Interno</th>
-                                 <th scope="col">Descrição</th>
-                                 <th scope="col">Qtd</th>
-                                 <th scope="col">Peso Unit.</th>
-                                 <th scope="col">Custo Unit. Líq. (R$)</th>
-                                 <th scope="col">Venda Unit. (R$)</th>
-                                 <th scope="col">Lucro Unit. (R$)</th>
-                                 <th scope="col">Margem %</th>
-                                 <th scope="col">Custo Total (R$)</th>
-                                 <th scope="col">Venda Total (R$)</th>
-                                 <th scope="col">Lucro Total (R$)</th>
-                                 <th scope="col">FOB (R$)</th>
-                                 <th scope="col">Frete+Seguro (R$)</th>
-                                 <th scope="col">CIF (R$)</th>
-                                 <th scope="col">II (R$)</th>
-                                 <th scope="col">IPI Efetivo (R$)</th>
-                                 <th scope="col">PIS Efetivo (R$)</th>
-                                 <th scope="col">COFINS Efetivo (R$)</th>
-                                 <th scope="col">ICMS Efetivo (R$)</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Cód.</th>
+                                <th scope="col">Descrição</th>
+                                <th scope="col">Qtd</th>
+                                <th scope="col">Peso KG</th>
+                                <th scope="col">Frete (R$)</th>
+                                <th scope="col">CIF (R$)</th>
+                                <th scope="col">II (R$)</th>
+                                <th scope="col">IPI (R$)</th>
+                                <th scope="col">PIS (R$)</th>
+                                <th scope="col">COFINS (R$)</th>
+                                <th scope="col">ICMS (R$)</th>
+                                <th scope="col">Custo Líq. (R$)</th>
+                                <th scope="col">Venda (R$)</th>
+                                <th scope="col">Lucro (R$)</th>
+                                <th scope="col">Margem %</th>
                              </tr>
                         </thead>
                         <tbody></tbody>
@@ -1614,7 +1609,7 @@
         }
     }
     
-    // --- GESTÃO DE CÁLCULOS SALVOS (NOVO) ---
+    // --- GESTÃO DE CÁLCULOS SALVOS ---
     function populateSavedCalculationsDropdown() {
         const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
         const dropdown = geId('savedCalculations');
@@ -2113,16 +2108,6 @@
         if (!resultTbody) { console.error("tbody não encontrado para itemResultTable"); return; }
         resultTbody.innerHTML = '';
     
-        acc.despAduan_BRL = TxtToNum('despesasAduaneirasBRL');
-        acc.freteNac_BRL = TxtToNum('freteNacionalBRL');
-        
-        acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-        
-        acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-        
-        acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
-        acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
-        
         items.forEach(item => {
             const row = resultTbody.insertRow();
             let lucroCellStyle = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin);
@@ -2141,23 +2126,19 @@
                 <td>${item.index + 1}</td>
                 <td>${item.codInterno || ''}</td>
                 <td style="white-space: normal;">${item.descricao || ''}</td>
-                <td style="text-align: right;">${item.quantidade.toLocaleString('pt-BR')}</td>
-                <td style="text-align: right;">${(item.pesoUnitKG || 0).toFixed(3)}</td>
-                <td style="text-align: right;">${formatBRL(item.custoUnitarioItem)}</td>
-                <td style="text-align: right;">${formatBRL(item.valorVendaUnitBR)}</td>
-                <td style="text-align: right;">${formatBRL(lucroUnitarioRS)}</td>
-                <td ${lucroCellStyle} style="text-align: right;">${lucroDisplay}</td>
-                <td style="text-align: right;">${formatBRL(item.custoTotalLinha)}</td>
-                <td style="text-align: right;">${formatBRL(item.precoVendaTotalBrasil)}</td>
-                <td style="text-align: right;">${formatBRL(lucroTotalLinhaRS)}</td>
-                <td style="text-align: right;">${formatBRL(item.fobBRL_item)}</td>
-                <td style="text-align: right;">${formatBRL(freteSeguroBRL)}</td>
-                <td style="text-align: right;">${formatBRL(item.CIF_Total_BRL)}</td>
-                <td style="text-align: right;">${formatBRL(item.valorII)}</td>
-                <td style="text-align: right;">${formatBRL(item.ipi_efetivo)}</td>
-                <td style="text-align: right;">${formatBRL(item.pis_efetivo)}</td>
-                <td style="text-align: right;">${formatBRL(item.cofins_efetivo)}</td>
-                <td style="text-align: right;">${formatBRL(item.icms_efetivo)}</td>
+                <td>${item.quantidade.toLocaleString('pt-BR')}</td>
+                <td>${(item.pesoUnitKG || 0).toFixed(3)}</td>
+                <td>${formatBRL(item.freteExibicaoPorPesoUnitarioBRL)}</td>
+                <td>${formatBRL(item.CIF_Total_BRL)}</td>
+                <td>${formatBRL(item.valorII)}</td>
+                <td>${formatBRL(item.ipi_efetivo)}</td>
+                <td>${formatBRL(item.pis_efetivo)}</td>
+                <td>${formatBRL(item.cofins_efetivo)}</td>
+                <td>${formatBRL(item.icms_efetivo)}</td>
+                <td>${formatBRL(item.custoUnitarioItem)}</td>
+                <td>${formatBRL(item.valorVendaUnitBR)}</td>
+                <td>${formatBRL(lucroUnitarioRS)}</td>
+                <td ${lucroCellStyle}>${lucroDisplay}</td>
             `;
         });
     }
