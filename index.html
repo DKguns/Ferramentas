@@ -574,7 +574,7 @@
         }
 
         .action-buttons { margin-top: 25px; margin-bottom: 20px; text-align: center; }
-        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button, .saved-calculations-section button {
+        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button {
             color: white; padding: 12px 20px; font-size: 16px; font-weight: bold;
             display: inline-block; width: auto; margin: 5px 10px; border: none;
             border-radius: 8px; cursor: pointer;
@@ -725,29 +725,6 @@
         .tooltip-container:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
-        }
-
-        #savedCalculationsList {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #savedCalculationsList li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            border-bottom: 1px solid var(--theme-border-secondary);
-        }
-        
-        #savedCalculationsList li:last-child {
-            border-bottom: none;
-        }
-
-        #savedCalculationsList button {
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-left: 5px;
         }
 
     </style>
@@ -994,6 +971,7 @@
                                 <th scope="col" data-translate-key="resThCustoTotalLinhaLiquido">CUSTO TOTAL LINHA R$ (Líquido)</th>
                                 <th scope="col" data-translate-key="resThPrecoVendaUnitBR">PREÇO VENDA UNIT. R$ Brasil</th>
                                 <th scope="col" data-translate-key="resThPrecoVendaTotalBR">PREÇO VENDA Total. R$ Brasil</th>
+                                <th scope="col" data-translate-key="resThVendaMin">VENDA MÍNIMA (R$)</th>
                                 <th scope="col" data-translate-key="resThLucroUnit">LUCRO UNIT. (R$)</th>
                                 <th scope="col" data-translate-key="resThLucroTotalLinha">LUCRO TOTAL LINHA (R$)</th>
                                 <th scope="col" data-translate-key="resThMargemLucroUnit">MARGEM LUCRO UNIT. %</th>
@@ -2109,7 +2087,6 @@
             const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const participacaoPesoUnitItem = item.percRateioPesoUnit.toFixed(2) + '%';
-            const vendaMinima = item.custoUnitarioItem / (1 - (0 / 100)); // Supondo 0% de margem para o ponto de equilíbrio
 
             row.innerHTML = `
                 <td>${item.index + 1}</td> <td>${item.codInterno || ''}</td> <td>${item.descricao || ''}</td> <td>${item.ncm || ''}</td>
