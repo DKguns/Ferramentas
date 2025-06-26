@@ -1892,7 +1892,7 @@
 
         } catch (e) {
             console.error("Erro detalhado em calcularCustosMultiItem:", e, e.stack);
-            showToast("Erro crítico ao calcular. Verifique os valores.", "error");
+            showToast("Erro crítico ao calcular. Verifique os valores.", 'error');
         }
     }
 
@@ -2217,74 +2217,167 @@
             return;
         }
         showToast('Iniciando geração do PDF...', 'success');
-        
+
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        const { items, acc, moedaLabel } = latestCalculationResults;
-        const nomeUsuario = geId('nomeUsuario').value;
-        const nomeFornecedor = geId('nomeFornecedor').value;
-        const dataCalculo = geId('dataCalculo').value;
-        const refInterna = geId('refInterna').value;
-
-        // Cabeçalho
-        doc.setFontSize(18);
-        doc.setTextColor('#007bff');
-        doc.text('Relatório de Custo de Importação', 105, 15, null, null, 'center');
-        
-        doc.setFontSize(10);
-        doc.setTextColor('#212529');
-        doc.text(`Usuário: ${nomeUsuario}`, 14, 25);
-        doc.text(`Fornecedor: ${nomeFornecedor}`, 14, 30);
-        doc.text(`Data: ${dataCalculo}`, 14, 35);
-        doc.text(`Ref.: ${refInterna}`, 14, 40);
-
-        // Resumo Geral
-        doc.setFontSize(12);
-        doc.setTextColor('#007bff');
-        doc.text('Resumo Geral do Embarque (BRL)', 14, 50);
-        
-        const summaryData = [
-            ['Custo Total Geral (Líquido)', formatBRL(acc.totalGeral_BRL)],
-            ['Receita Total Estimada', formatBRL(valorTotalVendaBrasil)],
-            ['Lucro Total Estimado', formatBRL(valorTotalVendaBrasil - acc.totalGeral_BRL)],
-            ['Valor FOB Total', formatBRL(acc.fob_BRL)],
-            ['Total Impostos Efetivos', formatBRL(acc.totalImpostosEfetivosGlobal)],
-            ['Total Créditos Fiscais', formatBRL(acc.totalCreditosFiscais_BRL)],
-        ];
-        
-        doc.autoTable({
-            startY: 55,
-            head: [['Indicador', 'Valor (BRL)']],
-            body: summaryData,
-            theme: 'striped',
-            headStyles: { fillColor: [0, 123, 255] }
+        const doc = new jsPDF({
+            orientation: 'p',
+            unit: 'mm',
+            format: 'a4'
         });
 
-        // Tabela de Itens
-        doc.addPage();
+        const { items, acc, valorTotalVendaBrasil } = latestCalculationResults;
+        const nomeUsuario = geId('nomeUsuario').value || 'N/A';
+        const nomeFornecedor = geId('nomeFornecedor').value || 'N/A';
+        const dataCalculo = geId('dataCalculo').value ? new Date(geId('dataCalculo').value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
+        const refInterna = geId('refInterna').value || 'N/A';
+        const diProcesso = geId('diProcesso').value || 'N/A';
+        const appVersion = geId('appVersion')?.textContent || '';
+
+        // Colors from CSS variables
+        const primaryColor = '#007bff';
+        const textColor = '#212529';
+        const secondaryTextColor = '#495057';
+        const greenColor = '#20c997';
+        const redColor = '#dc3545';
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        let finalY = 0;
+
+        // --- HEADER and FOOTER ---
+        const pageHeader = (data) => {
+            doc.setFontSize(16);
+            doc.setTextColor(primaryColor);
+            doc.setFont(undefined, 'bold');
+            doc.text('Relatório de Custo de Importação', pageWidth / 2, 15, { align: 'center' });
+            doc.setFont(undefined, 'normal');
+        };
+
+        const pageFooter = (data) => {
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(8);
+            doc.setTextColor(secondaryTextColor);
+            const footerText = `Gerado por: ${nomeUsuario} | Ferramenta de Importação ${appVersion} | Página ${data.pageNumber} de ${pageCount}`;
+            doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        };
+        
+        // --- PAGE 1: SUMMARY ---
+        // Basic Info
+        doc.setFontSize(9);
+        doc.setTextColor(secondaryTextColor);
+        doc.text(`Fornecedor: ${nomeFornecedor}`, 14, 28);
+        doc.text(`Referência: ${refInterna}`, 14, 33);
+        doc.text(`DI/Processo: ${diProcesso}`, 14, 38);
+        doc.text(`Data do Cálculo: ${dataCalculo}`, pageWidth - 14, 28, { align: 'right' });
+        
+        // Financial Summary
         doc.setFontSize(12);
-        doc.setTextColor('#007bff');
-        doc.text('Resultados Detalhados por Item', 14, 15);
+        doc.setTextColor(primaryColor);
+        doc.setFont(undefined, 'bold');
+        doc.text('Resumo Financeiro (BRL)', 14, 50);
+        doc.setFont(undefined, 'normal');
         
-        const tableBody = items.map(item => [
-            item.codInterno,
-            item.descricao.substring(0, 25), // Limitar tamanho da descrição
-            item.quantidade,
-            formatBRL(item.custoUnitarioItem),
-            formatBRL(item.valorVendaUnitBR),
-            `${(item.lucroPercentualUnitario || 0).toFixed(2)}%`
-        ]);
-        
+        const lucroTotalRS = valorTotalVendaBrasil - acc.totalGeral_BRL;
+        const lucroCor = lucroTotalRS >= 0 ? greenColor : redColor;
+
         doc.autoTable({
-            startY: 20,
-            head: [['Cód.', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Preço Venda Unit.', 'Margem %']],
+            startY: 54,
+            theme: 'plain',
+            body: [
+                ['Custo Total Geral (Líquido):', formatBRL(acc.totalGeral_BRL)],
+                ['Receita Total Estimada:', formatBRL(valorTotalVendaBrasil)],
+                [{ content: 'Lucro Total Estimado:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]
+            ],
+            styles: { fontSize: 10, cellPadding: 2 },
+            columnStyles: {
+                0: { cellWidth: 50, fontStyle: 'bold', textColor: textColor },
+                1: { cellWidth: 'auto', halign: 'right' }
+            }
+        });
+        finalY = doc.lastAutoTable.finalY + 10;
+
+        // KPI Summary
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor);
+        doc.setFont(undefined, 'bold');
+        doc.text('Principais Indicadores (BRL)', 14, finalY);
+        doc.setFont(undefined, 'normal');
+
+        doc.autoTable({
+            startY: finalY + 4,
+            theme: 'grid',
+            head: [['Indicador', 'Valor', 'Indicador', 'Valor']],
+            body: [
+                ['Valor FOB', formatBRL(acc.fob_BRL), 'Total Impostos Pagos (Bruto)', formatBRL(acc.totalImpostosPagosBruto)],
+                ['Frete + Seguro Intl.', formatBRL(acc.frete_BRL + acc.seguro_BRL), 'Total Impostos Efetivos', formatBRL(acc.totalImpostosEfetivosGlobal)],
+                ['Despesas Nacionais', formatBRL(acc.despAduan_BRL + acc.freteNac_BRL), 'Total Créditos Fiscais', formatBRL(acc.totalCreditosFiscais_BRL)],
+            ],
+            headStyles: { fillColor: primaryColor, textColor: '#ffffff' },
+            styles: { fontSize: 9, cellPadding: 2 },
+            alternateRowStyles: { fillColor: '#f8f9fa' }
+        });
+        finalY = doc.lastAutoTable.finalY;
+
+        // --- PAGE 2+: ITEM LIST ---
+        doc.addPage();
+
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor);
+        doc.setFont(undefined, 'bold');
+        doc.text('Resultados Detalhados por Item', 14, 20);
+        doc.setFont(undefined, 'normal');
+        
+        const tableBody = items.map((item, index) => {
+            const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
+            return [
+                index + 1,
+                item.codInterno || '-',
+                item.descricao,
+                item.quantidade,
+                formatBRL(item.custoUnitarioItem),
+                formatBRL(item.valorVendaUnitBR),
+                formatBRL(lucroUnitarioRS),
+                `${(item.lucroPercentualUnitario || 0).toFixed(2)}%`
+            ]
+        });
+
+        doc.autoTable({
+            startY: 24,
+            head: [['#', 'Cód.', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Venda Unit.', 'Lucro Unit.', 'Margem %']],
             body: tableBody,
             theme: 'grid',
-            headStyles: { fillColor: [0, 123, 255] }
+            headStyles: { fillColor: primaryColor, textColor: '#ffffff', fontSize: 9 },
+            foot: [['Total', '', '', acc.totalQtdItens.toLocaleString('pt-BR'), '', '', formatBRL(lucroTotalRS), '']],
+            footStyles: { fillColor: '#e9ecef', textColor: textColor, fontStyle: 'bold' },
+            styles: { fontSize: 8, cellPadding: 1.5, overflow: 'linebreak' },
+            columnStyles: {
+                0: { halign: 'center', cellWidth: 8 },
+                1: { cellWidth: 15 },
+                2: { cellWidth: 50 },
+                3: { halign: 'right' },
+                4: { halign: 'right' },
+                5: { halign: 'right' },
+                6: { halign: 'right' },
+                7: { halign: 'right' }
+            },
+            didDrawPage: function(data) {
+                pageHeader(data);
+                pageFooter(data);
+            },
+            didParseCell: function(data) {
+                if (data.column.index === 7 && data.section === 'body') {
+                    const lucroPerc = parseFloat(data.cell.raw.toString().replace('%',''));
+                    if (lucroPerc < (TxtToNum('modalLucroBaixoMin') || 20)) {
+                        data.cell.styles.textColor = redColor;
+                    }
+                }
+            }
         });
-        
-        doc.save(`Relatorio_Importacao_${refInterna.replace(/ /g, '_')}.pdf`);
+
+        // Add header and footer to the first page manually
+        pageHeader({pageNumber: 1});
+        pageFooter({pageNumber: 1});
+
+        doc.save(`Relatorio_Importacao_${refInterna.replace(/[\s/]/g, '_')}.pdf`);
     }
 
     function exportTableToCSV(filename) {
