@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v30.9</title>
+    <title>Ferramenta de Calculo de Importação v31.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -515,6 +515,7 @@
             font-weight: 600; white-space: nowrap; padding: 12px 10px; text-align: left;
             border-bottom: 2px solid var(--theme-accent-blue);
             border-right: 1px solid var(--theme-border-primary);
+            position: sticky; top: 0; z-index: 10;
         }
         #itemInputTable th:last-child, #itemResultTable th:last-child { border-right: none; }
         #itemInputTable td, #itemResultTable td {
@@ -569,7 +570,7 @@
 
         .item-table-input input[type="number"] { text-align: right; }
         .results-table td { white-space: nowrap; }
-        .results-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)) {
+        .results-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
             text-align: right;
         }
 
@@ -928,7 +929,6 @@
                 <h2 id="headingResultadosDetalhados" data-translate-key="headingResultadosDetalhados">Resultados Detalhados por Item</h2>
                 <div class="table-wrapper">
                     <table id="itemResultTable" class="results-table" aria-labelledby="headingResultadosDetalhados">
-                        <!-- THEAD ATUALIZADO -->
                         <thead>
                              <tr>
                                  <th scope="col">#</th>
@@ -1056,7 +1056,6 @@
                     </button>
                 </div>
 
-                <!-- SEÇÃO DE ANÁLISE DE SENSIBILIDADE CORRIGIDA -->
                 <section class="sensitivity-analysis-section" aria-labelledby="headingSensitivityAnalysis">
                     <h3 id="headingSensitivityAnalysis" data-translate-key="headingSensitivityAnalysis">Análise de Sensibilidade (What-If)</h3>
                     <div class="grid-container" style="align-items: flex-end;">
@@ -1079,7 +1078,6 @@
                         </div>
                     </div>
                 </section>
-                <!-- FIM DA SEÇÃO CORRIGIDA -->
 
 
                 <section aria-labelledby="headingDistribuicaoCusto" class="cost-distribution-section">
