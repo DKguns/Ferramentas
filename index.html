@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v30.5</title>
+    <title>Ferramenta de Calculo de Importação v30.6</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -649,11 +649,7 @@
         #compPercOutros { color: var(--theme-accent-orange); }
 
         .section-separator { border: none; height: auto; background-color: var(--theme-separator-bg-color); width: calc(100% + (2 * var(--theme-element-padding))); margin-left: calc(-1 * var(--theme-element-padding)); margin-right: calc(-1 * var(--theme-element-padding)); margin-top: 30px; margin-bottom: 25px; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; font-size: 0.9em; font-weight: 500; color: var(--theme-separator-text-color); text-transform: none; letter-spacing: 0.2px; padding: 8px var(--theme-element-padding); box-sizing: border-box; }
-        .section-separator-infoOrg::before       { content: "Informações Organizacionais"; }
-        .section-separator-detComLog::before    { content: "Detalhes Comerciais e Logísticos"; }
-        .section-separator-regTribCred::before    { content: "Regime Tributário e Créditos"; }
-        .section-separator-custosGlobais::before { content: "Custos Globais (Rateados entre os itens)"; }
-
+        
         /* Estilos para o Modal de Configurações */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; /* Começa oculto */ justify-content: center; align-items: center; z-index: 1050; backdrop-filter: blur(5px); }
         .modal-overlay.active { display: flex; }
@@ -771,7 +767,7 @@
             <section class="data-section global-inputs" aria-labelledby="headingDadosGlobais">
                 <h2 id="headingDadosGlobais" data-translate-key="headingDadosGlobais">Dados Globais do Embarque</h2>
                 
-                <div class="section-separator section-separator-infoOrg" data-translate-key="sepInfoOrganizacionais"></div>
+                <div class="section-separator"><span data-translate-key="sepInfoOrganizacionais">Informações Organizacionais</span></div>
                 <section aria-labelledby="headingInfoOrganizacionais">
                     <div class="grid-container">
                         <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome"><span class="error-message" id="nomeUsuarioError">Campo obrigatório</span><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
@@ -782,7 +778,7 @@
                         <div class="grid-item"><label for="dataCalculo" data-translate-key="labelDataCalculo">Data do Cálculo/Embarque:</label><input type="date" id="dataCalculo"><span class="error-message" id="dataCalculoError">Campo obrigatório</span><small class="field-description" data-translate-key="descDataCalculo">Data relevante para este cálculo.</small></div>
                     </div>
                 </section>
-                <div class="section-separator section-separator-detComLog" data-translate-key="sepDetalhesComerciais"></div>
+                <div class="section-separator"><span data-translate-key="sepDetalhesComerciais">Detalhes Comerciais e Logísticos</span></div>
 
                 <section aria-labelledby="headingDetalhesComerciais">
                     <div class="grid-container">
@@ -815,7 +811,7 @@
                         </div>
                     </div>
                 </section>
-                <div class="section-separator section-separator-regTribCred" data-translate-key="sepRegimeTributario"></div>
+                <div class="section-separator"><span data-translate-key="sepRegimeTributario">Regime Tributário e Créditos</span></div>
 
                 <section aria-labelledby="headingRegimeTributario">
                     <div class="grid-container">
@@ -826,7 +822,7 @@
                         <div class="grid-item"><label for="percCreditoICMS"><span data-translate-key="labelPercCreditoICMS">% Crédito ICMS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoICMS">Percentual de crédito de ICMS. Varia conforme o estado e benefícios fiscais (TTD).</span></span></label><input type="number" id="percCreditoICMS" step="0.01" value="100"></div>
                     </div>
                 </section>
-                <div class="section-separator section-separator-custosGlobais" data-translate-key="sepCustosGlobais"></div>
+                <div class="section-separator"><span data-translate-key="sepCustosGlobais">Custos Globais (Rateados entre os itens)</span></div>
 
                 <section aria-labelledby="headingCustosGlobais">
                     <div class="grid-container">
@@ -2782,33 +2778,13 @@
         
         document.querySelectorAll('[data-translate-key]').forEach(elem => {
             const key = elem.getAttribute('data-translate-key');
-            if (translations[lang][key]) {
-                // Handle different element types
-                if (elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA') {
-                    if (elem.placeholder) {
-                        elem.placeholder = translations[lang][key];
-                    }
-                } else if (elem.classList.contains('tooltip-text')){
-                     elem.textContent = translations[lang][key];
-                } 
-                else {
-                    // This handles most text elements like span, h1, h2, button, p, etc.
-                    const targetSpan = elem.querySelector('.tab-text') || elem;
-                    // Check if the element contains a tooltip, to avoid overwriting it
-                    const childNodes = Array.from(targetSpan.childNodes);
-                    const textNode = childNodes.find(node => node.nodeType === Node.TEXT_NODE);
-                    
-                    if (textNode) {
-                         textNode.nodeValue = translations[lang][key] + ' ';
-                    } else if (targetSpan.children.length === 0 || !targetSpan.querySelector('.tooltip-container')) {
-                        targetSpan.textContent = translations[lang][key];
-                    } else {
-                        // If it's a label with a tooltip, find the first text node to update
-                        const firstNode = targetSpan.childNodes[0];
-                        if (firstNode && firstNode.nodeType === Node.TEXT_NODE) {
-                            firstNode.nodeValue = translations[lang][key];
-                        }
-                    }
+            const translation = translations[lang][key];
+
+            if (translation !== undefined) {
+                if ((elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA') && elem.placeholder) {
+                    elem.placeholder = translation;
+                } else {
+                    elem.textContent = translation;
                 }
             }
         });
