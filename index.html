@@ -634,9 +634,9 @@
         #compPercOutros { color: var(--theme-accent-orange); }
 
         .section-separator { border: none; height: auto; background-color: var(--theme-separator-bg-color); width: calc(100% + (2 * var(--theme-element-padding))); margin-left: calc(-1 * var(--theme-element-padding)); margin-right: calc(-1 * var(--theme-element-padding)); margin-top: 30px; margin-bottom: 25px; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; font-size: 0.9em; font-weight: 500; color: var(--theme-separator-text-color); text-transform: none; letter-spacing: 0.2px; padding: 8px var(--theme-element-padding); box-sizing: border-box; }
-        .section-separator-infoOrg::before     { content: "Informações Organizacionais"; }
-        .section-separator-detComLog::before   { content: "Detalhes Comerciais e Logísticos"; }
-        .section-separator-regTribCred::before   { content: "Regime Tributário e Créditos"; }
+        .section-separator-infoOrg::before       { content: "Informações Organizacionais"; }
+        .section-separator-detComLog::before    { content: "Detalhes Comerciais e Logísticos"; }
+        .section-separator-regTribCred::before    { content: "Regime Tributário e Créditos"; }
         .section-separator-custosGlobais::before { content: "Custos Globais (Rateados entre os itens)"; }
 
         /* Estilos para o Modal de Configurações */
@@ -1130,7 +1130,7 @@
     </div>
 
 <script>
-// IIFE to avoid polluting the global scope
+// IIFE para evitar poluir o escopo global
 (function() {
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
 
@@ -1140,7 +1140,7 @@
 
     function geId(id) { return document.getElementById(id); }
 
-    // --- NOTIFICATION SYSTEM ---
+    // --- SISTEMA DE NOTIFICAÇÃO ---
     function showToast(message, type = 'error') {
         const container = geId('toast-container');
         const toast = document.createElement('div');
@@ -1173,12 +1173,12 @@
         }, 4000);
     }
 
-    // --- UTILITY FUNCTIONS ---
+    // --- FUNÇÕES UTILITÁRIAS ---
     function TxtToNum(elementIdOrValue, isElement = true) {
         let valStr;
         if (isElement) {
             const elem = geId(elementIdOrValue);
-            if (!elem) { console.warn(`Element with ID '${elementIdOrValue}' not found in TxtToNum.`); return 0; }
+            if (!elem) { console.warn(`Elemento com ID '${elementIdOrValue}' não encontrado em TxtToNum.`); return 0; }
             if (elem.type === 'date') { return elem.value; }
             valStr = String(elem.value);
         } else {
@@ -1200,7 +1200,7 @@
         } catch (e) { return `${symbol} ${(value || 0).toFixed(2)}`; }
     }
     
-    // --- UI/UX FUNCTIONS ---
+    // --- FUNÇÕES DE UI/UX ---
     function updateCotacaoButtonLabel() {
         const moedaInput = geId('moedaEstrangeira');
         const moeda = moedaInput ? (moedaInput.value.toUpperCase() || "USD") : "USD";
@@ -1263,15 +1263,15 @@
                 const dataHoraCotacao = new Date(parseInt(data[cotacaoKey].timestamp) * 1000);
                 infoSpan.textContent = `Cotação (${data[cotacaoKey].name.split('/')[0]}): ${cotacao.toFixed(4)} em ${dataHoraCotacao.toLocaleDateString('pt-BR')} ${dataHoraCotacao.toLocaleTimeString('pt-BR')}`;
                 infoSpan.classList.remove('error');
-                saveState(); // Save state after successful fetch
+                saveState(); // Salva o estado após busca bem-sucedida
             } else { throw new Error(`Cotação ${targetMoeda}-BRL não encontrada.`); }
         } catch (error) {
-            console.error("Quotation error:", error);
+            console.error("Erro na cotação:", error);
             infoSpan.textContent = `Erro ao buscar ${targetMoeda}: ${error.message}`;
             infoSpan.classList.add('error');
         } finally {
             const duration = Date.now() - startTime;
-            const minDisplayTime = 500; // 0.5 seconds
+            const minDisplayTime = 500; // 0.5 segundos
             setTimeout(() => {
                 button.classList.remove('button-loading');
                 button.disabled = false;
@@ -1279,14 +1279,14 @@
         }
     }
 
-    // --- DYNAMIC TABLE FUNCTIONS ---
+    // --- FUNÇÕES DA TABELA DINÂMICA ---
     function createItemInputRow(index, itemData = null) {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const row = tbody.insertRow();
         
         const defaultRowData = {
-             desc: "", codInterno: "", ncm: "", qtd: "", precoCustoUnitME: "", pesoUnitKG: "",
-             aliqII: "", aliqIPI: "", aliqPIS: "", aliqCOFINS: "", aliqICMS: "", valVendaUnitBR: ""
+              desc: "", codInterno: "", ncm: "", qtd: "", precoCustoUnitME: "", pesoUnitKG: "",
+              aliqII: "", aliqIPI: "", aliqPIS: "", aliqCOFINS: "", aliqICMS: "", valVendaUnitBR: ""
         };
         const data = itemData || defaultRowData;
 
@@ -1379,7 +1379,7 @@
         const qtdElem = geId(`qtdItem${index}`);
         const valUnitMEElem = geId(`precoCustoUnitMEItem${index}`);
         const pesoUnitKGElem = geId(`pesoUnitKGItem${index}`);
-        if (!qtdElem ||!valUnitMEElem ||!pesoUnitKGElem) { return; }
+        if (!qtdElem || !valUnitMEElem || !pesoUnitKGElem) { return; }
         const qtd = TxtToNum(qtdElem.value, false);
         const valUnitME = TxtToNum(valUnitMEElem.value, false);
         const pesoUnitKG = TxtToNum(pesoUnitKGElem.value, false);
@@ -1396,8 +1396,8 @@
         const percCredIPIInput = geId('percCreditoIPI');
         const percCredICMSInput = geId('percCreditoICMS');
 
-        if(!percCredPISInput ||!percCredCOFINSInput ||!percCredIPIInput ||!percCredICMSInput) {
-            console.warn("One or more credit fields were not found in handleRegimeChange.");
+        if(!percCredPISInput || !percCredCOFINSInput || !percCredIPIInput || !percCredICMSInput) {
+            console.warn("Um ou mais campos de crédito não foram encontrados em handleRegimeChange.");
             return;
         }
         
@@ -1432,18 +1432,18 @@
         screens.forEach(screen => {
             const isActive = screen.id === screenIdToShow;
             screen.classList.toggle('active', isActive);
-            screen.hidden =!isActive;
+            screen.hidden = !isActive;
         });
 
         tabs.forEach(tab => {
             const isActive = tab.getAttribute('aria-controls') === screenIdToShow;
             tab.classList.toggle('active', isActive);
-            tab.setAttribute('aria-selected', isActive? 'true' : 'false');
-            tab.setAttribute('tabindex', isActive? '0' : '-1');
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            tab.setAttribute('tabindex', isActive ? '0' : '-1');
         });
     }
 
-    // --- DATA PERSISTENCE ---
+    // --- PERSISTÊNCIA DE DADOS ---
     function saveState() {
         try {
             const data = {
@@ -1485,7 +1485,7 @@
                 }, 800);
             }
         } catch (e) {
-            console.error("Error saving state:", e);
+            console.error("Erro ao salvar o estado:", e);
             showToast("Erro ao salvar dados no navegador.", 'error');
         }
     }
@@ -1494,7 +1494,7 @@
         try {
             const savedData = localStorage.getItem('importCalculatorData');
             if (!savedData) {
-                limparTodosOsCampos(false); // Initialize with defaults but don't clear storage
+                limparTodosOsCampos(false); // Inicializa com padrões, mas não limpa o armazenamento
                 return;
             }
 
@@ -1516,20 +1516,20 @@
                     createItemInputRow(index, item);
                 });
             } else {
-                 createItemInputRow(0); // Ensure at least one row if saved data is empty
+                 createItemInputRow(0); // Garante pelo menos uma linha se os dados salvos estiverem vazios
             }
             
             handleRegimeChange();
             updateCotacaoButtonLabel();
             
-            console.log("State loaded from localStorage.");
+            console.log("Estado carregado do localStorage.");
         } catch (e) {
-            console.error("Error loading state:", e);
-            limparTodosOsCampos(true); // Clear everything on error
+            console.error("Erro ao carregar o estado:", e);
+            limparTodosOsCampos(true); // Limpa tudo em caso de erro
         }
     }
 
-    // --- FORM VALIDATION ---
+    // --- VALIDAÇÃO DE FORMULÁRIO ---
     function validateForm() {
         let isValid = true;
         clearValidations();
@@ -1560,13 +1560,13 @@
             }
         };
     
-        // Validate global fields
+        // Validar campos globais
         ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo'].forEach(id => checkField(id, false));
     
-        // Validate currency and cost fields
+        // Validar campos de moeda e custo
         ['taxaCambio', 'totalFreteME', 'taxaSiscomexBRL'].forEach(id => checkField(id, true));
     
-        // Validate item table rows
+        // Validar linhas da tabela de itens
         const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
         let hasAtLeastOneItem = false;
         for (let i = 0; i < itemRows.length; i++) {
@@ -1593,7 +1593,7 @@
         document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
     }
 
-    // --- INITIALIZATION ---
+    // --- INICIALIZAÇÃO ---
     window.onload = function() {
         loadState();
         
@@ -1700,7 +1700,7 @@
         return `class="${styleClass}"`;
     }
 
-    // --- MAIN CALCULATION LOGIC ---
+    // --- LÓGICA DE CÁLCULO PRINCIPAL ---
     function calcularCustosMultiItem() {
         if (!validateForm()) {
             showToast("Por favor, corrija os campos obrigatórios em vermelho.", 'error');
@@ -1886,26 +1886,26 @@
             showToast("Cálculo realizado com sucesso!", "success");
             showScreen('telaDashboardPanel');
             renderizarGraficoCustos(
-                [acc.fob_BRL, (acc.frete_BRL + acc.seguro_BRL + acc.outrasDespME_BRL), acc.ii_BRL, (acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL), acc.icms_efetivo_BRL, (acc.afrmm_BRL + acc.siscomex_BRL), (acc.despAduan_BRL + acc.freteNac_BRL)],
+                [acc.fob_BRL, (acc.frete_BRL + acc.seguro_BRL + acc.outrasDespME_BRL), acc.ii_BRL, (acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL), acc.icms_efetivo_BRL, (acc.afrmm_BRL + acc.siscomex_BRL), (despesasAduaneirasBRL_global + freteNacionalBRL_global)],
                 ['FOB', 'Frete/Seg. Intl.', 'II', 'IPI/PIS/COFINS Efet.', 'ICMS Efet.', 'Taxas (AFRMM/Sisc.)', 'Desp. Nacionais']
             );
 
         } catch (e) {
-            console.error("Detailed error in calcularCustosMultiItem:", e, e.stack);
+            console.error("Erro detalhado em calcularCustosMultiItem:", e, e.stack);
             showToast("Erro crítico ao calcular. Verifique os valores.", "error");
         }
     }
 
     function limparTodosOsCampos(clearStorage = true) {
-        if (clearStorage && confirm("Tem certeza que deseja limpar todos os campos? Esta ação não pode ser desfeita.")) {
-            localStorage.removeItem('importCalculatorData');
+        if (clearStorage && !confirm("Tem certeza que deseja limpar todos os campos? Esta ação não pode ser desfeita.")) {
+            return; // O usuário cancelou
+        }
+        
+        if(clearStorage){
+             localStorage.removeItem('importCalculatorData');
             const statusElem = geId('saveStatus');
             if(statusElem) statusElem.style.opacity = '0';
-            console.log("Saved data has been removed.");
-        } else if (!clearStorage) {
-             // Continue without confirmation if just initializing
-        } else {
-            return; // User cancelled the confirm dialog
+            console.log("Dados salvos foram removidos.");
         }
 
 
@@ -1944,16 +1944,27 @@
         }
         
         showScreen('telaEntradaPanel');
-        console.log("All fields have been cleared for a new calculation.");
+        console.log("Todos os campos foram limpos para um novo cálculo.");
     }
     
-    // --- Rendering functions ---
+    // --- Funções de renderização ---
     function renderResultsTable(results) {
-        const { items, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, taxaCambio } = results;
+        const { items, acc, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, taxaCambio } = results;
         const resultTbody = geId('itemResultTable')?.getElementsByTagName('tbody')[0];
-        if (!resultTbody) { console.error("tbody not found for itemResultTable"); return; }
+        if (!resultTbody) { console.error("tbody não encontrado para itemResultTable"); return; }
         resultTbody.innerHTML = '';
-
+    
+        // Adicionar totais globais no cálculo
+        acc.despAduan_BRL = TxtToNum('despesasAduaneirasBRL');
+        acc.freteNac_BRL = TxtToNum('freteNacionalBRL');
+        
+        acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
+        
+        acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
+        
+        acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
+        acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
+        
         items.forEach(item => {
             const row = resultTbody.insertRow();
             let lucroCellStyle = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin);
@@ -2035,8 +2046,16 @@
     function renderDashboard(results) {
         const { acc, items, moedaLabel, valorFOBTotalME, valorTotalVendaBrasil, lucroAltoMin, lucroMedioMin, lucroBaixoMin } = results;
         const lucroTotalPedidoRS = valorTotalVendaBrasil - acc.totalGeral_BRL;
-        const lucroTotalPedidoPerc = (valorTotalVendaBrasil > 0) ? (lucroTotalPedidoRS / valorTotalVendaBrasil) * 100 : (acc.totalGeral_BRL > 0 ? -Infinity : 0);
+        const lucroTotalPedidoPerc = (acc.totalGeral_BRL > 0) ? (lucroTotalPedidoRS / acc.totalGeral_BRL) * 100 : (valorTotalVendaBrasil > 0 ? Infinity : 0);
         const percFreteSobreFOB = acc.fob_BRL > 0 ? (acc.frete_BRL / acc.fob_BRL) * 100 : 0;
+        
+        const totalCustoProduto = acc.fob_BRL;
+        const totalImpostosEfetivos = acc.totalImpostosEfetivosGlobal;
+        const totalOutrosCustos = acc.totalGeral_BRL - totalCustoProduto - totalImpostosEfetivos;
+        
+        const percCustoProduto = (acc.totalGeral_BRL > 0) ? (totalCustoProduto / acc.totalGeral_BRL) * 100 : 0;
+        const percImpostos = (acc.totalGeral_BRL > 0) ? (totalImpostosEfetivos / acc.totalGeral_BRL) * 100 : 0;
+        const percOutros = (acc.totalGeral_BRL > 0) ? (totalOutrosCustos / acc.totalGeral_BRL) * 100 : 0;
 
         function setInnerTextDashboard(id, value, isCurrency = false, currencyCodeForME = 'USD', highlightClass = '') {
             const elem = geId(id);
@@ -2046,7 +2065,8 @@
                 } else {
                     elem.textContent = isCurrency ? formatBRL(value) : value;
                 }
-                elem.className = 'kpi-value'; // Reset classes
+                // Reset classes. Remove specific highlights before adding a new one.
+                elem.classList.remove('profit-positive', 'profit-negative', 'blue-highlight', 'orange-highlight');
                 if (highlightClass) elem.classList.add(highlightClass);
             }
         }
@@ -2063,26 +2083,51 @@
                 prominentProfitCard.style.display = 'none';
             }
         }
-
-        setInnerTextDashboard('dbValorPedidoME', valorFOBTotalME, true, moedaLabel);
-        setInnerTextDashboard('dbTotalCustoImp', acc.totalGeral_BRL, true);
+        
+        setInnerTextDashboard('dbValorPedidoME', valorFOBTotalME, true, moedaLabel, 'blue-highlight');
+        setInnerTextDashboard('dbTotalCustoImp', acc.totalGeral_BRL, true, '', 'orange-highlight');
         setInnerTextDashboard('dbReceitaTotalBrasil', valorTotalVendaBrasil, true);
         setInnerTextDashboard('dbLucroTotalPedidoRS', lucroTotalPedidoRS, true, '', lucroTotalPedidoRS >= 0 ? 'profit-positive' : 'profit-negative');
-        setInnerTextDashboard('dbLucroTotalPedidoPerc', lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%', false, '', lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
+        setInnerTextDashboard('dbLucroTotalPedidoPerc', isFinite(lucroTotalPedidoPerc) ? lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%' : 'N/A', false, '', lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
+        
         setInnerTextDashboard('dbTotalFOB_BRL', acc.fob_BRL, true);
         setInnerTextDashboard('dbFreteTotalBRL', acc.frete_BRL, true);
         setInnerTextDashboard('dbPercFreteSobreFOB', percFreteSobreFOB.toFixed(2).replace('.',',') + '%');
         setInnerTextDashboard('dbTotalImpostosBruto', acc.totalImpostosPagosBruto, true);
         setInnerTextDashboard('dbTotalImpostosEfetivos', acc.totalImpostosEfetivosGlobal, true);
 
+        // Renderizar as barras de distribuição
+        const distTotal = acc.totalGeral_BRL > 0 ? acc.totalGeral_BRL : 1;
+        const distProdutoPerc = ((acc.fob_BRL) / distTotal) * 100;
+        const distFreteSegPerc = ((acc.frete_BRL + acc.seguro_BRL + acc.outrasDespME_BRL) / distTotal) * 100;
+        const distImpFedPerc = ((acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL) / distTotal) * 100;
+        const distICMSPerc = (acc.icms_efetivo_BRL / distTotal) * 100;
+        const distDespNacPerc = ((acc.despAduan_BRL + acc.freteNac_BRL) / distTotal) * 100;
+        
+        geId('dbDistProduto').textContent = distProdutoPerc.toFixed(1) + '%';
+        geId('barDistProduto').style.width = distProdutoPerc + '%';
+        geId('dbDistFreteSegInt').textContent = distFreteSegPerc.toFixed(1) + '%';
+        geId('barDistFreteSegInt').style.width = distFreteSegPerc + '%';
+        geId('dbDistImpFed').textContent = distImpFedPerc.toFixed(1) + '%';
+        geId('barDistImpFed').style.width = distImpFedPerc + '%';
+        geId('dbDistICMS').textContent = distICMSPerc.toFixed(1) + '%';
+        geId('barDistICMS').style.width = distICMSPerc + '%';
+        geId('dbDistDespNac').textContent = distDespNacPerc.toFixed(1) + '%';
+        geId('barDistDespNac').style.width = distDespNacPerc + '%';
+
+        geId('compPercProduto').textContent = percCustoProduto.toFixed(2).replace('.',',') + '%';
+        geId('compPercImpostos').textContent = percImpostos.toFixed(2).replace('.',',') + '%';
+        geId('compPercOutros').textContent = percOutros.toFixed(2).replace('.',',') + '%';
+
         const renderList = (listId, sortedItems, maxItems = 10) => {
             const listElement = geId(listId);
             if (!listElement) return;
             listElement.innerHTML = '';
             if (sortedItems.length > 0) {
+                const maxAbsValue = Math.max(...sortedItems.map(item => Math.abs(item.lucroPercentualUnitario)));
                 sortedItems.slice(0, maxItems).forEach(item => {
                     const li = document.createElement('li');
-                    const barWidth = Math.max(0, Math.min(100, Math.abs(item.lucroPercentualUnitario)));
+                    const barWidth = maxAbsValue > 0 ? (Math.abs(item.lucroPercentualUnitario) / maxAbsValue) * 100 : 0;
                     const displayLucro = item.lucroPercentualUnitario.toFixed(2).replace('.',',') + '%';
                     const profitBarClass = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin).replace('class="','').replace('"','');
                     li.innerHTML = `<span class="item-name" title="${item.descricao || item.codInterno || 'Item'}">${item.descricao || item.codInterno || `Item ${item.index + 1}`}</span><div class="item-bar-container"><div class="item-bar ${profitBarClass}" style="width: ${barWidth}%;"></div></div><span class="item-value">${displayLucro}</span>`;
@@ -2097,23 +2142,224 @@
         renderList('topLucrativosList', [...itemsComLucroValido].sort((a, b) => b.lucroPercentualUnitario - a.lucroPercentualUnitario));
         renderList('topMenosLucrativosList', [...itemsComLucroValido].sort((a, b) => a.lucroPercentualUnitario - b.lucroPercentualUnitario));
     }
+
+    function renderizarGraficoCustos(data, labels) {
+        const ctx = geId('custoTotalPizzaChart')?.getContext('2d');
+        if (!ctx) return;
     
-    // Make functions globally accessible
-    window.showToast = showToast;
+        const isDarkMode = document.body.classList.contains('theme-dark');
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDarkMode ? '#e8e8f0' : '#495057';
+    
+        const backgroundColors = [
+            'rgba(32, 201, 151, 0.7)',  // Verde
+            'rgba(0, 123, 255, 0.7)',   // Azul
+            'rgba(253, 126, 20, 0.7)',  // Laranja
+            'rgba(220, 53, 69, 0.7)',   // Vermelho
+            'rgba(255, 193, 7, 0.7)',   // Amarelo
+            'rgba(23, 162, 184, 0.7)',  // Ciano
+            'rgba(108, 117, 125, 0.7)'  // Cinza
+        ];
+        const borderColors = backgroundColors.map(color => color.replace('0.7', '1'));
+    
+        if (custoTotalChartInstance) {
+            custoTotalChartInstance.destroy();
+        }
+    
+        custoTotalChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Composição do Custo Total',
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: textColor,
+                            font: {
+                                family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += formatBRL(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // --- FUNÇÕES DE EXPORTAÇÃO E COMPARTILHAMENTO ---
+    function gerarPDF() {
+        if (!latestCalculationResults) {
+            showToast('Calcule primeiro para gerar o PDF.', 'warning');
+            return;
+        }
+        showToast('Iniciando geração do PDF...', 'success');
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const { items, acc, moedaLabel } = latestCalculationResults;
+        const nomeUsuario = geId('nomeUsuario').value;
+        const nomeFornecedor = geId('nomeFornecedor').value;
+        const dataCalculo = geId('dataCalculo').value;
+        const refInterna = geId('refInterna').value;
+
+        // Cabeçalho
+        doc.setFontSize(18);
+        doc.setTextColor('#007bff');
+        doc.text('Relatório de Custo de Importação', 105, 15, null, null, 'center');
+        
+        doc.setFontSize(10);
+        doc.setTextColor('#212529');
+        doc.text(`Usuário: ${nomeUsuario}`, 14, 25);
+        doc.text(`Fornecedor: ${nomeFornecedor}`, 14, 30);
+        doc.text(`Data: ${dataCalculo}`, 14, 35);
+        doc.text(`Ref.: ${refInterna}`, 14, 40);
+
+        // Resumo Geral
+        doc.setFontSize(12);
+        doc.setTextColor('#007bff');
+        doc.text('Resumo Geral do Embarque (BRL)', 14, 50);
+        
+        const summaryData = [
+            ['Custo Total Geral (Líquido)', formatBRL(acc.totalGeral_BRL)],
+            ['Receita Total Estimada', formatBRL(valorTotalVendaBrasil)],
+            ['Lucro Total Estimado', formatBRL(valorTotalVendaBrasil - acc.totalGeral_BRL)],
+            ['Valor FOB Total', formatBRL(acc.fob_BRL)],
+            ['Total Impostos Efetivos', formatBRL(acc.totalImpostosEfetivosGlobal)],
+            ['Total Créditos Fiscais', formatBRL(acc.totalCreditosFiscais_BRL)],
+        ];
+        
+        doc.autoTable({
+            startY: 55,
+            head: [['Indicador', 'Valor (BRL)']],
+            body: summaryData,
+            theme: 'striped',
+            headStyles: { fillColor: [0, 123, 255] }
+        });
+
+        // Tabela de Itens
+        doc.addPage();
+        doc.setFontSize(12);
+        doc.setTextColor('#007bff');
+        doc.text('Resultados Detalhados por Item', 14, 15);
+        
+        const tableBody = items.map(item => [
+            item.codInterno,
+            item.descricao.substring(0, 25), // Limitar tamanho da descrição
+            item.quantidade,
+            formatBRL(item.custoUnitarioItem),
+            formatBRL(item.valorVendaUnitBR),
+            `${(item.lucroPercentualUnitario || 0).toFixed(2)}%`
+        ]);
+        
+        doc.autoTable({
+            startY: 20,
+            head: [['Cód.', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Preço Venda Unit.', 'Margem %']],
+            body: tableBody,
+            theme: 'grid',
+            headStyles: { fillColor: [0, 123, 255] }
+        });
+        
+        doc.save(`Relatorio_Importacao_${refInterna.replace(/ /g, '_')}.pdf`);
+    }
+
+    function exportTableToCSV(filename) {
+        if (!latestCalculationResults) {
+            showToast('Calcule primeiro para exportar.', 'warning');
+            return;
+        }
+
+        const { items } = latestCalculationResults;
+        let csvContent = "data:text/csv;charset=utf-8,";
+        const headers = Object.keys(items[0]).join(',');
+        csvContent += headers + "\r\n";
+
+        items.forEach(item => {
+            const values = Object.values(item).map(v => typeof v === 'string' ? `"${v.replace(/"/g, '""')}"` : v).join(',');
+            csvContent += values + "\r\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('CSV exportado com sucesso!', 'success');
+    }
+
+    function shareDashboardViaWhatsApp() {
+        if (!latestCalculationResults) {
+            showToast('Calcule primeiro para compartilhar.', 'warning');
+            return;
+        }
+    
+        const modal = geId('shareImageModal');
+        const screenshotImg = geId('dashboardScreenshot');
+        const areaToCapture = geId('dashboardScreenshotArea');
+        
+        showToast('Gerando imagem do dashboard...', 'success');
+    
+        html2canvas(areaToCapture, {
+            backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff',
+            scale: 2 // Aumenta a resolução
+        }).then(canvas => {
+            screenshotImg.src = canvas.toDataURL('image/png');
+            modal.style.display = 'flex';
+        }).catch(err => {
+            console.error('Erro ao gerar a imagem:', err);
+            showToast('Falha ao gerar a imagem do dashboard.', 'error');
+        });
+    }
+
+    geId('closeShareModalBtn')?.addEventListener('click', () => {
+        geId('shareImageModal').style.display = 'none';
+    });
+    geId('shareImageModal')?.addEventListener('click', (event) => {
+         if (event.target === geId('shareImageModal')) {
+            geId('shareImageModal').style.display = 'none';
+         }
+    });
+
+    // --- Tornar funções globalmente acessíveis ---
     window.calcularCustosMultiItem = calcularCustosMultiItem;
-    window.gerarPDF = function() { /* PDF logic will be restored if needed */ showToast('Gerando PDF...', 'success'); };
-    window.exportTableToCSV = function() { /* CSV logic will be restored if needed */ showToast('Exportando CSV...', 'success'); };
+    window.gerarPDF = gerarPDF;
+    window.exportTableToCSV = exportTableToCSV;
     window.limparTodosOsCampos = limparTodosOsCampos;
     window.showScreen = showScreen;
     window.updateCotacaoButtonLabel = updateCotacaoButtonLabel;
     window.fetchCotacaoMoeda = fetchCotacaoMoeda;
     window.handleRegimeChange = handleRegimeChange;
     window.updateItemCalculatedFields = updateItemCalculatedFields;
-    window.shareDashboardViaWhatsApp = function() { /* Share logic will be restored if needed */ showToast('Abrindo modal de compartilhamento...', 'success'); };
+    window.shareDashboardViaWhatsApp = shareDashboardViaWhatsApp;
     window.removerLinhaItem = removerLinhaItem;
     window.carregarImpostosPadrao = carregarImpostosPadrao;
-    window.createItemInputRow = createItemInputRow;
-    window.renderizarGraficoCustos = function(data, labels) { /* Chart logic will be restored if needed */ };
+    window.renderizarGraficoCustos = renderizarGraficoCustos;
 
 })();
 </script>
