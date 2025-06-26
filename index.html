@@ -574,7 +574,7 @@
         }
 
         .action-buttons { margin-top: 25px; margin-bottom: 20px; text-align: center; }
-        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button {
+        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button, .saved-calculations-section button {
             color: white; padding: 12px 20px; font-size: 16px; font-weight: bold;
             display: inline-block; width: auto; margin: 5px 10px; border: none;
             border-radius: 8px; cursor: pointer;
@@ -928,53 +928,15 @@
                                 <th scope="col">#</th>
                                 <th scope="col" data-translate-key="resThCodInterno">Cód. Interno</th>
                                 <th scope="col" data-translate-key="resThDescricao">Descrição</th>
-                                <th scope="col" data-translate-key="resThNCM">NCM</th>
+                                <th scope="col" data-translate-key="resThCustoUnitLiquido">Custo Unit. (R$)</th>
+                                <th scope="col" data-translate-key="resThPrecoVendaUnitBR">Venda Unit. (R$)</th>
+                                <th scope="col" data-translate-key="resThVendaMin">Venda Mín. (R$)</th>
+                                <th scope="col" data-translate-key="resThLucroUnit">Lucro Unit. (R$)</th>
+                                <th scope="col" data-translate-key="resThMargemLucroUnit">Margem %</th>
                                 <th scope="col" data-translate-key="resThQtd">Qtd</th>
-                                <th scope="col" data-translate-key="resThPesoUnitKG">Peso Unit. KG</th>
-                                <th scope="col" data-translate-key="resThPesoTotalKG">Peso Total KG</th>
-                                <th scope="col" data-translate-key="resThPercRateioPesoUnit">% Rateio Peso Unit.</th>
-                                <th scope="col" data-translate-key="resThFretePesoUnit">Frete por Peso Unit. (R$)</th>
-                                <th scope="col" data-translate-key="resThPrecoCustoUnitME">Pr. Custo Unit. $</th>
-                                <th scope="col" data-translate-key="resThPrecoCustoTotalME">Pr. Custo Total $</th>
-                                <th scope="col" data-translate-key="resThFOBUnit">FOB Unit. (R$)</th>
-                                <th scope="col" data-translate-key="resThFOBTotal">FOB Total (R$)</th>
-                                <th scope="col" data-translate-key="resThFOBPerc">FOB %</th>
-                                <th scope="col" data-translate-key="resThSeguroRateado">Seguro Rateado (R$)</th>
-                                <th scope="col" data-translate-key="resThOutrasDespRateadas">Outras Desp. Rateadas (R$)</th>
-                                <th scope="col" data-translate-key="resThCIFTotal">CIF Total (R$)</th>
-                                <th scope="col" data-translate-key="resThIIR">II R$</th>
-                                <th scope="col" data-translate-key="resThValorTotalNF">Valor Total NF (R$)</th>
-                                <th scope="col" data-translate-key="resThValorUnitarioNF">Valor Unitário NF (R$)</th>
-                                <th scope="col" data-translate-key="resThIPIPago">IPI Pago R$</th>
-                                <th scope="col" data-translate-key="resThIPICredito">IPI Crédito R$</th>
-                                <th scope="col" data-translate-key="resThIPICusto">IPI Custo R$</th>
-                                <th scope="col" data-translate-key="resThTXSISC">TX.SISC. (R$)</th>
-                                <th scope="col" data-translate-key="resThPISPago">PIS Pago R$</th>
-                                <th scope="col" data-translate-key="resThPISCredito">PIS Crédito R$</th>
-                                <th scope="col" data-translate-key="resThPISCusto">PIS Custo R$</th>
-                                <th scope="col" data-translate-key="resThCOFINSPago">COFINS Pago R$</th>
-                                <th scope="col" data-translate-key="resThCOFINSCredito">COFINS Crédito R$</th>
-                                <th scope="col" data-translate-key="resThCOFINSCusto">COFINS Custo R$</th>
-                                <th scope="col" data-translate-key="resThBaseCalcICMS">Base Calc. ICMS R$</th>
-                                <th scope="col" data-translate-key="resThICMSPago">ICMS Pago R$</th>
-                                <th scope="col" data-translate-key="resThICMSCredito">ICMS Crédito R$</th>
-                                <th scope="col" data-translate-key="resThICMSCusto">ICMS Custo R$</th>
-                                <th scope="col" data-translate-key="resThAFRMM">AFRMM R$</th>
-                                <th scope="col" data-translate-key="resThDespAdu">Desp. Adu R$</th>
-                                <th scope="col" data-translate-key="resThFreteNac">Frete Nac R$</th>
-                                <th scope="col" data-translate-key="resThCustoTotalComImpostos">Custo Total Com Impostos</th>
-                                <th scope="col" data-translate-key="resThCustoUnitComImpostos">CUSTO UNIT Com Impostos</th>
-                                <th scope="col" data-translate-key="resThSomaImpostosQueCreditam">Soma Impostos Que Creditam (R$)</th>
-                                <th scope="col" data-translate-key="resThSomaImpostosComCreditos">Soma Impostos Com Creditos (R$)</th>
-                                <th scope="col" data-translate-key="resThTotalImpEfetivos">Total Imp. Efetivos</th>
-                                <th scope="col" data-translate-key="resThCustoUnitLiquido">CUSTO UNIT. R$ (Líquido)</th>
-                                <th scope="col" data-translate-key="resThCustoTotalLinhaLiquido">CUSTO TOTAL LINHA R$ (Líquido)</th>
-                                <th scope="col" data-translate-key="resThPrecoVendaUnitBR">PREÇO VENDA UNIT. R$ Brasil</th>
-                                <th scope="col" data-translate-key="resThPrecoVendaTotalBR">PREÇO VENDA Total. R$ Brasil</th>
-                                <th scope="col" data-translate-key="resThVendaMin">VENDA MÍNIMA (R$)</th>
-                                <th scope="col" data-translate-key="resThLucroUnit">LUCRO UNIT. (R$)</th>
-                                <th scope="col" data-translate-key="resThLucroTotalLinha">LUCRO TOTAL LINHA (R$)</th>
-                                <th scope="col" data-translate-key="resThMargemLucroUnit">MARGEM LUCRO UNIT. %</th>
+                                <th scope="col" data-translate-key="resThCustoTotalLinhaLiquido">Custo Total (R$)</th>
+                                <th scope="col" data-translate-key="resThPrecoVendaTotalBR">Venda Total (R$)</th>
+                                <th scope="col" data-translate-key="resThLucroTotalLinha">Lucro Total (R$)</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -2850,6 +2812,7 @@
     window.carregarImpostosPadrao = carregarImpostosPadrao;
     window.renderizarGraficoCustos = renderizarGraficoCustos;
     window.applyTranslations = applyTranslations;
+    window.runSensitivityAnalysis = function() {}; // Definir a função globalmente
 
 })();
 </script>
