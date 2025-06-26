@@ -841,10 +841,6 @@
             
             <div class="action-buttons">
                 <button class="main-calculate-button" onclick="calcularCustosMultiItem()" data-translate-key="btnCalcular">Calcular Custos, Lucro e Indicadores</button>
-                <button type="button" class="pdf-button" onclick="gerarPDF()" data-translate-key="btnGerarPDF">Gerar PDF do Relatório</button>
-                <button type="button" class="csv-button" onclick="exportTableToCSV('resultados_importacao.csv')" data-translate-key="btnExportarCSV">
-                    <i class="fas fa-file-csv"></i> Exportar para CSV
-                </button>
                 <button type="button" class="clear-button" onclick="limparTodosOsCampos(true)" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
             </div>
         </section>
@@ -999,6 +995,12 @@
                     </div>
                 </div>
                 <div class="action-buttons" style="margin-top: 20px;">
+                     <button type="button" class="pdf-button" onclick="gerarPDF()" data-translate-key="btnGerarPDF">
+                        <i class="fas fa-file-pdf"></i> Gerar PDF
+                    </button>
+                    <button type="button" class="csv-button" onclick="exportTableToCSV('resultados_importacao.csv')" data-translate-key="btnExportarCSV">
+                        <i class="fas fa-file-csv"></i> Exportar CSV
+                    </button>
                     <button type="button" class="whatsapp-button" onclick="shareDashboardViaWhatsApp()" data-translate-key="btnShareWhatsApp">
                         <i class="fab fa-whatsapp"></i> Compartilhar Dashboard
                     </button>
