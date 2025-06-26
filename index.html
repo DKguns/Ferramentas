@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v30.7</title>
+    <title>Ferramenta de Calculo de Importação v30.8</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -623,6 +623,11 @@
         body.theme-dark .profit-low { background-color: rgba(var(--theme-accent-light-orange-rgb), 0.25) !important; color: var(--theme-accent-light-orange) !important; }
         body.theme-dark .profit-loss { background-color: rgba(var(--theme-accent-red-rgb), 0.25) !important; }
         
+        /* Adicionado para o resultado da simulação */
+        #simNovoLucro.profit-positive { color: var(--theme-accent-green); text-shadow: 0 0 8px var(--theme-glow-green); }
+        #simNovoLucro.profit-negative { color: var(--theme-accent-red); text-shadow: 0 0 8px var(--theme-glow-red); }
+
+
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
         .top-items-section, .cost-components-section, .sensitivity-analysis-section { margin-top: 30px; }
@@ -730,7 +735,7 @@
     </style>
 </head>
 <body>
-    <!-- NOVO: Container para as notificações (toasts) -->
+    <!-- Container para as notificações (toasts) -->
     <div id="toast-container"></div>
 
     <header class="app-header">
@@ -1042,23 +1047,31 @@
                     </button>
                 </div>
 
+                <!-- SEÇÃO DE ANÁLISE DE SENSIBILIDADE CORRIGIDA -->
                 <section class="sensitivity-analysis-section" aria-labelledby="headingSensitivityAnalysis">
                     <h3 id="headingSensitivityAnalysis" data-translate-key="headingSensitivityAnalysis">Análise de Sensibilidade (What-If)</h3>
-                    <div class="grid-container">
+                    <div class="grid-container" style="align-items: flex-end;">
                         <div class="grid-item">
                             <label for="simTaxaCambio" data-translate-key="labelSimTaxaCambio">Simular Taxa de Câmbio:</label>
-                            <input type="number" id="simTaxaCambio" step="0.01" oninput="runSensitivityAnalysis()">
+                            <input type="number" id="simTaxaCambio" step="0.01" placeholder="Ex: 5.40">
                         </div>
                         <div class="grid-item">
                             <label for="simTotalFreteME" data-translate-key="labelSimFreteME">Simular Frete Intl. ($):</label>
-                            <input type="number" id="simTotalFreteME" step="0.01" oninput="runSensitivityAnalysis()">
+                            <input type="number" id="simTotalFreteME" step="0.01" placeholder="Ex: 1200.00">
+                        </div>
+                        <div class="grid-item">
+                             <button type="button" id="runSimulationBtn" class="main-calculate-button" style="padding: 10px 18px; font-size: 1em; width: 100%;">
+                                <i class="fas fa-play"></i> Simular Novo Lucro
+                             </button>
                         </div>
                         <div class="grid-item">
                             <strong data-translate-key="labelSimNovoLucro">Novo Lucro Total (R$):</strong>
-                            <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em;"></span>
+                            <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em; transition: color 0.3s ease;"></span>
                         </div>
                     </div>
                 </section>
+                <!-- FIM DA SEÇÃO CORRIGIDA -->
+
 
                 <section aria-labelledby="headingDistribuicaoCusto" class="cost-distribution-section">
                     <h3 id="headingDistribuicaoCusto" data-translate-key="headingDistribuicaoCusto">Distribuição Percentual Estimada do Custo Total Geral (Líquido de Créditos):</h3>
@@ -1661,6 +1674,7 @@
         geId('appContainer').addEventListener('input', saveState);
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         geId('idiomaSelect').addEventListener('change', (e) => applyTranslations(e.target.value));
+        geId('runSimulationBtn')?.addEventListener('click', runSensitivityAnalysis); // Conecta o botão novo
 
         
         updateCotacaoButtonLabel();
@@ -2049,26 +2063,23 @@
             const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const participacaoPesoUnitItem = item.percRateioPesoUnit.toFixed(2) + '%';
+            
+            // Colunas da tabela de resultados detalhados
+            const vendaMinima = item.custoUnitarioItem / (1 - (0 / 100)); // Simulação com 0% de margem
 
             row.innerHTML = `
-                <td>${item.index + 1}</td> <td>${item.codInterno || ''}</td> <td>${item.descricao || ''}</td> <td>${item.ncm || ''}</td>
-                <td>${item.quantidade || 0}</td> <td>${(item.pesoUnitKG || 0).toFixed(3)}</td> <td>${(item.pesoTotalKG || 0).toFixed(3)}</td>
-                <td>${participacaoPesoUnitItem}</td> <td>${formatBRL(item.freteExibicaoPorPesoUnitarioBRL)}</td>
-                <td>${formatCurrency(item.precoCustoUnitME, moedaLabel)}</td> <td>${formatCurrency(item.precoCustoTotalME, moedaLabel)}</td>
-                <td>${formatBRL(fobUnitarioBRL)}</td> <td>${formatBRL(item.fobBRL_item)}</td> <td>${item.fobPercent.toFixed(2).replace('.',',')}%</td>
-                <td>${formatBRL(seguroRateadoBRL)}</td> <td>${formatBRL(outrasDespesasRateadasBRL)}</td> <td>${formatBRL(item.CIF_Total_BRL)}</td>
-                <td>${formatBRL(item.valorII)}</td> <td>${formatBRL(item.valorTotalNF_BRL)}</td> <td>${formatBRL(item.valorUnitarioNF_BRL)}</td>
-                <td>${formatBRL(item.ipi_pago)}</td> <td>${formatBRL(item.ipi_creditado)}</td> <td>${formatBRL(item.ipi_efetivo)}</td>
-                <td>${formatBRL(item.taxaSiscomexRateada_BRL_item)}</td> <td>${formatBRL(item.pis_pago)}</td> <td>${formatBRL(item.pis_creditado)}</td>
-                <td>${formatBRL(item.pis_efetivo)}</td> <td>${formatBRL(item.cofins_pago)}</td> <td>${formatBRL(item.cofins_creditado)}</td>
-                <td>${formatBRL(item.cofins_efetivo)}</td> <td>${formatBRL(item.baseCalcICMS_item)}</td> <td>${formatBRL(item.icms_pago)}</td>
-                <td>${formatBRL(item.icms_creditado)}</td> <td>${formatBRL(item.icms_efetivo)}</td> <td>${formatBRL(item.valorAFRMM)}</td>
-                <td>${formatBRL(item.despesasAduaneirasBRL_item)}</td> <td>${formatBRL(item.freteNacionalBRL_item)}</td>
-                <td>${formatBRL(item.custoTotalComTodosImpostos_BRL)}</td> <td>${formatBRL(item.custoUnitarioComTodosImpostos_BRL)}</td>
-                <td>${formatBRL(item.somaImpostosQueCreditam_BRL)}</td> <td>${formatBRL(item.somaImpostosComCreditos_BRL)}</td>
-                <td>${formatBRL(totalImpostosEfetivosItemComII)}</td> <td>${formatBRL(item.custoUnitarioItem)}</td>
-                <td>${formatBRL(item.custoTotalLinha)}</td> <td>${formatBRL(item.valorVendaUnitBR)}</td> <td>${formatBRL(item.precoVendaTotalBrasil)}</td>
-                <td>${formatBRL(lucroUnitarioRS)}</td> <td>${formatBRL(lucroTotalLinhaRS)}</td> <td ${lucroCellStyle}>${lucroDisplay}</td>
+                <td>${item.index + 1}</td>
+                <td>${item.codInterno || ''}</td>
+                <td>${item.descricao || ''}</td>
+                <td>${formatBRL(item.custoUnitarioItem)}</td>
+                <td>${formatBRL(item.valorVendaUnitBR)}</td>
+                <td>${formatBRL(vendaMinima)}</td>
+                <td>${formatBRL(lucroUnitarioRS)}</td>
+                <td ${lucroCellStyle}>${lucroDisplay}</td>
+                <td>${item.quantidade.toLocaleString('pt-BR')}</td>
+                <td>${formatBRL(item.custoTotalLinha)}</td>
+                <td>${formatBRL(item.precoVendaTotalBrasil)}</td>
+                <td>${formatBRL(lucroTotalLinhaRS)}</td>
             `;
         });
     }
@@ -2557,9 +2568,9 @@
         geId('shareImageModal').style.display = 'none';
     });
     geId('shareImageModal')?.addEventListener('click', (event) => {
-         if (event.target === geId('shareImageModal')) {
-            geId('shareImageModal').style.display = 'none';
-         }
+       if (event.target === geId('shareImageModal')) {
+          geId('shareImageModal').style.display = 'none';
+       }
     });
 
     // --- DRAG AND DROP ---
@@ -2597,8 +2608,8 @@
         tbody.addEventListener('drop', (e) => {
              e.preventDefault();
              if(draggedRow){
-                renumerarLinhas();
-                saveState();
+                 renumerarLinhas();
+                 saveState();
              }
         });
     }
@@ -2797,7 +2808,7 @@
     }
 
 
-    // --- Tornar funções globalmente acessíveis ---
+    // --- FUNÇÕES GLOBAIS ---
     window.calcularCustosMultiItem = calcularCustosMultiItem;
     window.gerarPDF = gerarPDF;
     window.exportTableToCSV = exportTableToCSV;
@@ -2812,9 +2823,98 @@
     window.carregarImpostosPadrao = carregarImpostosPadrao;
     window.renderizarGraficoCustos = renderizarGraficoCustos;
     window.applyTranslations = applyTranslations;
-    window.runSensitivityAnalysis = function() {}; // Definir a função globalmente
+    
+    // --- LÓGICA DA ANÁLISE DE SENSIBILIDADE ---
+    window.runSensitivityAnalysis = function() {
+        if (!latestCalculationResults) {
+            showToast('Por favor, execute o cálculo principal primeiro para poder simular.', 'warning');
+            return;
+        }
+
+        const { items: originalItems, valorTotalVendaBrasil } = latestCalculationResults;
+
+        const taxaCambioOriginal = TxtToNum('taxaCambio');
+        const freteMEOriginal = TxtToNum('totalFreteME');
+
+        const simTaxaCambioInput = geId('simTaxaCambio');
+        const simFreteMEInput = geId('simTotalFreteME');
+
+        const taxaCambio = TxtToNum(simTaxaCambioInput.value, false) || taxaCambioOriginal;
+        const totalFreteME_global = TxtToNum(simFreteMEInput.value, false) || freteMEOriginal;
+
+        const totalSeguroME_global = TxtToNum('totalSeguroME');
+        const totalOutrasDespesasME_global = TxtToNum('totalOutrasDespesasME');
+        const taxaSiscomexBRL_global = TxtToNum('taxaSiscomexBRL');
+        const despesasAduaneirasBRL_global = TxtToNum('despesasAduaneirasBRL');
+        const freteNacionalBRL_global = TxtToNum('freteNacionalBRL');
+        const aliqAFRMM_global_dec = TxtToNum('aliquotaAFRMM') / 100;
+
+        const percCreditoPIS_dec = geId('percCreditoPIS').disabled ? 0 : TxtToNum('percCreditoPIS') / 100;
+        const percCreditoCOFINS_dec = geId('percCreditoCOFINS').disabled ? 0 : TxtToNum('percCreditoCOFINS') / 100;
+        const percCreditoIPI_dec = geId('percCreditoIPI').disabled ? 0 : TxtToNum('percCreditoIPI') / 100;
+        const percCreditoICMS_dec = geId('percCreditoICMS').disabled ? 0 : TxtToNum('percCreditoICMS') / 100;
+
+        try {
+            let valorFOBTotalME = 0;
+            let pesoTotalEmbarqueKG = 0;
+            originalItems.forEach(item => {
+                 valorFOBTotalME += item.precoCustoTotalME;
+                 pesoTotalEmbarqueKG += item.pesoTotalKG;
+            });
+
+            let totalImpostosEfetivosSimulado = 0;
+            let CIF_Total_BRL_acumulado_simulado = 0;
+
+            originalItems.forEach(item => {
+                const fobPercent = (valorFOBTotalME > 0) ? (item.precoCustoTotalME / valorFOBTotalME * 100) : 0;
+                
+                const fobBRL_item_sim = item.precoCustoTotalME * taxaCambio;
+                const freteBRL_item_sim = (totalFreteME_global * taxaCambio) * (fobPercent / 100);
+                const seguroBRL_item_sim = (totalSeguroME_global * taxaCambio) * (fobPercent / 100);
+                const outrasDespesasBRL_item_sim = (totalOutrasDespesasME_global * taxaCambio) * (fobPercent / 100);
+
+                const CIF_Total_BRL_sim = fobBRL_item_sim + freteBRL_item_sim + seguroBRL_item_sim + outrasDespesasBRL_item_sim;
+                CIF_Total_BRL_acumulado_simulado += CIF_Total_BRL_sim;
+
+                const valorII_sim = CIF_Total_BRL_sim * item.aliqII;
+
+                const baseIPI_sim = CIF_Total_BRL_sim + valorII_sim;
+                const ipi_pago_sim = baseIPI_sim * item.aliqIPI;
+                const ipi_efetivo_sim = ipi_pago_sim * (1 - percCreditoIPI_dec);
+
+                const pis_pago_sim = CIF_Total_BRL_sim * item.aliqPIS;
+                const pis_efetivo_sim = pis_pago_sim * (1 - percCreditoPIS_dec);
+
+                const cofins_pago_sim = CIF_Total_BRL_sim * item.aliqCOFINS;
+                const cofins_efetivo_sim = cofins_pago_sim * (1 - percCreditoCOFINS_dec);
+                
+                const taxaSiscomexRateada_BRL_item_sim = taxaSiscomexBRL_global * (fobPercent / 100);
+
+                const baseCalcICMS_sim = (CIF_Total_BRL_sim + valorII_sim + ipi_pago_sim + pis_pago_sim + cofins_pago_sim + taxaSiscomexRateada_BRL_item_sim) / (1 - item.aliqICMS);
+                const icms_pago_sim = baseCalcICMS_sim * item.aliqICMS;
+                const icms_efetivo_sim = icms_pago_sim * (1 - percCreditoICMS_dec);
+
+                const valorAFRMM_sim = freteBRL_item_sim * aliqAFRMM_global_dec;
+
+                totalImpostosEfetivosSimulado += valorII_sim + ipi_efetivo_sim + pis_efetivo_sim + cofins_efetivo_sim + icms_efetivo_sim + valorAFRMM_sim + taxaSiscomexRateada_BRL_item_sim;
+            });
+
+            const totalGeralSimulado = CIF_Total_BRL_acumulado_simulado + totalImpostosEfetivosSimulado + despesasAduaneirasBRL_global + freteNacionalBRL_global;
+            const novoLucro = valorTotalVendaBrasil - totalGeralSimulado;
+
+            const simNovoLucroElem = geId('simNovoLucro');
+            simNovoLucroElem.textContent = formatBRL(novoLucro);
+            simNovoLucroElem.classList.remove('profit-positive', 'profit-negative');
+            simNovoLucroElem.classList.add(novoLucro >= 0 ? 'profit-positive' : 'profit-negative');
+
+        } catch (e) {
+            console.error("Erro na análise de sensibilidade:", e);
+            showToast("Ocorreu um erro ao simular.", "error");
+        }
+    };
 
 })();
 </script>
 </body>
 </html>
+
