@@ -1077,10 +1077,6 @@
                             <input type="number" id="simTotalFreteME" step="0.01" oninput="runSensitivityAnalysis()">
                         </div>
                         <div class="grid-item">
-                            <label for="simII" data-translate-key="labelSimII">Simular Alíquota II (%):</label>
-                            <input type="number" id="simII" step="0.01" oninput="runSensitivityAnalysis()">
-                        </div>
-                        <div class="grid-item">
                             <strong data-translate-key="labelSimNovoLucro">Novo Lucro Total (R$):</strong>
                             <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em;"></span>
                         </div>
@@ -2076,15 +2072,19 @@
             const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const participacaoPesoUnitItem = item.percRateioPesoUnit.toFixed(2) + '%';
+            const vendaMinima = item.custoUnitarioItem / (1 - (0 / 100)); // Supondo 0% de margem para o ponto de equilíbrio
 
             row.innerHTML = `
                 <td>${item.index + 1}</td> <td>${item.codInterno || ''}</td> <td>${item.descricao || ''}</td>
-                <td>${item.quantidade || 0}</td>
                 <td>${formatBRL(item.custoUnitarioItem)}</td>
                 <td>${formatBRL(item.valorVendaUnitBR)}</td>
-                <td>${formatBRL(item.custoUnitarioItem)}</td>
+                <td>${formatBRL(vendaMinima)}</td>
                 <td>${formatBRL(lucroUnitarioRS)}</td>
                 <td ${lucroCellStyle}>${lucroDisplay}</td>
+                <td>${item.quantidade || 0}</td>
+                <td>${formatBRL(item.custoTotalLinha)}</td>
+                <td>${formatBRL(item.precoVendaTotalBrasil)}</td>
+                <td>${formatBRL(lucroTotalLinhaRS)}</td>
             `;
         });
     }
