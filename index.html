@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v30.4</title>
+    <title>Ferramenta de Calculo de Importação v30.5</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -215,7 +215,10 @@
         }
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
         .grid-item label {
-            display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;
+            display: inline-flex; 
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px; font-weight: 500; font-size: 14px;
             color: var(--theme-text-secondary);
         }
         .grid-item input[type="text"], .grid-item input[type="number"], .grid-item input[type="date"], .grid-item select, .grid-item textarea {
@@ -519,6 +522,18 @@
         }
         #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
         #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td { border-bottom: none; }
+        
+        #itemInputTable tr.dragging {
+            opacity: 0.5;
+            background: var(--theme-accent-blue);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            width: 20px;
+            text-align: center;
+            color: var(--theme-text-secondary);
+        }
 
         #itemInputTable td input[type="text"], #itemInputTable td input[type="number"] {
             width: 100%; padding: 8px 10px; font-size: 13px;
@@ -532,21 +547,21 @@
             background-color: var(--input-focus-bg); outline: none;
         }
         
-        #itemInputTable th:nth-child(2), #itemInputTable td:nth-child(2) { min-width: 180px; }
-        #itemInputTable td:nth-child(2) input[type="text"] { width: 100%; }
-
-        #itemInputTable th:nth-child(3), #itemInputTable td:nth-child(3) { min-width: 100px; }
+        #itemInputTable th:nth-child(3), #itemInputTable td:nth-child(3) { min-width: 180px; }
         #itemInputTable td:nth-child(3) input[type="text"] { width: 100%; }
 
-        #itemInputTable th:nth-child(4), #itemInputTable td:nth-child(4) { min-width: 90px; }
+        #itemInputTable th:nth-child(4), #itemInputTable td:nth-child(4) { min-width: 100px; }
         #itemInputTable td:nth-child(4) input[type="text"] { width: 100%; }
 
-        #itemInputTable td:nth-child(5) input[type="number"],
-        #itemInputTable td:nth-child(8) input[type="number"],
+        #itemInputTable th:nth-child(5), #itemInputTable td:nth-child(5) { min-width: 90px; }
+        #itemInputTable td:nth-child(5) input[type="text"] { width: 100%; }
+
+        #itemInputTable td:nth-child(6) input[type="number"],
         #itemInputTable td:nth-child(9) input[type="number"],
         #itemInputTable td:nth-child(10) input[type="number"],
         #itemInputTable td:nth-child(11) input[type="number"],
-        #itemInputTable td:nth-child(12) input[type="number"]
+        #itemInputTable td:nth-child(12) input[type="number"],
+        #itemInputTable td:nth-child(13) input[type="number"]
         {
             min-width: 80px;
         }
@@ -668,6 +683,53 @@
         #shareImageModalContent button.close-modal-btn { background-color: var(--theme-accent-red); color: white; border: none; }
         #shareImageModalContent a.whatsapp-link-btn { background-color: var(--theme-accent-green); color: white; border: none; }
 
+        /* Tooltip Styles */
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .tooltip-icon {
+            margin-left: 4px;
+            color: var(--theme-text-secondary);
+            cursor: help;
+            font-size: 0.9em;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--theme-bg-secondary);
+            color: var(--theme-text-primary);
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1010;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--theme-border-primary);
+            box-shadow: 0 2px 8px var(--theme-shadow-color);
+            font-size: 0.85em;
+            font-weight: 400;
+        }
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--theme-border-primary) transparent transparent transparent;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -679,7 +741,7 @@
             <img src="https://placehold.co/100x30/FFFFFF/000000?text=VEXOS&font=Inter" alt="Logo VEXOS" id="appLogo"
                  onerror="this.onerror=null; this.src='https://placehold.co/100x30/E9ECEF/495057?text=Logo+Vexos+01.png&font=Inter';">
         </div>
-        <h1>Ferramenta de Calculo de Importação <span id="saveStatus"></span><span id="appVersion" style="font-size: 0.5em; color: var(--theme-text-secondary);"></span></h1>
+        <h1><span data-translate-key="mainTitle">Ferramenta de Calculo de Importação</span> <span id="saveStatus"></span><span id="appVersion" style="font-size: 0.5em; color: var(--theme-text-secondary);"></span></h1>
         <div class="header-buttons">
             <button id="settingsBtn" aria-label="Abrir Configurações">
                 <i class="fas fa-cog" aria-hidden="true"></i>
@@ -694,14 +756,14 @@
 
     <main class="container" id="appContainer">
         <nav role="tablist" aria-label="Navegação da Calculadora">
-            <button type="button" id="tabEntradaBtn" role="tab" aria-controls="telaEntradaPanel" aria-selected="true" onclick="showScreen('telaEntradaPanel')" data-translate-key="tabEntrada">
-                <i class="fas fa-keyboard" aria-hidden="true"></i> <span class="tab-text">1. Entrada de Dados</span>
+            <button type="button" id="tabEntradaBtn" role="tab" aria-controls="telaEntradaPanel" aria-selected="true" onclick="showScreen('telaEntradaPanel')">
+                <i class="fas fa-keyboard" aria-hidden="true"></i> <span class="tab-text" data-translate-key="tabEntrada">1. Entrada de Dados</span>
             </button>
-            <button type="button" id="tabResultadosBtn" role="tab" aria-controls="telaResultadosPanel" aria-selected="false" onclick="showScreen('telaResultadosPanel')" data-translate-key="tabResultados">
-                <i class="fas fa-table-list" aria-hidden="true"></i> <span class="tab-text">2. Resultados Detalhados</span>
+            <button type="button" id="tabResultadosBtn" role="tab" aria-controls="telaResultadosPanel" aria-selected="false" onclick="showScreen('telaResultadosPanel')">
+                <i class="fas fa-table-list" aria-hidden="true"></i> <span class="tab-text" data-translate-key="tabResultados">2. Resultados Detalhados</span>
             </button>
-            <button type="button" id="tabDashboardBtn" role="tab" aria-controls="telaDashboardPanel" aria-selected="false" onclick="showScreen('telaDashboardPanel')" data-translate-key="tabDashboard">
-                <i class="fas fa-chart-pie" aria-hidden="true"></i> <span class="tab-text">3. Dashboard e Resumo</span>
+            <button type="button" id="tabDashboardBtn" role="tab" aria-controls="telaDashboardPanel" aria-selected="false" onclick="showScreen('telaDashboardPanel')">
+                <i class="fas fa-chart-pie" aria-hidden="true"></i> <span class="tab-text" data-translate-key="tabDashboard">3. Dashboard e Resumo</span>
             </button>
         </nav>
 
@@ -757,19 +819,11 @@
 
                 <section aria-labelledby="headingRegimeTributario">
                     <div class="grid-container">
-                        <div class="grid-item">
-                            <label for="regimeTributario" data-translate-key="labelRegimeTributario">Regime Tributário Federal:</label>
-                            <select id="regimeTributario" onchange="handleRegimeChange()">
-                                <option value="Lucro Real" selected>Lucro Real</option>
-                                <option value="Lucro Presumido">Lucro Presumido</option>
-                                <option value="Simples Nacional">Simples Nacional</option>
-                            </select>
-                            <small class="field-description" data-translate-key="descRegimeTributario">Define sugestões para os créditos abaixo.</small>
-                        </div>
-                        <div class="grid-item"><label for="percCreditoPIS" data-translate-key="labelPercCreditoPIS">% Crédito PIS:</label><input type="number" id="percCreditoPIS" step="0.01" value="100.00"><small class="field-description" data-translate-key="descPercCreditoPIS">Sugestão: L.Real = 100%; L.Presumido/Simples = 0%.</small></div>
-                        <div class="grid-item"><label for="percCreditoCOFINS" data-translate-key="labelPercCreditoCOFINS">% Crédito COFINS:</label><input type="number" id="percCreditoCOFINS" step="0.01" value="100.00"><small class="field-description" data-translate-key="descPercCreditoCOFINS">Sugestão: L.Real = 100%; L.Presumido/Simples = 0%.</small></div>
-                        <div class="grid-item"><label for="percCreditoIPI" data-translate-key="labelPercCreditoIPI">% Crédito IPI:</label><input type="number" id="percCreditoIPI" step="0.01" value="100.00"><small class="field-description" data-translate-key="descPercCreditoIPI">Sugestão: L.Real (Indústria) = 100%; Outros = 0%.</small></div>
-                        <div class="grid-item"><label for="percCreditoICMS" data-translate-key="labelPercCreditoICMS">% Crédito ICMS:</label><input type="number" id="percCreditoICMS" step="0.01" value="100"><small class="field-description" data-translate-key="descPercCreditoICMS">Sugestão: 100% para L.Real/Presumido. Ajuste conforme TTD. Simples = 0%.</small></div>
+                        <div class="grid-item"><label for="regimeTributario"><span data-translate-key="labelRegimeTributario">Regime Tributário Federal:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipRegimeTributario">Define o regime de tributação da empresa, impactando os créditos fiscais. Lucro Real permite mais créditos, enquanto Simples Nacional não permite.</span></span></label><select id="regimeTributario" onchange="handleRegimeChange()"><option value="Lucro Real" selected>Lucro Real</option><option value="Lucro Presumido">Lucro Presumido</option><option value="Simples Nacional">Simples Nacional</option></select></div>
+                        <div class="grid-item"><label for="percCreditoPIS"><span data-translate-key="labelPercCreditoPIS">% Crédito PIS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoPIS">Percentual de crédito de PIS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.</span></span></label><input type="number" id="percCreditoPIS" step="0.01" value="100.00"></div>
+                        <div class="grid-item"><label for="percCreditoCOFINS"><span data-translate-key="labelPercCreditoCOFINS">% Crédito COFINS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoCOFINS">Percentual de crédito de COFINS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.</span></span></label><input type="number" id="percCreditoCOFINS" step="0.01" value="100.00"></div>
+                        <div class="grid-item"><label for="percCreditoIPI"><span data-translate-key="labelPercCreditoIPI">% Crédito IPI:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoIPI">Percentual de crédito de IPI. Geralmente 100% para indústrias no Lucro Real e 0% para os demais.</span></span></label><input type="number" id="percCreditoIPI" step="0.01" value="100.00"></div>
+                        <div class="grid-item"><label for="percCreditoICMS"><span data-translate-key="labelPercCreditoICMS">% Crédito ICMS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoICMS">Percentual de crédito de ICMS. Varia conforme o estado e benefícios fiscais (TTD).</span></span></label><input type="number" id="percCreditoICMS" step="0.01" value="100"></div>
                     </div>
                 </section>
                 <div class="section-separator section-separator-custosGlobais" data-translate-key="sepCustosGlobais"></div>
@@ -792,7 +846,7 @@
                         </div>
                         <div class="grid-item"><label for="despesasAduaneirasBRL" data-translate-key="labelDespesasAduaneirasBRL">Desp. Aduaneiras TOTAIS (BRL):</label><input type="number" id="despesasAduaneirasBRL" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descDespesasAduaneirasBRL">Ex: Despachante, Armazenagem, LI.</small></div>
                         <div class="grid-item"><label for="freteNacionalBRL" data-translate-key="labelFreteNacionalBRL">Frete Nacional TOTAL (BRL):</label><input type="number" id="freteNacionalBRL" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descFreteNacionalBRL">Transporte no Brasil até destino final.</small></div>
-                        <div class="grid-item"><label for="aliquotaAFRMM" data-translate-key="labelAliquotaAFRMM">Alíquota AFRMM Global (%):</label><input type="number" id="aliquotaAFRMM" step="0.01" placeholder="0.00"><small class="field-description" data-translate-key="descAliquotaAFRMM">Padrão 25% para Longo Curso. Ajuste se Cabotagem (10%).</small></div>
+                        <div class="grid-item"><label for="aliquotaAFRMM"><span data-translate-key="labelAliquotaAFRMM">Alíquota AFRMM Global (%):</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipAFRMM">Adicional ao Frete para a Renovação da Marinha Mercante. Padrão 8% para transporte marítimo. Zerar para outros modais.</span></span></label><input type="number" id="aliquotaAFRMM" step="0.01" placeholder="0.00"></div>
                     </div>
                 </section>
                 <section aria-labelledby="headingObservacoesGerais" style="margin-top: 20px;">
@@ -811,6 +865,7 @@
                     <table id="itemInputTable" class="item-table-input" aria-labelledby="headingItensEmbarque">
                         <thead>
                             <tr>
+                                <th style="width: 20px;"></th>
                                 <th scope="col">#</th>
                                 <th scope="col" data-translate-key="thDescricao">Descrição</th>
                                 <th scope="col" data-translate-key="thCodInterno">Cód. Interno</th>
@@ -834,7 +889,7 @@
                 </div>
                 <div style="text-align: right; margin-top: 15px;">
                     <button type="button" id="adicionarItemBtn" class="main-calculate-button" style="font-size: 14px; padding: 8px 15px; background-color: var(--theme-accent-green);">
-                        <i class="fas fa-plus"></i> Adicionar Novo Item
+                        <i class="fas fa-plus"></i> <span data-translate-key="btnAdicionarItem">Adicionar Novo Item</span>
                     </button>
                 </div>
             </section>
@@ -1139,6 +1194,7 @@
     let custoTotalChartInstance = null;
     let saveTimeout;
     let latestCalculationResults = null;
+    let draggedRow = null;
 
     function geId(id) { return document.getElementById(id); }
 
@@ -1222,9 +1278,9 @@
 
         const itemInputTableHead = geId('itemInputTable')?.querySelector('thead');
         if (itemInputTableHead) {
-            const thCustoUnit = itemInputTableHead.querySelector('th:nth-child(6)');
+            const thCustoUnit = itemInputTableHead.querySelector('th:nth-child(7)');
             if(thCustoUnit) thCustoUnit.innerText = `Pr. Custo Unit. ${currencySymbol}`;
-            const thCustoTotal = itemInputTableHead.querySelector('th:nth-child(14)');
+            const thCustoTotal = itemInputTableHead.querySelector('th:nth-child(15)');
             if(thCustoTotal) thCustoTotal.innerText = `Pr. Custo Total ${currencySymbol}`;
         }
         const itemResultTableHead = geId('itemResultTable')?.querySelector('thead');
@@ -1285,6 +1341,7 @@
     function createItemInputRow(index, itemData = null) {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const row = tbody.insertRow();
+        row.draggable = true;
         
         const defaultRowData = {
               desc: "", codInterno: "", ncm: "", qtd: "", precoCustoUnitME: "", pesoUnitKG: "",
@@ -1293,6 +1350,7 @@
         const data = itemData || defaultRowData;
 
         row.innerHTML = `
+            <td class="drag-handle" title="Arraste para reordenar"><i class="fas fa-grip-vertical"></i></td>
             <td>${index + 1}</td>
             <td><label class="sr-only" for="descItem${index}">Descrição do Item ${index + 1}</label><input type="text" id="descItem${index}" value="${data.desc}" placeholder="Descrição do Produto"></td>
             <td><label class="sr-only" for="codInternoItem${index}">Código Interno do Item ${index + 1}</label><input type="text" id="codInternoItem${index}" value="${data.codInterno}" placeholder="Cód."></td>
@@ -1358,7 +1416,7 @@
         const rows = tbody.rows;
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
-            row.cells[0].textContent = i + 1;
+            row.cells[1].textContent = i + 1; // Cell 0 is now the drag handle
             
             row.querySelectorAll('input, label, span.error-message').forEach(elem => {
                 if (elem.id) {
@@ -1450,7 +1508,8 @@
         try {
             const data = {
                 global: {},
-                items: []
+                items: [],
+                lang: geId('idiomaSelect').value
             };
 
             const globalFields = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo', 'moedaEstrangeira', 'taxaCambio', 'incoterm', 'modalidadeTransporte', 'regimeTributario', 'percCreditoPIS', 'percCreditoCOFINS', 'percCreditoIPI', 'percCreditoICMS', 'totalFreteME', 'totalSeguroME', 'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais'];
@@ -1496,11 +1555,16 @@
         try {
             const savedData = localStorage.getItem('importCalculatorData');
             if (!savedData) {
-                limparTodosOsCampos(false); // Inicializa com padrões, mas não limpa o armazenamento
+                limparTodosOsCampos(false); 
                 return;
             }
 
             const data = JSON.parse(savedData);
+            
+            if (data.lang) {
+                geId('idiomaSelect').value = data.lang;
+                applyTranslations(data.lang);
+            }
 
             if (data.global) {
                 for (const id in data.global) {
@@ -1518,7 +1582,7 @@
                     createItemInputRow(index, item);
                 });
             } else {
-                 createItemInputRow(0); // Garante pelo menos uma linha se os dados salvos estiverem vazios
+                 createItemInputRow(0); 
             }
             
             handleRegimeChange();
@@ -1527,7 +1591,7 @@
             console.log("Estado carregado do localStorage.");
         } catch (e) {
             console.error("Erro ao carregar o estado:", e);
-            limparTodosOsCampos(true); // Limpa tudo em caso de erro
+            limparTodosOsCampos(true); 
         }
     }
 
@@ -1562,13 +1626,9 @@
             }
         };
     
-        // Validar campos globais
         ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo'].forEach(id => checkField(id, false));
-    
-        // Validar campos de moeda e custo
         ['taxaCambio', 'totalFreteME', 'taxaSiscomexBRL'].forEach(id => checkField(id, true));
     
-        // Validar linhas da tabela de itens
         const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
         let hasAtLeastOneItem = false;
         for (let i = 0; i < itemRows.length; i++) {
@@ -1601,9 +1661,12 @@
         
         geId('appContainer').addEventListener('input', saveState);
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
+        geId('idiomaSelect').addEventListener('change', (e) => applyTranslations(e.target.value));
+
         
         updateCotacaoButtonLabel();
         handleRegimeChange();
+        setupDragAndDrop();
         
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const settingsBtn = document.getElementById('settingsBtn');
@@ -1899,7 +1962,10 @@
     }
 
     function limparTodosOsCampos(clearStorage = true) {
-        if (clearStorage && !confirm("Tem certeza que deseja limpar todos os campos? Esta ação não pode ser desfeita.")) {
+        const lang = geId('idiomaSelect').value;
+        const confirmMsg = translations[lang].confirmLimparCampos;
+
+        if (clearStorage && !confirm(confirmMsg)) {
             return; // O usuário cancelou
         }
         
@@ -2497,6 +2563,261 @@
          }
     });
 
+    // --- DRAG AND DROP ---
+    function setupDragAndDrop() {
+        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+
+        tbody.addEventListener('dragstart', (e) => {
+            draggedRow = e.target.closest('tr');
+            if(draggedRow){
+                setTimeout(() => {
+                    draggedRow.classList.add('dragging');
+                }, 0);
+            }
+        });
+
+        tbody.addEventListener('dragend', (e) => {
+            if(draggedRow) {
+                draggedRow.classList.remove('dragging');
+                draggedRow = null;
+            }
+        });
+
+        tbody.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(tbody, e.clientY);
+            if (draggedRow) {
+                if (afterElement == null) {
+                    tbody.appendChild(draggedRow);
+                } else {
+                    tbody.insertBefore(draggedRow, afterElement);
+                }
+            }
+        });
+        
+        tbody.addEventListener('drop', (e) => {
+             e.preventDefault();
+             if(draggedRow){
+                renumerarLinhas();
+                saveState();
+             }
+        });
+    }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('tr:not(.dragging)')];
+
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+
+    // --- TRANSLATION ---
+    const translations = {
+        "pt-BR": {
+            mainTitle: "Ferramenta de Calculo de Importação",
+            tabEntrada: "1. Entrada de Dados",
+            tabResultados: "2. Resultados Detalhados",
+            tabDashboard: "3. Dashboard e Resumo",
+            headingDadosGlobais: "Dados Globais do Embarque",
+            sepInfoOrganizacionais: "Informações Organizacionais",
+            labelNomeUsuario: "Nome do Usuário:",
+            descNomeUsuario: "Nome do responsável pelo cálculo.",
+            labelNomeFornecedor: "Nome do Fornecedor:",
+            descNomeFornecedor: "Fornecedor dos produtos.",
+            labelRefInterna: "Referência Interna / Ordem Compra:",
+            descRefInterna: "Código/nome para seu controle interno ou OC.",
+            labelNumeroPI: "Número da PI (Proforma):",
+            descNumeroPI: "Número da Fatura Proforma.",
+            labelDiProcesso: "Número da DI/Processo:",
+            descDiProcesso: "Identificador da DI ou do processo.",
+            labelDataCalculo: "Data do Cálculo/Embarque:",
+            descDataCalculo: "Data relevante para este cálculo.",
+            sepDetalhesComerciais: "Detalhes Comerciais e Logísticos",
+            labelMoedaEstrangeira: "Moeda Estrangeira Ativa:",
+            descMoedaEstrangeira: "Ex: USD, EUR, CNY. Define a moeda para os custos e cotação.",
+            labelTaxaCambio: "Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):",
+            descTaxaCambio: "Insira manualmente ou use os botões abaixo.",
+            labelIncoterm: "INCOTERM:",
+            descIncoterm: "Ex: FOB, CIF. Define responsabilidades.",
+            labelModalidadeTransporte: "Modalidade de Transporte:",
+            descModalidadeTransporte: "Ex: Marítimo, Aéreo.",
+            sepRegimeTributario: "Regime Tributário e Créditos",
+            labelRegimeTributario: "Regime Tributário Federal:",
+            tooltipRegimeTributario: "Define o regime de tributação da empresa, impactando os créditos fiscais. Lucro Real permite mais créditos, enquanto Simples Nacional não permite.",
+            labelPercCreditoPIS: "% Crédito PIS:",
+            tooltipCreditoPIS: "Percentual de crédito de PIS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.",
+            labelPercCreditoCOFINS: "% Crédito COFINS:",
+            tooltipCreditoCOFINS: "Percentual de crédito de COFINS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.",
+            labelPercCreditoIPI: "% Crédito IPI:",
+            tooltipCreditoIPI: "Percentual de crédito de IPI. Geralmente 100% para indústrias no Lucro Real e 0% para os demais.",
+            labelPercCreditoICMS: "% Crédito ICMS:",
+            tooltipCreditoICMS: "Percentual de crédito de ICMS. Varia conforme o estado e benefícios fiscais (TTD).",
+            sepCustosGlobais: "Custos Globais (Rateados entre os itens)",
+            labelTotalFreteME: "Frete Int. TOTAL ($):",
+            descTotalFreteME: "Frete principal em Moeda Estrangeira.",
+            labelTotalSeguroME: "Seguro Int. TOTAL ($):",
+            descTotalSeguroME: "Seguro da carga em Moeda Estrangeira.",
+            labelTotalOutrasDespesasME: "Outras Desp. Origem TOTAIS ($):",
+            descTotalOutrasDespesasME: "Ex: THC origem, docs, frete interno origem.",
+            labelTaxaSiscomexBRL: "Taxa Siscomex TOTAL (BRL):",
+            descTaxaSiscomexBRL: "Taxa de uso do Siscomex.",
+            labelDespesasAduaneirasBRL: "Desp. Aduaneiras TOTAIS (BRL):",
+            descDespesasAduaneirasBRL: "Ex: Despachante, Armazenagem, LI.",
+            labelFreteNacionalBRL: "Frete Nacional TOTAL (BRL):",
+            descFreteNacionalBRL: "Transporte no Brasil até destino final.",
+            labelAliquotaAFRMM: "Alíquota AFRMM Global (%):",
+            tooltipAFRMM: "Adicional ao Frete para a Renovação da Marinha Mercante. Padrão 8% para transporte marítimo. Zerar para outros modais.",
+            headingObservacoesGerais: "Observações Gerais",
+            descObservacoesGerais: "Este campo é para suas anotações e não afeta os cálculos.",
+            headingItensEmbarque: "Itens do Embarque",
+            noteItensEmbarque: `Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.`,
+            btnAdicionarItem: "Adicionar Novo Item",
+            btnCalcular: "Calcular Custos, Lucro e Indicadores",
+            btnLimparCampos: "Limpar Todos os Campos",
+            confirmLimparCampos: "Tem certeza que deseja limpar todos os campos? Esta ação não pode ser desfeita.",
+            modalConfigTitle: "Configurações",
+            modalIdiomaTitle: "Idioma",
+            modalIdiomaLabel: "Selecionar Idioma:",
+            modalIdiomaDesc: "Define o idioma da interface.",
+            modalLucroTitle: "Configurações de Margem de Lucro (%)",
+            modalLucroAltoLabel: "Mín. Lucro Alto (Verde):",
+            modalLucroAltoDesc: "Margem mínima para cor verde (lucro alto).",
+            modalLucroMedioLabel: "Mín. Lucro Médio (Amarelo):",
+            modalLucroMedioDesc: "Margem mínima para cor amarela (lucro médio).",
+            modalLucroBaixoLabel: "Mín. Lucro Baixo (Laranja):",
+            modalLucroBaixoDesc: "Margem mínima para cor laranja (lucro baixo). Abaixo disso será vermelho.",
+            modalBtnSalvar: "Salvar e Fechar",
+            btnGerarPDF: "Gerar PDF",
+            btnExportarCSV: "Exportar CSV"
+        },
+        "en-US": {
+            mainTitle: "Import Cost Calculator",
+            tabEntrada: "1. Data Entry",
+            tabResultados: "2. Detailed Results",
+            tabDashboard: "3. Dashboard & Summary",
+            headingDadosGlobais: "Global Shipment Data",
+            sepInfoOrganizacionais: "Organizational Information",
+            labelNomeUsuario: "User Name:",
+            descNomeUsuario: "Name of the person responsible for the calculation.",
+            labelNomeFornecedor: "Supplier Name:",
+            descNomeFornecedor: "Supplier of the products.",
+            labelRefInterna: "Internal Ref. / PO Number:",
+            descRefInterna: "Your internal control code/name or PO.",
+            labelNumeroPI: "Proforma Invoice (PI) Number:",
+            descNumeroPI: "Number of the Proforma Invoice.",
+            labelDiProcesso: "DI/Process Number:",
+            descDiProcesso: "Identifier of the DI or process.",
+            labelDataCalculo: "Calculation/Shipment Date:",
+            descDataCalculo: "Relevant date for this calculation.",
+            sepDetalhesComerciais: "Commercial and Logistics Details",
+            labelMoedaEstrangeira: "Active Foreign Currency:",
+            descMoedaEstrangeira: "e.g., USD, EUR, CNY. Defines the currency for costs and exchange rate.",
+            labelTaxaCambio: "Exchange Rate (BRL per 1 Unit of Active Currency):",
+            descTaxaCambio: "Enter manually or use the buttons below.",
+            labelIncoterm: "INCOTERM:",
+            descIncoterm: "e.g., FOB, CIF. Defines responsibilities.",
+            labelModalidadeTransporte: "Transport Mode:",
+            descModalidadeTransporte: "e.g., Maritime, Air.",
+            sepRegimeTributario: "Tax Regime and Credits",
+            labelRegimeTributario: "Federal Tax Regime:",
+            tooltipRegimeTributario: "Defines the company's tax regime, impacting tax credits. 'Lucro Real' allows more credits, while 'Simples Nacional' does not.",
+            labelPercCreditoPIS: "% PIS Credit:",
+            tooltipCreditoPIS: "Percentage of PIS credit to be used. Usually 100% for 'Lucro Real' and 0% for others.",
+            labelPercCreditoCOFINS: "% COFINS Credit:",
+            tooltipCreditoCOFINS: "Percentage of COFINS credit to be used. Usually 100% for 'Lucro Real' and 0% for others.",
+            labelPercCreditoIPI: "% IPI Credit:",
+            tooltipCreditoIPI: "Percentage of IPI credit. Usually 100% for industries under 'Lucro Real' and 0% for others.",
+            labelPercCreditoICMS: "% ICMS Credit:",
+            tooltipCreditoICMS: "Percentage of ICMS credit. Varies by state and tax benefits (TTD).",
+            sepCustosGlobais: "Global Costs (Prorated among items)",
+            labelTotalFreteME: "TOTAL Int. Freight ($):",
+            descTotalFreteME: "Main freight in Foreign Currency.",
+            labelTotalSeguroME: "TOTAL Int. Insurance ($):",
+            descTotalSeguroME: "Cargo insurance in Foreign Currency.",
+            labelTotalOutrasDespesasME: "TOTAL Other Origin Expenses ($):",
+            descTotalOutrasDespesasME: "e.g., THC at origin, docs, domestic freight at origin.",
+            labelTaxaSiscomexBRL: "TOTAL Siscomex Fee (BRL):",
+            descTaxaSiscomexBRL: "Fee for using the Siscomex system.",
+            labelDespesasAduaneirasBRL: "TOTAL Customs Expenses (BRL):",
+            descDespesasAduaneirasBRL: "e.g., Customs broker, Storage, LI.",
+            labelFreteNacionalBRL: "TOTAL Domestic Freight (BRL):",
+            descFreteNacionalBRL: "Transport in Brazil to the final destination.",
+            labelAliquotaAFRMM: "Global AFRMM Rate (%):",
+            tooltipAFRMM: "Additional Freight for the Renewal of the Merchant Marine. Standard is 8% for maritime transport. Set to zero for other modes.",
+            headingObservacoesGerais: "General Remarks",
+            descObservacoesGerais: "This field is for your notes and does not affect calculations.",
+            headingItensEmbarque: "Shipment Items",
+            noteItensEmbarque: `Enter the rates for each item (e.g., 10 for 10%). Weight is for informational purposes. "Pr. Venda Unit. R$ Brasil" is the unit sale price.`,
+            btnAdicionarItem: "Add New Item",
+            btnCalcular: "Calculate Costs, Profit, and KPIs",
+            btnLimparCampos: "Clear All Fields",
+            confirmLimparCampos: "Are you sure you want to clear all fields? This action cannot be undone.",
+            modalConfigTitle: "Settings",
+            modalIdiomaTitle: "Language",
+            modalIdiomaLabel: "Select Language:",
+            modalIdiomaDesc: "Defines the interface language.",
+            modalLucroTitle: "Profit Margin Settings (%)",
+            modalLucroAltoLabel: "Min. High Profit (Green):",
+            modalLucroAltoDesc: "Minimum margin for green color (high profit).",
+            modalLucroMedioLabel: "Min. Medium Profit (Yellow):",
+            modalLucroMedioDesc: "Minimum margin for yellow color (medium profit).",
+            modalLucroBaixoLabel: "Min. Low Profit (Orange):",
+            modalLucroBaixoDesc: "Minimum margin for orange color (low profit). Below this will be red.",
+            modalBtnSalvar: "Save and Close",
+            btnGerarPDF: "Generate PDF",
+            btnExportarCSV: "Export CSV"
+        }
+    };
+
+    function applyTranslations(lang) {
+        if (!translations[lang]) return;
+        
+        document.querySelectorAll('[data-translate-key]').forEach(elem => {
+            const key = elem.getAttribute('data-translate-key');
+            if (translations[lang][key]) {
+                // Handle different element types
+                if (elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA') {
+                    if (elem.placeholder) {
+                        elem.placeholder = translations[lang][key];
+                    }
+                } else if (elem.classList.contains('tooltip-text')){
+                     elem.textContent = translations[lang][key];
+                } 
+                else {
+                    // This handles most text elements like span, h1, h2, button, p, etc.
+                    const targetSpan = elem.querySelector('.tab-text') || elem;
+                    // Check if the element contains a tooltip, to avoid overwriting it
+                    const childNodes = Array.from(targetSpan.childNodes);
+                    const textNode = childNodes.find(node => node.nodeType === Node.TEXT_NODE);
+                    
+                    if (textNode) {
+                         textNode.nodeValue = translations[lang][key] + ' ';
+                    } else if (targetSpan.children.length === 0 || !targetSpan.querySelector('.tooltip-container')) {
+                        targetSpan.textContent = translations[lang][key];
+                    } else {
+                        // If it's a label with a tooltip, find the first text node to update
+                        const firstNode = targetSpan.childNodes[0];
+                        if (firstNode && firstNode.nodeType === Node.TEXT_NODE) {
+                            firstNode.nodeValue = translations[lang][key];
+                        }
+                    }
+                }
+            }
+        });
+
+        document.documentElement.lang = lang;
+        saveState();
+    }
+
+
     // --- Tornar funções globalmente acessíveis ---
     window.calcularCustosMultiItem = calcularCustosMultiItem;
     window.gerarPDF = gerarPDF;
@@ -2511,6 +2832,7 @@
     window.removerLinhaItem = removerLinhaItem;
     window.carregarImpostosPadrao = carregarImpostosPadrao;
     window.renderizarGraficoCustos = renderizarGraficoCustos;
+    window.applyTranslations = applyTranslations;
 
 })();
 </script>
