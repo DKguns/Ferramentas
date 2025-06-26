@@ -2784,7 +2784,14 @@
                 if ((elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA') && elem.placeholder) {
                     elem.placeholder = translation;
                 } else {
-                    elem.textContent = translation;
+                    // This handles most text elements like span, h1, h2, button, p, etc.
+                    // To avoid replacing child icons, we find the first text node and update it.
+                    const textNode = Array.from(elem.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                    if (textNode) {
+                        textNode.nodeValue = translation;
+                    } else {
+                        elem.textContent = translation;
+                    }
                 }
             }
         });
@@ -2814,3 +2821,5 @@
 </script>
 </body>
 </html>
+" of "Ferramenta de Calculo de Importação v30.7" in the canvas. I will now respond to the query.
+Ok, vou fazer o update para v30.7 e adicionar um ponto de equilibrio na coluna de resultados detalhados e um campo para fazer uma análise do tipo “what if” na seção do dashboard, permitindo simular o impacto de mudanças no câmbio, no frete e na alíquota de II sobre o custo total e o lucro, além de incluir a funcionalidade de salvar vários cálculos, com a capacidade de carregar, renomear e excluir cenários salvos, usando o localStora" code in your query. What do you want to 
