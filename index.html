@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V41.2</title>
+    <title>Ferramenta de Calculo de Importação V42.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -735,7 +735,6 @@
     </style>
 </head>
 <body>
-    <!-- Container para as notificações (toasts) -->
     <div id="toast-container"></div>
 
     <header class="app-header">
@@ -1234,6 +1233,7 @@
     </div>
 
 <script>
+// IIFE para garantir que o script rode após o carregamento do DOM e evite poluir o escopo global
 document.addEventListener('DOMContentLoaded', function() {
     
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
@@ -1925,11 +1925,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.custoTotalLinha = item.CIF_Total_BRL + item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.valorAFRMM + item.taxaSiscomexRateada_BRL_item + item.despesasAduaneirasBRL_item + item.icms_efetivo + item.freteNacionalBRL_item;
                 item.custoUnitarioItem = item.quantidade > 0 ? item.custoTotalLinha / item.quantidade : 0;
                 
-                if (item.valorVendaUnitBR > 0 && item.custoUnitarioItem > 0) {
+                if (item.valorVendaUnitBR > 0) {
                     item.lucroPercentualUnitario = ((item.valorVendaUnitBR - item.custoUnitarioItem) / item.valorVendaUnitBR) * 100;
-                } else if (item.valorVendaUnitBR > 0 && item.custoUnitarioItem <= 0) {
-                    item.lucroPercentualUnitario = 100;
-                } else { item.lucroPercentualUnitario = null; }
+                } else {
+                    item.lucroPercentualUnitario = null;
+                }
                 
                 acc.fob_BRL += item.fobBRL_item;
                 acc.frete_BRL += item.freteExibicaoPorPesoUnitarioBRL;
@@ -1980,7 +1980,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const lang = geId('idiomaSelect').value;
             const confirmMsg = translations[lang].confirmLimparCampos;
             if (!confirm(confirmMsg)) {
-                return; // O usuário cancelou
+                return;
             }
         }
         
@@ -2036,7 +2036,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const resultTbody = geId('itemResultTable')?.getElementsByTagName('tbody')[0];
         if (!resultTbody) { console.error("tbody não encontrado para itemResultTable"); return; }
         resultTbody.innerHTML = '';
-    
+        
         items.forEach(item => {
             const row = resultTbody.insertRow();
             let lucroCellStyle = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin);
@@ -2290,7 +2290,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // --- FUNÇÕES DE EXPORTAÇÃO E COMPARTILHAMENTO ---
     function gerarPDF() {
         if (!latestCalculationResults) {
             showToast('Calcule primeiro para gerar o PDF.', 'warning');
@@ -2554,377 +2553,59 @@ document.addEventListener('DOMContentLoaded', function() {
             showToast('Falha ao gerar a imagem do dashboard.', 'error');
         });
     }
-
-    geId('closeShareModalBtn')?.addEventListener('click', () => {
-        geId('shareImageModal').style.display = 'none';
-    });
-    geId('shareImageModal')?.addEventListener('click', (event) => {
-         if (event.target === geId('shareImageModal')) {
-            geId('shareImageModal').style.display = 'none';
-         }
-    });
-
-    // --- DRAG AND DROP ---
-    function setupDragAndDrop() {
-        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
-
-        tbody.addEventListener('dragstart', (e) => {
-            draggedRow = e.target.closest('tr');
-            if(draggedRow){
-                setTimeout(() => {
-                    draggedRow.classList.add('dragging');
-                }, 0);
-            }
-        });
-
-        tbody.addEventListener('dragend', (e) => {
-            if(draggedRow) {
-                draggedRow.classList.remove('dragging');
-                draggedRow = null;
-            }
-        });
-
-        tbody.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(tbody, e.clientY);
-            if (draggedRow) {
-                if (afterElement == null) {
-                    tbody.appendChild(draggedRow);
-                } else {
-                    tbody.insertBefore(draggedRow, afterElement);
-                }
-            }
-        });
-        
-        tbody.addEventListener('drop', (e) => {
-             e.preventDefault();
-             if(draggedRow){
-                renumerarLinhas();
-                saveState();
-             }
-        });
-    }
-
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('tr:not(.dragging)')];
-
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-
-    // --- TRANSLATION ---
-    const translations = {
-        "pt-BR": {
-            mainTitle: "Ferramenta de Calculo de Importação",
-            tabEntrada: "1. Entrada de Dados",
-            tabResultados: "2. Resultados Detalhados",
-            tabDashboard: "3. Dashboard e Resumo",
-            headingDadosGlobais: "Dados Globais do Embarque",
-            sepInfoOrganizacionais: "Informações Organizacionais",
-            labelNomeUsuario: "Nome do Usuário:",
-            descNomeUsuario: "Nome do responsável pelo cálculo.",
-            labelNomeFornecedor: "Nome do Fornecedor:",
-            descNomeFornecedor: "Fornecedor dos produtos.",
-            labelRefInterna: "Referência Interna / Ordem Compra:",
-            descRefInterna: "Código/nome para seu controle interno ou OC.",
-            labelNumeroPI: "Número da PI (Proforma):",
-            descNumeroPI: "Número da Fatura Proforma.",
-            labelDiProcesso: "Número da DI/Processo:",
-            descDiProcesso: "Identificador da DI ou do processo.",
-            labelDataCalculo: "Data do Cálculo/Embarque:",
-            descDataCalculo: "Data relevante para este cálculo.",
-            sepDetalhesComerciais: "Detalhes Comerciais e Logísticos",
-            labelMoedaEstrangeira: "Moeda Estrangeira Ativa:",
-            descMoedaEstrangeira: "Ex: USD, EUR, CNY. Define a moeda para os custos e cotação.",
-            labelTaxaCambio: "Taxa de Câmbio (BRL por 1 Unid. Moeda Ativa):",
-            descTaxaCambio: "Insira manualmente ou use os botões abaixo.",
-            labelIncoterm: "INCOTERM:",
-            descIncoterm: "Ex: FOB, CIF. Define responsabilidades.",
-            labelModalidadeTransporte: "Modalidade de Transporte:",
-            descModalidadeTransporte: "Ex: Marítimo, Aéreo.",
-            sepRegimeTributario: "Regime Tributário e Créditos",
-            labelRegimeTributario: "Regime Tributário Federal:",
-            tooltipRegimeTributario: "Define o regime de tributação da empresa, impactando os créditos fiscais. Lucro Real permite mais créditos, enquanto Simples Nacional não permite.",
-            labelPercCreditoPIS: "% Crédito PIS:",
-            tooltipCreditoPIS: "Percentual de crédito de PIS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.",
-            labelPercCreditoCOFINS: "% Crédito COFINS:",
-            tooltipCreditoCOFINS: "Percentual de crédito de COFINS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.",
-            labelPercCreditoIPI: "% Crédito IPI:",
-            tooltipCreditoIPI: "Percentual de crédito de IPI. Geralmente 100% para indústrias no Lucro Real e 0% para os demais.",
-            labelPercCreditoICMS: "% Crédito ICMS:",
-            tooltipCreditoICMS: "Percentual de crédito de ICMS. Varia conforme o estado e benefícios fiscais (TTD).",
-            sepCustosGlobais: "Custos Globais (Rateados entre os itens)",
-            labelTotalFreteME: "Frete Int. TOTAL ($):",
-            descTotalFreteME: "Frete principal em Moeda Estrangeira.",
-            labelTotalSeguroME: "Seguro Int. TOTAL ($):",
-            descTotalSeguroME: "Seguro da carga em Moeda Estrangeira.",
-            labelTotalOutrasDespesasME: "Outras Desp. Origem TOTAIS ($):",
-            descTotalOutrasDespesasME: "Ex: THC origem, docs, frete interno origem.",
-            labelTaxaSiscomexBRL: "Taxa Siscomex TOTAL (BRL):",
-            descTaxaSiscomexBRL: "Taxa de uso do Siscomex.",
-            labelDespesasAduaneirasBRL: "Desp. Aduaneiras TOTAIS (BRL):",
-            descDespesasAduaneirasBRL: "Ex: Despachante, Armazenagem, LI.",
-            labelFreteNacionalBRL: "Frete Nacional TOTAL (BRL):",
-            descFreteNacionalBRL: "Transporte no Brasil até destino final.",
-            labelAliquotaAFRMM: "Alíquota AFRMM Global (%):",
-            tooltipAFRMM: "Adicional ao Frete para a Renovação da Marinha Mercante. Padrão 8% para transporte marítimo. Zerar para outros modais.",
-            headingObservacoesGerais: "Observações Gerais",
-            descObservacoesGerais: "Este campo é para suas anotações e não afeta os cálculos.",
-            headingItensEmbarque: "Itens do Embarque",
-            noteItensEmbarque: `Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.`,
-            btnAdicionarItem: "Adicionar Novo Item",
-            btnCalcular: "Calcular Custos, Lucro e Indicadores",
-            btnLimparCampos: "Limpar Todos os Campos",
-            confirmLimparCampos: "Tem certeza que deseja limpar todos os campos? Esta ação não pode ser desfeita.",
-            modalConfigTitle: "Configurações",
-            modalIdiomaTitle: "Idioma",
-            modalIdiomaLabel: "Selecionar Idioma:",
-            modalIdiomaDesc: "Define o idioma da interface.",
-            modalLucroTitle: "Configurações de Margem de Lucro (%)",
-            modalLucroAltoLabel: "Mín. Lucro Alto (Verde):",
-            modalLucroAltoDesc: "Margem mínima para cor verde (lucro alto).",
-            modalLucroMedioLabel: "Mín. Lucro Médio (Amarelo):",
-            modalLucroMedioDesc: "Margem mínima para cor amarela (lucro médio).",
-            modalLucroBaixoLabel: "Mín. Lucro Baixo (Laranja):",
-            modalLucroBaixoDesc: "Margem mínima para cor laranja (lucro baixo). Abaixo disso será vermelho.",
-            modalBtnSalvar: "Salvar e Fechar",
-            btnGerarPDF: "Gerar PDF",
-            btnExportarCSV: "Exportar CSV"
-        },
-        "en-US": {
-            mainTitle: "Import Cost Calculator",
-            tabEntrada: "1. Data Entry",
-            tabResultados: "2. Detailed Results",
-            tabDashboard: "3. Dashboard & Summary",
-            headingDadosGlobais: "Global Shipment Data",
-            sepInfoOrganizacionais: "Organizational Information",
-            labelNomeUsuario: "User Name:",
-            descNomeUsuario: "Name of the person responsible for the calculation.",
-            labelNomeFornecedor: "Supplier Name:",
-            descNomeFornecedor: "Supplier of the products.",
-            labelRefInterna: "Internal Ref. / PO Number:",
-            descRefInterna: "Your internal control code/name or PO.",
-            labelNumeroPI: "Proforma Invoice (PI) Number:",
-            descNumeroPI: "Number of the Proforma Invoice.",
-            labelDiProcesso: "DI/Process Number:",
-            descDiProcesso: "Identifier of the DI or process.",
-            labelDataCalculo: "Calculation/Shipment Date:",
-            descDataCalculo: "Relevant date for this calculation.",
-            sepDetalhesComerciais: "Commercial and Logistics Details",
-            labelMoedaEstrangeira: "Active Foreign Currency:",
-            descMoedaEstrangeira: "e.g., USD, EUR, CNY. Defines the currency for costs and exchange rate.",
-            labelTaxaCambio: "Exchange Rate (BRL per 1 Unit of Active Currency):",
-            descTaxaCambio: "Enter manually or use the buttons below.",
-            labelIncoterm: "INCOTERM:",
-            descIncoterm: "e.g., FOB, CIF. Defines responsibilities.",
-            labelModalidadeTransporte: "Transport Mode:",
-            descModalidadeTransporte: "e.g., Maritime, Air.",
-            sepRegimeTributario: "Tax Regime and Credits",
-            labelRegimeTributario: "Federal Tax Regime:",
-            tooltipRegimeTributario: "Defines the company's tax regime, impacting tax credits. 'Lucro Real' allows more credits, while 'Simples Nacional' does not.",
-            labelPercCreditoPIS: "% PIS Credit:",
-            tooltipCreditoPIS: "Percentage of PIS credit to be used. Usually 100% for 'Lucro Real' and 0% for others.",
-            labelPercCreditoCOFINS: "% COFINS Credit:",
-            tooltipCreditoCOFINS: "Percentage of COFINS credit to be used. Usually 100% for 'Lucro Real' and 0% for others.",
-            labelPercCreditoIPI: "% IPI Credit:",
-            tooltipCreditoIPI: "Percentage of IPI credit. Usually 100% for industries under 'Lucro Real' and 0% for others.",
-            labelPercCreditoICMS: "% ICMS Credit:",
-            tooltipCreditoICMS: "Percentage of ICMS credit. Varies by state and tax benefits (TTD).",
-            sepCustosGlobais: "Global Costs (Prorated among items)",
-            labelTotalFreteME: "TOTAL Int. Freight ($):",
-            descTotalFreteME: "Main freight in Foreign Currency.",
-            labelTotalSeguroME: "TOTAL Int. Insurance ($):",
-            descTotalSeguroME: "Cargo insurance in Foreign Currency.",
-            labelTotalOutrasDespesasME: "TOTAL Other Origin Expenses ($):",
-            descTotalOutrasDespesasME: "e.g., THC at origin, docs, domestic freight at origin.",
-            labelTaxaSiscomexBRL: "TOTAL Siscomex Fee (BRL):",
-            descTaxaSiscomexBRL: "Fee for using the Siscomex system.",
-            labelDespesasAduaneirasBRL: "TOTAL Customs Expenses (BRL):",
-            descDespesasAduaneirasBRL: "e.g., Customs broker, Storage, LI.",
-            labelFreteNacionalBRL: "TOTAL Domestic Freight (BRL):",
-            descFreteNacionalBRL: "Transport in Brazil to the final destination.",
-            labelAliquotaAFRMM: "Global AFRMM Rate (%):",
-            tooltipAFRMM: "Additional Freight for the Renewal of the Merchant Marine. Standard is 8% for maritime transport. Set to zero for other modes.",
-            headingObservacoesGerais: "General Remarks",
-            descObservacoesGerais: "This field is for your notes and does not affect calculations.",
-            headingItensEmbarque: "Shipment Items",
-            noteItensEmbarque: `Enter the rates for each item (e.g., 10 for 10%). Weight is for informational purposes. "Pr. Venda Unit. R$ Brasil" is the unit sale price.`,
-            btnAdicionarItem: "Add New Item",
-            btnCalcular: "Calculate Costs, Profit, and KPIs",
-            btnLimparCampos: "Clear All Fields",
-            confirmLimparCampos: "Are you sure you want to clear all fields? This action cannot be undone.",
-            modalConfigTitle: "Settings",
-            modalIdiomaTitle: "Language",
-            modalIdiomaLabel: "Select Language:",
-            modalIdiomaDesc: "Defines the interface language.",
-            modalLucroTitle: "Profit Margin Settings (%)",
-            modalLucroAltoLabel: "Min. High Profit (Green):",
-            modalLucroAltoDesc: "Minimum margin for green color (high profit).",
-            modalLucroMedioLabel: "Min. Medium Profit (Yellow):",
-            modalLucroMedioDesc: "Minimum margin for yellow color (medium profit).",
-            modalLucroBaixoLabel: "Min. Low Profit (Orange):",
-            modalLucroBaixoDesc: "Minimum margin for orange color (low profit). Below this will be red.",
-            modalBtnSalvar: "Save and Close",
-            btnGerarPDF: "Generate PDF",
-            btnExportarCSV: "Exportar CSV"
-        }
-    };
-
-    function applyTranslations(lang) {
-        if (!translations[lang]) return;
-        
-        document.querySelectorAll('[data-translate-key]').forEach(elem => {
-            const key = elem.getAttribute('data-translate-key');
-            const translation = translations[lang][key];
-
-            if (translation !== undefined) {
-                if ((elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA') && elem.placeholder) {
-                    elem.placeholder = translation;
-                } else {
-                    elem.textContent = translation;
-                }
-            }
-        });
-
-        document.documentElement.lang = lang;
-        saveState();
-    }
-    
-    // --- LÓGICA DA ANÁLISE DE SENSIBILIDADE (CORRIGIDA) ---
-    function runSensitivityAnalysis() {
-        if (!latestCalculationResults) {
-            showToast('Por favor, execute o cálculo principal primeiro para poder simular.', 'warning');
-            return;
-        }
-
-        const { items: originalItems, valorTotalVendaBrasil, acc } = latestCalculationResults;
-        const taxaCambioOriginal = TxtToNum('taxaCambio');
-        const freteMEOriginal = TxtToNum('totalFreteME');
-
-        const simTaxaCambioInput = geId('simTaxaCambio');
-        const simFreteMEInput = geId('simTotalFreteME');
-
-        const taxaCambio = TxtToNum(simTaxaCambioInput.value, false) || taxaCambioOriginal;
-        const totalFreteME_global = TxtToNum(simFreteMEInput.value, false) || freteMEOriginal;
-
-        const totalSeguroME_global = TxtToNum('totalSeguroME');
-        const totalOutrasDespesasME_global = TxtToNum('totalOutrasDespesasME');
-        const taxaSiscomexBRL_global = TxtToNum('taxaSiscomexBRL');
-        const despesasAduaneirasBRL_global = TxtToNum('despesasAduaneirasBRL');
-        const freteNacionalBRL_global = TxtToNum('freteNacionalBRL');
-        const aliqAFRMM_global_dec = TxtToNum('aliquotaAFRMM') / 100;
-
-        const percCreditoPIS_dec = geId('percCreditoPIS').disabled ? 0 : TxtToNum('percCreditoPIS') / 100;
-        const percCreditoCOFINS_dec = geId('percCreditoCOFINS').disabled ? 0 : TxtToNum('percCreditoCOFINS') / 100;
-        const percCreditoIPI_dec = geId('percCreditoIPI').disabled ? 0 : TxtToNum('percCreditoIPI') / 100;
-        const percCreditoICMS_dec = geId('percCreditoICMS').disabled ? 0 : TxtToNum('percCreditoICMS') / 100;
-
-        try {
-            let valorFOBTotalME = 0;
-            originalItems.forEach(item => { valorFOBTotalME += item.precoCustoTotalME; });
-            
-            let custoTotalGeralSimulado = 0;
-            
-            originalItems.forEach(item => {
-                const fobPercent = (valorFOBTotalME > 0) ? (item.precoCustoTotalME / valorFOBTotalME) : (1 / originalItems.length);
-                const pesoPercent = (acc.totalPesoKG > 0) ? (item.pesoTotalKG / acc.totalPesoKG) : (1 / originalItems.length);
-
-                const fobBRL_item_sim = item.precoCustoTotalME * taxaCambio;
-                const freteBRL_item_sim = (totalFreteME_global * taxaCambio) * fobPercent;
-                const seguroBRL_item_sim = (totalSeguroME_global * taxaCambio) * fobPercent;
-                const outrasDespesasBRL_item_sim = (totalOutrasDespesasME_global * taxaCambio) * fobPercent;
-                const taxaSiscomexRateada_BRL_item_sim = taxaSiscomexBRL_global * fobPercent;
-                
-                const despesasAduaneirasBRL_item_sim = despesasAduaneirasBRL_global * pesoPercent;
-                const freteNacionalBRL_item_sim = freteNacionalBRL_global * pesoPercent;
-                
-                const CIF_Total_BRL_sim = fobBRL_item_sim + freteBRL_item_sim + seguroBRL_item_sim + outrasDespesasBRL_item_sim;
-                
-                const valorII_sim = CIF_Total_BRL_sim * item.aliqII;
-                
-                const baseIPI_sim = CIF_Total_BRL_sim + valorII_sim;
-                const ipi_pago_sim = baseIPI_sim * item.aliqIPI;
-                const ipi_efetivo_sim = ipi_pago_sim * (1 - percCreditoIPI_dec);
-                
-                const pis_pago_sim = CIF_Total_BRL_sim * item.aliqPIS;
-                const pis_efetivo_sim = pis_pago_sim * (1 - percCreditoPIS_dec);
-                
-                const cofins_pago_sim = CIF_Total_BRL_sim * item.aliqCOFINS;
-                const cofins_efetivo_sim = cofins_pago_sim * (1 - percCreditoCOFINS_dec);
-                
-                const valorAFRMM_sim = freteBRL_item_sim * aliqAFRMM_global_dec;
-
-                const baseCalcICMS_sim = (CIF_Total_BRL_sim + valorII_sim + ipi_pago_sim + pis_pago_sim + cofins_pago_sim + taxaSiscomexRateada_BRL_item_sim) / (1 - item.aliqICMS);
-                const icms_pago_sim = baseCalcICMS_sim * item.aliqICMS;
-                const icms_efetivo_sim = icms_pago_sim * (1 - percCreditoICMS_dec);
-
-                const custoItemSimulado = CIF_Total_BRL_sim + valorII_sim + ipi_efetivo_sim + pis_efetivo_sim + cofins_efetivo_sim + icms_efetivo_sim + valorAFRMM_sim + taxaSiscomexRateada_BRL_item_sim + despesasAduaneirasBRL_item_sim + freteNacionalBRL_item_sim;
-                custoTotalGeralSimulado += custoItemSimulado;
-            });
-
-            const novoLucro = valorTotalVendaBrasil - custoTotalGeralSimulado;
-
-            const simNovoLucroElem = geId('simNovoLucro');
-            simNovoLucroElem.textContent = formatBRL(novoLucro);
-            simNovoLucroElem.classList.remove('profit-positive', 'profit-negative');
-            simNovoLucroElem.classList.add(novoLucro >= 0 ? 'profit-positive' : 'profit-negative');
-
-        } catch (e) {
-            console.error("Erro na análise de sensibilidade:", e);
-            showToast("Ocorreu um erro ao simular.", "error");
-        }
-    }
     
     // --- SETUP DE EVENTOS ---
     function setupEventListeners() {
-        // Abas de navegação
         geId('tabEntradaBtn').addEventListener('click', () => showScreen('telaEntradaPanel'));
         geId('tabResultadosBtn').addEventListener('click', () => showScreen('telaResultadosPanel'));
         geId('tabDashboardBtn').addEventListener('click', () => showScreen('telaDashboardPanel'));
 
-        // Botões principais
         geId('calculateCostsBtn').addEventListener('click', calcularCustosMultiItem);
         geId('clearFieldsBtn').addEventListener('click', () => limparTodosOsCampos(true));
         
-        // Botões de cotação
         geId('btnUSD').addEventListener('click', () => fetchCotacaoMoeda('USD'));
         geId('btnEUR').addEventListener('click', () => fetchCotacaoMoeda('EUR'));
         geId('btnCNY').addEventListener('click', () => fetchCotacaoMoeda('CNY'));
         
-        // Modal de configurações
         geId('settingsBtn').addEventListener('click', () => geId('settingsModal').classList.add('active'));
         geId('closeSettingsModalBtn').addEventListener('click', () => geId('settingsModal').classList.remove('active'));
         geId('saveSettingsBtn').addEventListener('click', () => geId('settingsModal').classList.remove('active'));
 
-        // Gestão de Cálculos Salvos
         geId('saveCalculationBtn').addEventListener('click', saveCurrentCalculation);
         geId('loadCalculationBtn').addEventListener('click', loadSelectedCalculation);
         geId('deleteCalculationBtn').addEventListener('click', deleteSelectedCalculation);
         
-        // Botões do Dashboard
         geId('generatePdfBtn').addEventListener('click', gerarPDF);
         geId('exportCsvBtn').addEventListener('click', () => exportTableToCSV('resultados_importacao.csv'));
         geId('shareWppBtn').addEventListener('click', shareDashboardViaWhatsApp);
         
-        // Análise de Sensibilidade
         geId('runSimulationBtn').addEventListener('click', runSensitivityAnalysis);
 
-        // Outros
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         geId('moedaEstrangeira').addEventListener('input', updateCotacaoButtonLabel);
         geId('regimeTributario').addEventListener('change', handleRegimeChange);
+        
+        geId('appContainer').addEventListener('input', saveState);
+
+        const themeToggleBtn = geId('themeToggleBtn');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                let newTheme = document.body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark';
+                applyTheme(newTheme, true);
+            });
+        }
+
+        geId('closeShareModalBtn')?.addEventListener('click', () => {
+            geId('shareImageModal').style.display = 'none';
+        });
+        geId('shareImageModal')?.addEventListener('click', (event) => {
+             if (event.target === geId('shareImageModal')) {
+                geId('shareImageModal').style.display = 'none';
+             }
+        });
     }
     
     // --- INICIALIZAÇÃO ---
-    // A inicialização principal agora é chamada quando o DOM está pronto.
     loadState();
     populateSavedCalculationsDropdown();
     setupEventListeners();
@@ -2959,12 +2640,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-            let newTheme = body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark';
-            applyTheme(newTheme, true);
-        });
-    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (!localStorage.getItem('theme_manually_set')) {
+            const newColorScheme = event.matches ? "theme-dark" : "theme-light";
+            applyTheme(newColorScheme);
+        }
+    });
     
     const appVersionElem = geId('appVersion');
     if (appVersionElem) {
@@ -2979,7 +2660,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showScreen('telaEntradaPanel');
 
-})();
+});
 </script>
 </body>
 </html>
