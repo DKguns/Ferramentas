@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v31.3</title>
+    <title>Ferramenta de Calculo de Importação V41.2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -735,6 +735,7 @@
     </style>
 </head>
 <body>
+    <!-- Container para as notificações (toasts) -->
     <div id="toast-container"></div>
 
     <header class="app-header">
@@ -757,13 +758,13 @@
 
     <main class="container" id="appContainer">
         <nav role="tablist" aria-label="Navegação da Calculadora">
-            <button type="button" id="tabEntradaBtn" role="tab" aria-controls="telaEntradaPanel" aria-selected="true" onclick="showScreen('telaEntradaPanel')">
+            <button type="button" id="tabEntradaBtn" role="tab" aria-controls="telaEntradaPanel" aria-selected="true">
                 <i class="fas fa-keyboard" aria-hidden="true"></i> <span class="tab-text" data-translate-key="tabEntrada">1. Entrada de Dados</span>
             </button>
-            <button type="button" id="tabResultadosBtn" role="tab" aria-controls="telaResultadosPanel" aria-selected="false" onclick="showScreen('telaResultadosPanel')">
+            <button type="button" id="tabResultadosBtn" role="tab" aria-controls="telaResultadosPanel" aria-selected="false">
                 <i class="fas fa-table-list" aria-hidden="true"></i> <span class="tab-text" data-translate-key="tabResultados">2. Resultados Detalhados</span>
             </button>
-            <button type="button" id="tabDashboardBtn" role="tab" aria-controls="telaDashboardPanel" aria-selected="false" onclick="showScreen('telaDashboardPanel')">
+            <button type="button" id="tabDashboardBtn" role="tab" aria-controls="telaDashboardPanel" aria-selected="false">
                 <i class="fas fa-chart-pie" aria-hidden="true"></i> <span class="tab-text" data-translate-key="tabDashboard">3. Dashboard e Resumo</span>
             </button>
         </nav>
@@ -789,7 +790,7 @@
                     <div class="grid-container">
                         <div class="grid-item">
                             <label for="moedaEstrangeira" data-translate-key="labelMoedaEstrangeira">Moeda Estrangeira Ativa:</label>
-                            <input type="text" id="moedaEstrangeira" value="USD" oninput="updateCotacaoButtonLabel()">
+                            <input type="text" id="moedaEstrangeira" value="USD">
                             <small class="field-description" data-translate-key="descMoedaEstrangeira">Ex: USD, EUR, CNY. Define a moeda para os custos e cotação.</small>
                         </div>
                         <div class="grid-item">
@@ -798,9 +799,9 @@
                             <span class="error-message" id="taxaCambioError">Campo obrigatório</span>
                             <small class="field-description" data-translate-key="descTaxaCambio">Insira manualmente ou use os botões abaixo.</small>
                             <div class="currency-buttons-group">
-                                <button type="button" onclick="fetchCotacaoMoeda('USD')"><span class="button-text">USD-BRL</span><span class="spinner"></span></button>
-                                <button type="button" onclick="fetchCotacaoMoeda('EUR')"><span class="button-text">EUR-BRL</span><span class="spinner"></span></button>
-                                <button type="button" onclick="fetchCotacaoMoeda('CNY')"><span class="button-text">CNY-BRL</span><span class="spinner"></span></button>
+                                <button type="button" id="btnUSD"><span class="button-text">USD-BRL</span><span class="spinner"></span></button>
+                                <button type="button" id="btnEUR"><span class="button-text">EUR-BRL</span><span class="spinner"></span></button>
+                                <button type="button" id="btnCNY"><span class="button-text">CNY-BRL</span><span class="spinner"></span></button>
                             </div>
                             <output id="cotacaoInfo" aria-live="polite"></output>
                         </div>
@@ -820,7 +821,7 @@
 
                 <section aria-labelledby="headingRegimeTributario">
                     <div class="grid-container">
-                        <div class="grid-item"><label for="regimeTributario"><span data-translate-key="labelRegimeTributario">Regime Tributário Federal:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipRegimeTributario">Define o regime de tributação da empresa, impactando os créditos fiscais. Lucro Real permite mais créditos, enquanto Simples Nacional não permite.</span></span></label><select id="regimeTributario" onchange="handleRegimeChange()"><option value="Lucro Real" selected>Lucro Real</option><option value="Lucro Presumido">Lucro Presumido</option><option value="Simples Nacional">Simples Nacional</option></select></div>
+                        <div class="grid-item"><label for="regimeTributario"><span data-translate-key="labelRegimeTributario">Regime Tributário Federal:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipRegimeTributario">Define o regime de tributação da empresa, impactando os créditos fiscais. Lucro Real permite mais créditos, enquanto Simples Nacional não permite.</span></span></label><select id="regimeTributario"><option value="Lucro Real" selected>Lucro Real</option><option value="Lucro Presumido">Lucro Presumido</option><option value="Simples Nacional">Simples Nacional</option></select></div>
                         <div class="grid-item"><label for="percCreditoPIS"><span data-translate-key="labelPercCreditoPIS">% Crédito PIS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoPIS">Percentual de crédito de PIS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.</span></span></label><input type="number" id="percCreditoPIS" step="0.01" value="100.00"></div>
                         <div class="grid-item"><label for="percCreditoCOFINS"><span data-translate-key="labelPercCreditoCOFINS">% Crédito COFINS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoCOFINS">Percentual de crédito de COFINS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.</span></span></label><input type="number" id="percCreditoCOFINS" step="0.01" value="100.00"></div>
                         <div class="grid-item"><label for="percCreditoIPI"><span data-translate-key="labelPercCreditoIPI">% Crédito IPI:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoIPI">Percentual de crédito de IPI. Geralmente 100% para indústrias no Lucro Real e 0% para os demais.</span></span></label><input type="number" id="percCreditoIPI" step="0.01" value="100.00"></div>
@@ -917,8 +918,8 @@
             </section>
             
             <div class="action-buttons">
-                <button class="main-calculate-button" onclick="calcularCustosMultiItem()" data-translate-key="btnCalcular">Calcular Custos, Lucro e Indicadores</button>
-                <button type="button" class="clear-button" onclick="limparTodosOsCampos(true)" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
+                <button id="calculateCostsBtn" class="main-calculate-button" data-translate-key="btnCalcular">Calcular Custos, Lucro e Indicadores</button>
+                <button id="clearFieldsBtn" type="button" class="clear-button" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
             </div>
         </section>
 
@@ -1072,13 +1073,13 @@
                     </div>
                 </div>
                 <div class="action-buttons" style="margin-top: 20px;">
-                     <button type="button" class="pdf-button" onclick="gerarPDF()" data-translate-key="btnGerarPDF">
+                     <button type="button" id="generatePdfBtn" class="pdf-button" data-translate-key="btnGerarPDF">
                         <i class="fas fa-file-pdf"></i> Gerar PDF
                     </button>
-                    <button type="button" class="csv-button" onclick="exportTableToCSV('resultados_importacao.csv')" data-translate-key="btnExportarCSV">
+                    <button type="button" id="exportCsvBtn" class="csv-button" data-translate-key="btnExportarCSV">
                         <i class="fas fa-file-csv"></i> Exportar CSV
                     </button>
-                    <button type="button" class="whatsapp-button" onclick="shareDashboardViaWhatsApp()" data-translate-key="btnShareWhatsApp">
+                    <button type="button" id="shareWppBtn" class="whatsapp-button" data-translate-key="btnShareWhatsApp">
                         <i class="fab fa-whatsapp"></i> Compartilhar Dashboard
                     </button>
                 </div>
@@ -1170,6 +1171,7 @@
         </footer>
     </main>
 
+    <!-- Modals -->
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
             <button id="closeSettingsModalBtn" class="modal-close-btn" aria-label="Fechar Configurações">&times;</button>
@@ -1214,6 +1216,7 @@
         </div>
     </div>
     
+    <!-- Modal para compartilhar imagem -->
     <div id="shareImageModal" class="modal-overlay">
         <div id="shareImageModalContent">
             <h3 data-translate-key="shareModalTitle">Compartilhar Dashboard</h3>
@@ -1231,8 +1234,8 @@
     </div>
 
 <script>
-// IIFE para evitar poluir o escopo global
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
 
@@ -1394,15 +1397,15 @@
             <td><label class="sr-only" for="ncmItem${index}">NCM do Item ${index + 1}</label><input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM"></td>
             <td class="grid-item">
                 <label class="sr-only" for="qtdItem${index}">Quantidade do Item ${index + 1}</label>
-                <input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" oninput="updateItemCalculatedFields(${index})">
+                <input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0">
                 <span class="error-message" id="qtdItem${index}Error">Obrigatório</span>
             </td>
             <td class="grid-item">
                 <label class="sr-only" for="precoCustoUnitMEItem${index}">Preço Custo Unit. $ do Item ${index + 1}</label>
-                <input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" oninput="updateItemCalculatedFields(${index})">
+                <input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00">
                 <span class="error-message" id="precoCustoUnitMEItem${index}Error">Obrigatório</span>
             </td>
-            <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG do Item ${index + 1}</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000" oninput="updateItemCalculatedFields(${index})"></td>
+            <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG do Item ${index + 1}</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000"></td>
             <td class="grid-item"><label class="sr-only" for="aliqIIItem${index}">Alíquota II (%) do Item ${index + 1}</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
             <td class="grid-item"><label class="sr-only" for="aliqIPIItem${index}">Alíquota IPI (%) do Item ${index + 1}</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
             <td class="grid-item"><label class="sr-only" for="aliqPISItem${index}">Alíquota PIS (%) do Item ${index + 1}</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
@@ -1412,13 +1415,22 @@
             <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Preço Custo Total $ do Item ${index + 1}</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
             <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG do Item ${index + 1}</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
             <td>
-                <button type="button" class="clear-button" onclick="removerLinhaItem(this)" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" aria-label="Remover Item"><i class="fas fa-trash-alt"></i></button>
-                <button type="button" class="pdf-button" onclick="carregarImpostosPadrao(this)" style="padding: 5px 10px; font-size: 12px;" aria-label="Carregar Impostos Padrão"><i class="fas fa-bolt"></i> Padrão</button>
+                <button type="button" class="remove-item-btn" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" aria-label="Remover Item"><i class="fas fa-trash-alt"></i></button>
+                <button type="button" class="load-defaults-btn" style="padding: 5px 10px; font-size: 12px;" aria-label="Carregar Impostos Padrão"><i class="fas fa-bolt"></i> Padrão</button>
             </td>
         `;
+        setupRowEventListeners(row, index);
         updateItemCalculatedFields(index);
     }
-
+    
+    function setupRowEventListeners(row, index) {
+        geId(`qtdItem${index}`).addEventListener('input', () => updateItemCalculatedFields(index));
+        geId(`precoCustoUnitMEItem${index}`).addEventListener('input', () => updateItemCalculatedFields(index));
+        geId(`pesoUnitKGItem${index}`).addEventListener('input', () => updateItemCalculatedFields(index));
+        row.querySelector('.remove-item-btn').addEventListener('click', function() { removerLinhaItem(this); });
+        row.querySelector('.load-defaults-btn').addEventListener('click', function() { carregarImpostosPadrao(this); });
+    }
+    
     function adicionarLinhaItem() {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const newIndex = tbody.rows.length;
@@ -1453,7 +1465,7 @@
         const rows = tbody.rows;
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
-            row.cells[1].textContent = i + 1; // Cell 0 is now the drag handle
+            row.cells[1].textContent = i + 1;
             
             row.querySelectorAll('input, label, span.error-message').forEach(elem => {
                 if (elem.id) {
@@ -1465,10 +1477,7 @@
                     elem.htmlFor = forBase + i;
                 }
             });
-            
-            row.querySelectorAll('input[oninput*="updateItemCalculatedFields"]').forEach(input => {
-               input.setAttribute('oninput', `updateItemCalculatedFields(${i})`);
-            });
+            setupRowEventListeners(row, i);
         }
     }
     
@@ -1527,14 +1536,11 @@
         const tabs = document.querySelectorAll('button[role="tab"]');
 
         screens.forEach(screen => {
-            const isActive = screen.id === screenIdToShow;
-            screen.classList.toggle('active', isActive);
-            screen.hidden = !isActive;
+            screen.hidden = (screen.id !== screenIdToShow);
         });
 
         tabs.forEach(tab => {
             const isActive = tab.getAttribute('aria-controls') === screenIdToShow;
-            tab.classList.toggle('active', isActive);
             tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
             tab.setAttribute('tabindex', isActive ? '0' : '-1');
         });
@@ -1589,7 +1595,9 @@
             const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
             if (data.items && data.items.length > 0) {
-                data.items.forEach((item, index) => createItemInputRow(index, item));
+                data.items.forEach((item, index) => {
+                    createItemInputRow(index, item);
+                });
             } else {
                 createItemInputRow(0); 
             }
@@ -1764,122 +1772,7 @@
         document.querySelectorAll('.invalid-field').forEach(el => el.classList.remove('invalid-field'));
         document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
     }
-
-    // --- INICIALIZAÇÃO ---
-    window.onload = function() {
-        loadState();
-        populateSavedCalculationsDropdown();
-        
-        // Listeners
-        geId('appContainer').addEventListener('input', saveState);
-        geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
-        geId('idiomaSelect').addEventListener('change', (e) => applyTranslations(e.target.value));
-        geId('runSimulationBtn')?.addEventListener('click', runSensitivityAnalysis);
-        geId('saveCalculationBtn')?.addEventListener('click', saveCurrentCalculation);
-        geId('loadCalculationBtn')?.addEventListener('click', loadSelectedCalculation);
-        geId('deleteCalculationBtn')?.addEventListener('click', deleteSelectedCalculation);
-        
-        updateCotacaoButtonLabel();
-        handleRegimeChange();
-        setupDragAndDrop();
-        
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsModal = document.getElementById('settingsModal');
-        const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
-        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-        const body = document.body;
-        const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
-        const themeSrText = themeToggleBtn ? themeToggleBtn.querySelector('.sr-only') : null;
-
-        function applyTheme(theme, manual = false) {
-            if (theme === 'theme-dark') {
-                body.classList.add('theme-dark');
-                if (themeIcon) themeIcon.className = 'fas fa-sun';
-                if (themeSrText) themeSrText.textContent = "Alternar para tema claro";
-                if (themeToggleBtn) themeToggleBtn.setAttribute('aria-label', 'Alternar para tema claro');
-            } else {
-                body.classList.remove('theme-dark');
-                if (themeIcon) themeIcon.className = 'fas fa-moon';
-                if (themeSrText) themeSrText.textContent = "Alternar para tema escuro";
-                if (themeToggleBtn) themeToggleBtn.setAttribute('aria-label', 'Alternar para tema escuro');
-            }
-            localStorage.setItem('theme', theme);
-            if(manual) localStorage.setItem('theme_manually_set', 'true');
-        }
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        } else {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                applyTheme('theme-dark');
-            } else {
-                applyTheme('theme-light');
-            }
-        }
-
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                let newTheme = body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark';
-                applyTheme(newTheme, true);
-            });
-        }
-        
-        if (settingsBtn && settingsModal && closeSettingsModalBtn && saveSettingsBtn) {
-            settingsBtn.addEventListener('click', () => {
-                settingsModal.classList.add('active');
-            });
-            closeSettingsModalBtn.addEventListener('click', () => {
-                settingsModal.classList.remove('active');
-            });
-            saveSettingsBtn.addEventListener('click', () => {
-                settingsModal.classList.remove('active');
-            });
-            settingsModal.addEventListener('click', (event) => {
-                if (event.target === settingsModal) {
-                    settingsModal.classList.remove('active');
-                }
-            });
-        }
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem('theme_manually_set')) {
-                const newColorScheme = event.matches ? "theme-dark" : "theme-light";
-                applyTheme(newColorScheme);
-            }
-        });
-        
-        const appVersionElem = geId('appVersion');
-        if (appVersionElem) {
-            const titleText = document.title;
-            const versionMatch = titleText.match(/v\d+\.\d+(\.\d+)?/);
-            if (versionMatch) {
-                appVersionElem.textContent = versionMatch[0];
-            }
-        }
-        const footerInfoElem = geId('footerInfo');
-        if(footerInfoElem) footerInfoElem.textContent = `Criado por Diego Karloh | ${appVersionElem ? appVersionElem.textContent : 'Ferramenta de Calculo de Importação'}`;
-
-        showScreen('telaEntradaPanel');
-    };
-
-    function getLucroCellStyle(lucroPercentual, lucroAltoMin, lucroMedioMin, lucroBaixoMin) {
-        let styleClass = '';
-        if (lucroPercentual !== null && isFinite(lucroPercentual)) {
-            if (lucroPercentual >= lucroAltoMin) {
-                styleClass = 'profit-high';
-            } else if (lucroPercentual >= lucroMedioMin) {
-                styleClass = 'profit-medium';
-            } else if (lucroPercentual >= lucroBaixoMin) {
-                styleClass = 'profit-low';
-            } else {
-                styleClass = 'profit-loss';
-            }
-        }
-        return `class="${styleClass}"`;
-    }
-
+    
     // --- LÓGICA DE CÁLCULO PRINCIPAL ---
     function calcularCustosMultiItem() {
         if (!validateForm()) {
@@ -1956,7 +1849,6 @@
                 }
             }
             
-            const valorFOBTotalEmbarqueBRL = valorFOBTotalME * taxaCambio;
             let acc = {
                 fob_BRL: 0, frete_BRL: 0, seguro_BRL: 0, outrasDespME_BRL: 0, CIF_Total_BRL_acumulado: 0,
                 ii_BRL: 0,
@@ -2034,9 +1926,9 @@
                 item.custoUnitarioItem = item.quantidade > 0 ? item.custoTotalLinha / item.quantidade : 0;
                 
                 if (item.valorVendaUnitBR > 0 && item.custoUnitarioItem > 0) {
-                    item.lucroPercentualUnitario = ((item.valorVendaUnitBR - item.custoUnitarioItem) / item.custoUnitarioItem) * 100;
+                    item.lucroPercentualUnitario = ((item.valorVendaUnitBR - item.custoUnitarioItem) / item.valorVendaUnitBR) * 100;
                 } else if (item.valorVendaUnitBR > 0 && item.custoUnitarioItem <= 0) {
-                    item.lucroPercentualUnitario = Infinity;
+                    item.lucroPercentualUnitario = 100;
                 } else { item.lucroPercentualUnitario = null; }
                 
                 acc.fob_BRL += item.fobBRL_item;
@@ -2056,6 +1948,13 @@
                 acc.valorTotalNF_BRL_acumulado += item.valorTotalNF_BRL;
                 acc.siscomex_BRL += item.taxaSiscomexRateada_BRL_item;
             });
+
+            acc.despAduan_BRL = despesasAduaneirasBRL_global;
+            acc.freteNac_BRL = freteNacionalBRL_global;
+            acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
+            acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
+            acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
+            acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
             
             latestCalculationResults = { items, acc, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, valorTotalVendaBrasil, valorFOBTotalME, taxaCambio };
 
@@ -2138,59 +2037,6 @@
         if (!resultTbody) { console.error("tbody não encontrado para itemResultTable"); return; }
         resultTbody.innerHTML = '';
     
-        const thead = geId('itemResultTable').querySelector('thead tr');
-        thead.innerHTML = `
-            <th scope="col">#</th>
-            <th scope="col">Cód. Interno</th>
-            <th scope="col">Descrição</th>
-            <th scope="col">NCM</th>
-            <th scope="col">Qtd</th>
-            <th scope="col">Peso Unit. KG</th>
-            <th scope="col">Peso Total KG</th>
-            <th scope="col">% Rateio Peso Unit.</th>
-            <th scope="col">Frete por Peso Unit. (R$)</th>
-            <th scope="col">Pr. Custo Unit. $</th>
-            <th scope="col">Pr. Custo Total $</th>
-            <th scope="col">FOB Unit. (R$)</th>
-            <th scope="col">FOB Total (R$)</th>
-            <th scope="col">FOB %</th>
-            <th scope="col">Seguro Rateado (R$)</th>
-            <th scope="col">Outras Desp. Rateadas (R$)</th>
-            <th scope="col">CIF Total (R$)</th>
-            <th scope="col">II R$</th>
-            <th scope="col">Valor Total NF (R$)</th>
-            <th scope="col">Valor Unitário NF (R$)</th>
-            <th scope="col">IPI Pago R$</th>
-            <th scope="col">IPI Crédito R$</th>
-            <th scope="col">IPI Custo R$</th>
-            <th scope="col">TX.SISC. (R$)</th>
-            <th scope="col">PIS Pago R$</th>
-            <th scope="col">PIS Crédito R$</th>
-            <th scope="col">PIS Custo R$</th>
-            <th scope="col">COFINS Pago R$</th>
-            <th scope="col">COFINS Crédito R$</th>
-            <th scope="col">COFINS Custo R$</th>
-            <th scope="col">Base Calc. ICMS R$</th>
-            <th scope="col">ICMS Pago R$</th>
-            <th scope="col">ICMS Crédito R$</th>
-            <th scope="col">ICMS Custo R$</th>
-            <th scope="col">AFRMM R$</th>
-            <th scope="col">Desp. Adu R$</th>
-            <th scope="col">Frete Nac R$</th>
-            <th scope="col">Custo Total Com Impostos</th>
-            <th scope="col">CUSTO UNIT Com Impostos</th>
-            <th scope="col">Soma Impostos Que Creditam (R$)</th>
-            <th scope="col">Soma Impostos Com Creditos (R$)</th>
-            <th scope="col">Total Imp. Efetivos</th>
-            <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
-            <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
-            <th scope="col">PREÇO VENDA UNIT. R$ Brasil</th>
-            <th scope="col">PREÇO VENDA Total. R$ Brasil</th>
-            <th scope="col">LUCRO UNIT. (R$)</th>
-            <th scope="col">LUCRO TOTAL LINHA (R$)</th>
-            <th scope="col">MARGEM LUCRO UNIT. %</th>
-        `;
-
         items.forEach(item => {
             const row = resultTbody.insertRow();
             let lucroCellStyle = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin);
@@ -2259,8 +2105,6 @@
                 <td ${lucroCellStyle} style="font-weight: bold;">${lucroDisplay}</td>
             `;
         });
-        
-        applyTranslations(geId('idiomaSelect').value);
     }
 
     function renderSummary(results) {
@@ -2303,7 +2147,7 @@
     function renderDashboard(results) {
         const { acc, items, moedaLabel, valorFOBTotalME, valorTotalVendaBrasil, lucroAltoMin, lucroMedioMin, lucroBaixoMin } = results;
         const lucroTotalPedidoRS = valorTotalVendaBrasil - acc.totalGeral_BRL;
-        const lucroTotalPedidoPerc = (acc.totalGeral_BRL > 0) ? (lucroTotalPedidoRS / acc.totalGeral_BRL) * 100 : (valorTotalVendaBrasil > 0 ? Infinity : 0);
+        const lucroTotalPedidoPerc = (valorTotalVendaBrasil > 0) ? (lucroTotalPedidoRS / valorTotalVendaBrasil) * 100 : 0;
         const percFreteSobreFOB = acc.fob_BRL > 0 ? (acc.frete_BRL / acc.fob_BRL) * 100 : 0;
         
         const totalCustoProduto = acc.fob_BRL;
@@ -2322,7 +2166,6 @@
                 } else {
                     elem.textContent = isCurrency ? formatBRL(value) : value;
                 }
-                // Reset classes. Remove specific highlights before adding a new one.
                 elem.classList.remove('profit-positive', 'profit-negative', 'blue-highlight', 'orange-highlight');
                 if (highlightClass) elem.classList.add(highlightClass);
             }
@@ -2352,25 +2195,6 @@
         setInnerTextDashboard('dbPercFreteSobreFOB', percFreteSobreFOB.toFixed(2).replace('.',',') + '%');
         setInnerTextDashboard('dbTotalImpostosBruto', acc.totalImpostosPagosBruto, true);
         setInnerTextDashboard('dbTotalImpostosEfetivos', acc.totalImpostosEfetivosGlobal, true);
-
-        // Renderizar as barras de distribuição
-        const distTotal = acc.totalGeral_BRL > 0 ? acc.totalGeral_BRL : 1;
-        const distProdutoPerc = ((acc.fob_BRL) / distTotal) * 100;
-        const distFreteSegPerc = ((acc.frete_BRL + acc.seguro_BRL + acc.outrasDespME_BRL) / distTotal) * 100;
-        const distImpFedPerc = ((acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL) / distTotal) * 100;
-        const distICMSPerc = (acc.icms_efetivo_BRL / distTotal) * 100;
-        const distDespNacPerc = ((acc.despAduan_BRL + acc.freteNac_BRL) / distTotal) * 100;
-        
-        geId('dbDistProduto').textContent = distProdutoPerc.toFixed(1) + '%';
-        geId('barDistProduto').style.width = distProdutoPerc + '%';
-        geId('dbDistFreteSegInt').textContent = distFreteSegPerc.toFixed(1) + '%';
-        geId('barDistFreteSegInt').style.width = distFreteSegPerc + '%';
-        geId('dbDistImpFed').textContent = distImpFedPerc.toFixed(1) + '%';
-        geId('barDistImpFed').style.width = distImpFedPerc + '%';
-        geId('dbDistICMS').textContent = distICMSPerc.toFixed(1) + '%';
-        geId('barDistICMS').style.width = distICMSPerc + '%';
-        geId('dbDistDespNac').textContent = distDespNacPerc.toFixed(1) + '%';
-        geId('barDistDespNac').style.width = distDespNacPerc + '%';
 
         geId('compPercProduto').textContent = percCustoProduto.toFixed(2).replace('.',',') + '%';
         geId('compPercImpostos').textContent = percImpostos.toFixed(2).replace('.',',') + '%';
@@ -2405,7 +2229,6 @@
         if (!ctx) return;
     
         const isDarkMode = document.body.classList.contains('theme-dark');
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
         const textColor = isDarkMode ? '#e8e8f0' : '#495057';
     
         const backgroundColors = [
@@ -2636,7 +2459,7 @@
         }
 
         const { items } = latestCalculationResults;
-        const delimiter = ';'; // Use semicolon for Brazilian Excel
+        const delimiter = ';'; 
 
         const headers = [
             '#', 'Cód. Interno', 'Descrição', 'NCM', 'Qtd',
@@ -2691,7 +2514,6 @@
 
         const csvContent = [headers.join(delimiter), ...rows].join('\r\n');
         
-        // Add BOM for UTF-8 compatibility
         const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
 
@@ -2952,7 +2774,7 @@
             modalLucroBaixoDesc: "Minimum margin for orange color (low profit). Below this will be red.",
             modalBtnSalvar: "Save and Close",
             btnGerarPDF: "Generate PDF",
-            btnExportarCSV: "Export CSV"
+            btnExportarCSV: "Exportar CSV"
         }
     };
 
@@ -2983,7 +2805,8 @@
             return;
         }
 
-        const { items: originalItems, valorTotalVendaBrasil, taxaCambio: taxaCambioOriginal, acc } = latestCalculationResults;
+        const { items: originalItems, valorTotalVendaBrasil, acc } = latestCalculationResults;
+        const taxaCambioOriginal = TxtToNum('taxaCambio');
         const freteMEOriginal = TxtToNum('totalFreteME');
 
         const simTaxaCambioInput = geId('simTaxaCambio');
@@ -3059,24 +2882,102 @@
             showToast("Ocorreu um erro ao simular.", "error");
         }
     }
+    
+    // --- SETUP DE EVENTOS ---
+    function setupEventListeners() {
+        // Abas de navegação
+        geId('tabEntradaBtn').addEventListener('click', () => showScreen('telaEntradaPanel'));
+        geId('tabResultadosBtn').addEventListener('click', () => showScreen('telaResultadosPanel'));
+        geId('tabDashboardBtn').addEventListener('click', () => showScreen('telaDashboardPanel'));
 
+        // Botões principais
+        geId('calculateCostsBtn').addEventListener('click', calcularCustosMultiItem);
+        geId('clearFieldsBtn').addEventListener('click', () => limparTodosOsCampos(true));
+        
+        // Botões de cotação
+        geId('btnUSD').addEventListener('click', () => fetchCotacaoMoeda('USD'));
+        geId('btnEUR').addEventListener('click', () => fetchCotacaoMoeda('EUR'));
+        geId('btnCNY').addEventListener('click', () => fetchCotacaoMoeda('CNY'));
+        
+        // Modal de configurações
+        geId('settingsBtn').addEventListener('click', () => geId('settingsModal').classList.add('active'));
+        geId('closeSettingsModalBtn').addEventListener('click', () => geId('settingsModal').classList.remove('active'));
+        geId('saveSettingsBtn').addEventListener('click', () => geId('settingsModal').classList.remove('active'));
 
-    // --- FUNÇÕES GLOBAIS ---
-    window.calcularCustosMultiItem = calcularCustosMultiItem;
-    window.gerarPDF = gerarPDF;
-    window.exportTableToCSV = exportTableToCSV;
-    window.limparTodosOsCampos = limparTodosOsCampos;
-    window.showScreen = showScreen;
-    window.updateCotacaoButtonLabel = updateCotacaoButtonLabel;
-    window.fetchCotacaoMoeda = fetchCotacaoMoeda;
-    window.handleRegimeChange = handleRegimeChange;
-    window.updateItemCalculatedFields = updateItemCalculatedFields;
-    window.shareDashboardViaWhatsApp = shareDashboardViaWhatsApp;
-    window.removerLinhaItem = removerLinhaItem;
-    window.carregarImpostosPadrao = carregarImpostosPadrao;
-    window.renderizarGraficoCustos = renderizarGraficoCustos;
-    window.applyTranslations = applyTranslations;
-    window.runSensitivityAnalysis = runSensitivityAnalysis;
+        // Gestão de Cálculos Salvos
+        geId('saveCalculationBtn').addEventListener('click', saveCurrentCalculation);
+        geId('loadCalculationBtn').addEventListener('click', loadSelectedCalculation);
+        geId('deleteCalculationBtn').addEventListener('click', deleteSelectedCalculation);
+        
+        // Botões do Dashboard
+        geId('generatePdfBtn').addEventListener('click', gerarPDF);
+        geId('exportCsvBtn').addEventListener('click', () => exportTableToCSV('resultados_importacao.csv'));
+        geId('shareWppBtn').addEventListener('click', shareDashboardViaWhatsApp);
+        
+        // Análise de Sensibilidade
+        geId('runSimulationBtn').addEventListener('click', runSensitivityAnalysis);
+
+        // Outros
+        geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
+        geId('moedaEstrangeira').addEventListener('input', updateCotacaoButtonLabel);
+        geId('regimeTributario').addEventListener('change', handleRegimeChange);
+    }
+    
+    // --- INICIALIZAÇÃO ---
+    // A inicialização principal agora é chamada quando o DOM está pronto.
+    loadState();
+    populateSavedCalculationsDropdown();
+    setupEventListeners();
+    updateCotacaoButtonLabel();
+    handleRegimeChange();
+    setupDragAndDrop();
+    
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const body = document.body;
+    const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
+    
+    function applyTheme(theme, manual = false) {
+        if (theme === 'theme-dark') {
+            body.classList.add('theme-dark');
+            if (themeIcon) themeIcon.className = 'fas fa-sun';
+        } else {
+            body.classList.remove('theme-dark');
+            if (themeIcon) themeIcon.className = 'fas fa-moon';
+        }
+        localStorage.setItem('theme', theme);
+        if(manual) localStorage.setItem('theme_manually_set', 'true');
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            applyTheme('theme-dark');
+        } else {
+            applyTheme('theme-light');
+        }
+    }
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            let newTheme = body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark';
+            applyTheme(newTheme, true);
+        });
+    }
+    
+    const appVersionElem = geId('appVersion');
+    if (appVersionElem) {
+        const titleText = document.title;
+        const versionMatch = titleText.match(/v\d+\.\d+(\.\d+)?/);
+        if (versionMatch) {
+            appVersionElem.textContent = versionMatch[0];
+        }
+    }
+    const footerInfoElem = geId('footerInfo');
+    if(footerInfoElem) footerInfoElem.textContent = `Criado por Diego Karloh | ${appVersionElem ? appVersionElem.textContent : 'Ferramenta de Calculo de Importação'}`;
+
+    showScreen('telaEntradaPanel');
 
 })();
 </script>
