@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v30.7</title>
+    <title>Ferramenta de Calculo de Importação v31.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -171,7 +171,7 @@
         
         nav[role="tablist"] {
             margin-bottom: 25px; border-bottom: 1px solid var(--theme-border-secondary); padding-bottom: 0;
-            display: flex; gap: 5px;
+            display: flex; flex-wrap: wrap; gap: 5px;
         }
         nav[role="tablist"] button[role="tab"] {
             background-color: transparent; border: 1px solid transparent; border-bottom: none;
@@ -515,6 +515,7 @@
             font-weight: 600; white-space: nowrap; padding: 12px 10px; text-align: left;
             border-bottom: 2px solid var(--theme-accent-blue);
             border-right: 1px solid var(--theme-border-primary);
+            position: sticky; top: 0; z-index: 10;
         }
         #itemInputTable th:last-child, #itemResultTable th:last-child { border-right: none; }
         #itemInputTable td, #itemResultTable td {
@@ -569,7 +570,7 @@
 
         .item-table-input input[type="number"] { text-align: right; }
         .results-table td { white-space: nowrap; }
-        .results-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)) {
+        .results-table td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
             text-align: right;
         }
 
@@ -623,6 +624,10 @@
         body.theme-dark .profit-low { background-color: rgba(var(--theme-accent-light-orange-rgb), 0.25) !important; color: var(--theme-accent-light-orange) !important; }
         body.theme-dark .profit-loss { background-color: rgba(var(--theme-accent-red-rgb), 0.25) !important; }
         
+        #simNovoLucro.profit-positive { color: var(--theme-accent-green); text-shadow: 0 0 8px var(--theme-glow-green); }
+        #simNovoLucro.profit-negative { color: var(--theme-accent-red); text-shadow: 0 0 8px var(--theme-glow-red); }
+
+
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
         .top-items-section, .cost-components-section, .sensitivity-analysis-section { margin-top: 30px; }
@@ -730,7 +735,6 @@
     </style>
 </head>
 <body>
-    <!-- NOVO: Container para as notificações (toasts) -->
     <div id="toast-container"></div>
 
     <header class="app-header">
@@ -926,55 +930,54 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col" data-translate-key="resThCodInterno">Cód. Interno</th>
-                                <th scope="col" data-translate-key="resThDescricao">Descrição</th>
-                                <th scope="col" data-translate-key="resThNCM">NCM</th>
-                                <th scope="col" data-translate-key="resThQtd">Qtd</th>
-                                <th scope="col" data-translate-key="resThPesoUnitKG">Peso Unit. KG</th>
-                                <th scope="col" data-translate-key="resThPesoTotalKG">Peso Total KG</th>
-                                <th scope="col" data-translate-key="resThPercRateioPesoUnit">% Rateio Peso Unit.</th>
-                                <th scope="col" data-translate-key="resThFretePesoUnit">Frete por Peso Unit. (R$)</th>
-                                <th scope="col" data-translate-key="resThPrecoCustoUnitME">Pr. Custo Unit. $</th>
-                                <th scope="col" data-translate-key="resThPrecoCustoTotalME">Pr. Custo Total $</th>
-                                <th scope="col" data-translate-key="resThFOBUnit">FOB Unit. (R$)</th>
-                                <th scope="col" data-translate-key="resThFOBTotal">FOB Total (R$)</th>
-                                <th scope="col" data-translate-key="resThFOBPerc">FOB %</th>
-                                <th scope="col" data-translate-key="resThSeguroRateado">Seguro Rateado (R$)</th>
-                                <th scope="col" data-translate-key="resThOutrasDespRateadas">Outras Desp. Rateadas (R$)</th>
-                                <th scope="col" data-translate-key="resThCIFTotal">CIF Total (R$)</th>
-                                <th scope="col" data-translate-key="resThIIR">II R$</th>
-                                <th scope="col" data-translate-key="resThValorTotalNF">Valor Total NF (R$)</th>
-                                <th scope="col" data-translate-key="resThValorUnitarioNF">Valor Unitário NF (R$)</th>
-                                <th scope="col" data-translate-key="resThIPIPago">IPI Pago R$</th>
-                                <th scope="col" data-translate-key="resThIPICredito">IPI Crédito R$</th>
-                                <th scope="col" data-translate-key="resThIPICusto">IPI Custo R$</th>
-                                <th scope="col" data-translate-key="resThTXSISC">TX.SISC. (R$)</th>
-                                <th scope="col" data-translate-key="resThPISPago">PIS Pago R$</th>
-                                <th scope="col" data-translate-key="resThPISCredito">PIS Crédito R$</th>
-                                <th scope="col" data-translate-key="resThPISCusto">PIS Custo R$</th>
-                                <th scope="col" data-translate-key="resThCOFINSPago">COFINS Pago R$</th>
-                                <th scope="col" data-translate-key="resThCOFINSCredito">COFINS Crédito R$</th>
-                                <th scope="col" data-translate-key="resThCOFINSCusto">COFINS Custo R$</th>
-                                <th scope="col" data-translate-key="resThBaseCalcICMS">Base Calc. ICMS R$</th>
-                                <th scope="col" data-translate-key="resThICMSPago">ICMS Pago R$</th>
-                                <th scope="col" data-translate-key="resThICMSCredito">ICMS Crédito R$</th>
-                                <th scope="col" data-translate-key="resThICMSCusto">ICMS Custo R$</th>
-                                <th scope="col" data-translate-key="resThAFRMM">AFRMM R$</th>
-                                <th scope="col" data-translate-key="resThDespAdu">Desp. Adu R$</th>
-                                <th scope="col" data-translate-key="resThFreteNac">Frete Nac R$</th>
-                                <th scope="col" data-translate-key="resThCustoTotalComImpostos">Custo Total Com Impostos</th>
-                                <th scope="col" data-translate-key="resThCustoUnitComImpostos">CUSTO UNIT Com Impostos</th>
-                                <th scope="col" data-translate-key="resThSomaImpostosQueCreditam">Soma Impostos Que Creditam (R$)</th>
-                                <th scope="col" data-translate-key="resThSomaImpostosComCreditos">Soma Impostos Com Creditos (R$)</th>
-                                <th scope="col" data-translate-key="resThTotalImpEfetivos">Total Imp. Efetivos</th>
-                                <th scope="col" data-translate-key="resThCustoUnitLiquido">CUSTO UNIT. R$ (Líquido)</th>
-                                <th scope="col" data-translate-key="resThCustoTotalLinhaLiquido">CUSTO TOTAL LINHA R$ (Líquido)</th>
-                                <th scope="col" data-translate-key="resThPrecoVendaUnitBR">PREÇO VENDA UNIT. R$ Brasil</th>
-                                <th scope="col" data-translate-key="resThPrecoVendaTotalBR">PREÇO VENDA Total. R$ Brasil</th>
-                                <th scope="col" data-translate-key="resThVendaMin">VENDA MÍNIMA (R$)</th>
-                                <th scope="col" data-translate-key="resThLucroUnit">LUCRO UNIT. (R$)</th>
-                                <th scope="col" data-translate-key="resThLucroTotalLinha">LUCRO TOTAL LINHA (R$)</th>
-                                <th scope="col" data-translate-key="resThMargemLucroUnit">MARGEM LUCRO UNIT. %</th>
+                                <th scope="col">Cód. Interno</th>
+                                <th scope="col">Descrição</th>
+                                <th scope="col">NCM</th>
+                                <th scope="col">Qtd</th>
+                                <th scope="col">Peso Unit. KG</th>
+                                <th scope="col">Peso Total KG</th>
+                                <th scope="col">% Rateio Peso Unit.</th>
+                                <th scope="col">Frete por Peso Unit. (R$)</th>
+                                <th scope="col">Pr. Custo Unit. $</th>
+                                <th scope="col">Pr. Custo Total $</th>
+                                <th scope="col">FOB Unit. (R$)</th>
+                                <th scope="col">FOB Total (R$)</th>
+                                <th scope="col">FOB %</th>
+                                <th scope="col">Seguro Rateado (R$)</th>
+                                <th scope="col">Outras Desp. Rateadas (R$)</th>
+                                <th scope="col">CIF Total (R$)</th>
+                                <th scope="col">II R$</th>
+                                <th scope="col">Valor Total NF (R$)</th>
+                                <th scope="col">Valor Unitário NF (R$)</th>
+                                <th scope="col">IPI Pago R$</th>
+                                <th scope="col">IPI Crédito R$</th>
+                                <th scope="col">IPI Custo R$</th>
+                                <th scope="col">TX.SISC. (R$)</th>
+                                <th scope="col">PIS Pago R$</th>
+                                <th scope="col">PIS Crédito R$</th>
+                                <th scope="col">PIS Custo R$</th>
+                                <th scope="col">COFINS Pago R$</th>
+                                <th scope="col">COFINS Crédito R$</th>
+                                <th scope="col">COFINS Custo R$</th>
+                                <th scope="col">Base Calc. ICMS R$</th>
+                                <th scope="col">ICMS Pago R$</th>
+                                <th scope="col">ICMS Crédito R$</th>
+                                <th scope="col">ICMS Custo R$</th>
+                                <th scope="col">AFRMM R$</th>
+                                <th scope="col">Desp. Adu R$</th>
+                                <th scope="col">Frete Nac R$</th>
+                                <th scope="col">Custo Total Com Impostos</th>
+                                <th scope="col">CUSTO UNIT Com Impostos</th>
+                                <th scope="col">Soma Impostos Que Creditam (R$)</th>
+                                <th scope="col">Soma Impostos Com Creditos (R$)</th>
+                                <th scope="col">Total Imp. Efetivos</th>
+                                <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
+                                <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
+                                <th scope="col">PREÇO VENDA UNIT. R$ Brasil</th>
+                                <th scope="col">PREÇO VENDA Total. R$ Brasil</th>
+                                <th scope="col">LUCRO UNIT. (R$)</th>
+                                <th scope="col">LUCRO TOTAL LINHA (R$)</th>
+                                <th scope="col">MARGEM LUCRO UNIT. %</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -1082,21 +1085,27 @@
 
                 <section class="sensitivity-analysis-section" aria-labelledby="headingSensitivityAnalysis">
                     <h3 id="headingSensitivityAnalysis" data-translate-key="headingSensitivityAnalysis">Análise de Sensibilidade (What-If)</h3>
-                    <div class="grid-container">
+                    <div class="grid-container" style="align-items: flex-end;">
                         <div class="grid-item">
                             <label for="simTaxaCambio" data-translate-key="labelSimTaxaCambio">Simular Taxa de Câmbio:</label>
-                            <input type="number" id="simTaxaCambio" step="0.01" oninput="runSensitivityAnalysis()">
+                            <input type="number" id="simTaxaCambio" step="0.01" placeholder="Ex: 5.40">
                         </div>
                         <div class="grid-item">
                             <label for="simTotalFreteME" data-translate-key="labelSimFreteME">Simular Frete Intl. ($):</label>
-                            <input type="number" id="simTotalFreteME" step="0.01" oninput="runSensitivityAnalysis()">
+                            <input type="number" id="simTotalFreteME" step="0.01" placeholder="Ex: 1200.00">
+                        </div>
+                        <div class="grid-item">
+                             <button type="button" id="runSimulationBtn" class="main-calculate-button" style="padding: 10px 18px; font-size: 1em; width: 100%;">
+                                <i class="fas fa-play"></i> Simular Novo Lucro
+                             </button>
                         </div>
                         <div class="grid-item">
                             <strong data-translate-key="labelSimNovoLucro">Novo Lucro Total (R$):</strong>
-                            <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em;"></span>
+                            <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em; transition: color 0.3s ease;"></span>
                         </div>
                     </div>
                 </section>
+
 
                 <section aria-labelledby="headingDistribuicaoCusto" class="cost-distribution-section">
                     <h3 id="headingDistribuicaoCusto" data-translate-key="headingDistribuicaoCusto">Distribuição Percentual Estimada do Custo Total Geral (Líquido de Créditos):</h3>
@@ -1161,7 +1170,6 @@
         </footer>
     </main>
 
-    <!-- Modals -->
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
             <button id="closeSettingsModalBtn" class="modal-close-btn" aria-label="Fechar Configurações">&times;</button>
@@ -1206,7 +1214,6 @@
         </div>
     </div>
     
-    <!-- Modal para compartilhar imagem -->
     <div id="shareImageModal" class="modal-overlay">
         <div id="shareImageModalContent">
             <h3 data-translate-key="shareModalTitle">Compartilhar Dashboard</h3>
@@ -1227,6 +1234,7 @@
 // IIFE para evitar poluir o escopo global
 (function() {
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
+    const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
 
     let custoTotalChartInstance = null;
     let saveTimeout;
@@ -1236,7 +1244,7 @@
     function geId(id) { return document.getElementById(id); }
 
     // --- SISTEMA DE NOTIFICAÇÃO ---
-    function showToast(message, type = 'error') {
+    function showToast(message, type = 'success') {
         const container = geId('toast-container');
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -1320,14 +1328,6 @@
             const thCustoTotal = itemInputTableHead.querySelector('th:nth-child(15)');
             if(thCustoTotal) thCustoTotal.innerText = `Pr. Custo Total ${currencySymbol}`;
         }
-        const itemResultTableHead = geId('itemResultTable')?.querySelector('thead');
-        if(itemResultTableHead) {
-            const ths = itemResultTableHead.querySelectorAll('th');
-            if(ths.length > 10) {
-                 if(ths[9]) ths[9].innerText = `Pr. Custo Unit. ${currencySymbol}`;
-                 if(ths[10]) ths[10].innerText = `Pr. Custo Total ${currencySymbol}`;
-            }
-        }
     }
 
     async function fetchCotacaoMoeda(targetMoeda) {
@@ -1358,7 +1358,7 @@
                 const dataHoraCotacao = new Date(parseInt(data[cotacaoKey].timestamp) * 1000);
                 infoSpan.textContent = `Cotação (${data[cotacaoKey].name.split('/')[0]}): ${cotacao.toFixed(4)} em ${dataHoraCotacao.toLocaleDateString('pt-BR')} ${dataHoraCotacao.toLocaleTimeString('pt-BR')}`;
                 infoSpan.classList.remove('error');
-                saveState(); // Salva o estado após busca bem-sucedida
+                saveState();
             } else { throw new Error(`Cotação ${targetMoeda}-BRL não encontrada.`); }
         } catch (error) {
             console.error("Erro na cotação:", error);
@@ -1366,7 +1366,7 @@
             infoSpan.classList.add('error');
         } finally {
             const duration = Date.now() - startTime;
-            const minDisplayTime = 500; // 0.5 segundos
+            const minDisplayTime = 500;
             setTimeout(() => {
                 button.classList.remove('button-loading');
                 button.disabled = false;
@@ -1541,36 +1541,71 @@
     }
 
     // --- PERSISTÊNCIA DE DADOS ---
-    function saveState() {
-        try {
-            const data = {
-                global: {},
-                items: [],
-                lang: geId('idiomaSelect').value
-            };
+    function getCurrentStateAsObject() {
+        const data = {
+            global: {},
+            items: [],
+            lang: geId('idiomaSelect').value,
+            calculationName: geId('calculationName').value
+        };
 
-            const globalFields = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo', 'moedaEstrangeira', 'taxaCambio', 'incoterm', 'modalidadeTransporte', 'regimeTributario', 'percCreditoPIS', 'percCreditoCOFINS', 'percCreditoIPI', 'percCreditoICMS', 'totalFreteME', 'totalSeguroME', 'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais'];
-            globalFields.forEach(id => {
-                const elem = geId(id);
-                if (elem) {
-                    data.global[id] = elem.value;
-                }
+        const globalFields = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo', 'moedaEstrangeira', 'taxaCambio', 'incoterm', 'modalidadeTransporte', 'regimeTributario', 'percCreditoPIS', 'percCreditoCOFINS', 'percCreditoIPI', 'percCreditoICMS', 'totalFreteME', 'totalSeguroME', 'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais'];
+        globalFields.forEach(id => {
+            const elem = geId(id);
+            if (elem) data.global[id] = elem.value;
+        });
+
+        const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
+        for (let i = 0; i < itemRows.length; i++) {
+            const itemData = {};
+            const itemFields = ['desc', 'codInterno', 'ncm', 'qtd', 'precoCustoUnitME', 'pesoUnitKG', 'aliqII', 'aliqIPI', 'aliqPIS', 'aliqCOFINS', 'aliqICMS', 'valVendaUnitBR'];
+            itemFields.forEach(field => {
+                const elem = geId(`${field}Item${i}`);
+                if (elem) itemData[field] = elem.value;
             });
+            data.items.push(itemData);
+        }
+        return data;
+    }
 
-            const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
-            for (let i = 0; i < itemRows.length; i++) {
-                const itemData = {};
-                const itemFields = ['desc', 'codInterno', 'ncm', 'qtd', 'precoCustoUnitME', 'pesoUnitKG', 'aliqII', 'aliqIPI', 'aliqPIS', 'aliqCOFINS', 'aliqICMS', 'valVendaUnitBR'];
-                itemFields.forEach(field => {
-                    const elem = geId(`${field}Item${i}`);
-                    if (elem) {
-                        itemData[field] = elem.value;
-                    }
-                });
-                data.items.push(itemData);
+    function applyState(data) {
+        if (!data) return;
+        try {
+            if (data.lang) {
+                geId('idiomaSelect').value = data.lang;
+                applyTranslations(data.lang);
             }
 
-            localStorage.setItem('importCalculatorData', JSON.stringify(data));
+            if (data.global) {
+                for (const id in data.global) {
+                    const elem = geId(id);
+                    if (elem) elem.value = data.global[id];
+                }
+            }
+             if (data.calculationName) {
+                geId('calculationName').value = data.calculationName;
+            }
+
+            const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            if (data.items && data.items.length > 0) {
+                data.items.forEach((item, index) => createItemInputRow(index, item));
+            } else {
+                createItemInputRow(0); 
+            }
+            
+            handleRegimeChange();
+            updateCotacaoButtonLabel();
+        } catch(e) {
+            console.error("Erro ao aplicar estado:", e);
+            showToast("Falha ao carregar os dados.", "error");
+        }
+    }
+    
+    function saveState() {
+        try {
+            const data = getCurrentStateAsObject();
+            localStorage.setItem('importCalculator_lastState', JSON.stringify(data));
             
             const statusElem = geId('saveStatus');
             if (statusElem) {
@@ -1590,45 +1625,83 @@
 
     function loadState() {
         try {
-            const savedData = localStorage.getItem('importCalculatorData');
+            const savedData = localStorage.getItem('importCalculator_lastState');
             if (!savedData) {
                 limparTodosOsCampos(false); 
                 return;
             }
-
             const data = JSON.parse(savedData);
-            
-            if (data.lang) {
-                geId('idiomaSelect').value = data.lang;
-                applyTranslations(data.lang);
-            }
-
-            if (data.global) {
-                for (const id in data.global) {
-                    const elem = geId(id);
-                    if (elem) {
-                        elem.value = data.global[id];
-                    }
-                }
-            }
-
-            const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = '';
-            if (data.items && data.items.length > 0) {
-                data.items.forEach((item, index) => {
-                    createItemInputRow(index, item);
-                });
-            } else {
-                 createItemInputRow(0); 
-            }
-            
-            handleRegimeChange();
-            updateCotacaoButtonLabel();
-            
-            console.log("Estado carregado do localStorage.");
+            applyState(data);
+            console.log("Último estado carregado do localStorage.");
         } catch (e) {
             console.error("Erro ao carregar o estado:", e);
             limparTodosOsCampos(true); 
+        }
+    }
+    
+    // --- GESTÃO DE CÁLCULOS SALVOS ---
+    function populateSavedCalculationsDropdown() {
+        const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
+        const dropdown = geId('savedCalculations');
+        dropdown.innerHTML = '<option value="">-- Selecione um cálculo salvo --</option>';
+        Object.keys(savedCalcs).forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            dropdown.appendChild(option);
+        });
+    }
+
+    function saveCurrentCalculation() {
+        const name = geId('calculationName').value.trim();
+        if (!name) {
+            showToast("Por favor, dê um nome ao cálculo para salvá-lo.", 'warning');
+            geId('calculationName').focus();
+            return;
+        }
+
+        const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
+        const dataToSave = getCurrentStateAsObject();
+        
+        savedCalcs[name] = dataToSave;
+        localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
+        
+        populateSavedCalculationsDropdown();
+        geId('savedCalculations').value = name;
+        showToast(`Cálculo "${name}" salvo com sucesso!`, 'success');
+    }
+
+    function loadSelectedCalculation() {
+        const name = geId('savedCalculations').value;
+        if (!name) {
+            showToast("Nenhum cálculo selecionado para carregar.", 'warning');
+            return;
+        }
+
+        const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
+        const dataToLoad = savedCalcs[name];
+
+        if (dataToLoad) {
+            applyState(dataToLoad);
+            showToast(`Cálculo "${name}" carregado.`, 'success');
+        } else {
+            showToast(`Cálculo "${name}" não encontrado.`, 'error');
+        }
+    }
+
+    function deleteSelectedCalculation() {
+        const name = geId('savedCalculations').value;
+        if (!name) {
+            showToast("Nenhum cálculo selecionado para excluir.", 'warning');
+            return;
+        }
+
+        if (confirm(`Tem certeza que deseja excluir o cálculo salvo "${name}"?`)) {
+            const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
+            delete savedCalcs[name];
+            localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
+            populateSavedCalculationsDropdown();
+            showToast(`Cálculo "${name}" excluído.`, 'success');
         }
     }
 
@@ -1695,11 +1768,16 @@
     // --- INICIALIZAÇÃO ---
     window.onload = function() {
         loadState();
+        populateSavedCalculationsDropdown();
         
+        // Listeners
         geId('appContainer').addEventListener('input', saveState);
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         geId('idiomaSelect').addEventListener('change', (e) => applyTranslations(e.target.value));
-
+        geId('runSimulationBtn')?.addEventListener('click', runSensitivityAnalysis);
+        geId('saveCalculationBtn')?.addEventListener('click', saveCurrentCalculation);
+        geId('loadCalculationBtn')?.addEventListener('click', loadSelectedCalculation);
+        geId('deleteCalculationBtn')?.addEventListener('click', deleteSelectedCalculation);
         
         updateCotacaoButtonLabel();
         handleRegimeChange();
@@ -1999,18 +2077,19 @@
     }
 
     function limparTodosOsCampos(clearStorage = true) {
-        const lang = geId('idiomaSelect').value;
-        const confirmMsg = translations[lang].confirmLimparCampos;
-
-        if (clearStorage && !confirm(confirmMsg)) {
-            return; // O usuário cancelou
+        if (clearStorage) {
+            const lang = geId('idiomaSelect').value;
+            const confirmMsg = translations[lang].confirmLimparCampos;
+            if (!confirm(confirmMsg)) {
+                return; // O usuário cancelou
+            }
         }
         
         if(clearStorage){
-             localStorage.removeItem('importCalculatorData');
+             localStorage.removeItem('importCalculator_lastState');
             const statusElem = geId('saveStatus');
             if(statusElem) statusElem.style.opacity = '0';
-            console.log("Dados salvos foram removidos.");
+            console.log("Estado automático removido.");
         }
 
 
@@ -2018,7 +2097,7 @@
         const globalInputs = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso',
                               'moedaEstrangeira', 'taxaCambio', 'totalFreteME', 'totalSeguroME',
                               'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL',
-                              'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais'];
+                              'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais', 'calculationName'];
         globalInputs.forEach(id => {
             const elem = geId(id);
             if (elem) {
@@ -2059,17 +2138,59 @@
         if (!resultTbody) { console.error("tbody não encontrado para itemResultTable"); return; }
         resultTbody.innerHTML = '';
     
-        // Adicionar totais globais no cálculo
-        acc.despAduan_BRL = TxtToNum('despesasAduaneirasBRL');
-        acc.freteNac_BRL = TxtToNum('freteNacionalBRL');
-        
-        acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-        
-        acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-        
-        acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
-        acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
-        
+        const thead = geId('itemResultTable').querySelector('thead tr');
+        thead.innerHTML = `
+            <th scope="col">#</th>
+            <th scope="col">Cód. Interno</th>
+            <th scope="col">Descrição</th>
+            <th scope="col">NCM</th>
+            <th scope="col">Qtd</th>
+            <th scope="col">Peso Unit. KG</th>
+            <th scope="col">Peso Total KG</th>
+            <th scope="col">% Rateio Peso Unit.</th>
+            <th scope="col">Frete por Peso Unit. (R$)</th>
+            <th scope="col">Pr. Custo Unit. $</th>
+            <th scope="col">Pr. Custo Total $</th>
+            <th scope="col">FOB Unit. (R$)</th>
+            <th scope="col">FOB Total (R$)</th>
+            <th scope="col">FOB %</th>
+            <th scope="col">Seguro Rateado (R$)</th>
+            <th scope="col">Outras Desp. Rateadas (R$)</th>
+            <th scope="col">CIF Total (R$)</th>
+            <th scope="col">II R$</th>
+            <th scope="col">Valor Total NF (R$)</th>
+            <th scope="col">Valor Unitário NF (R$)</th>
+            <th scope="col">IPI Pago R$</th>
+            <th scope="col">IPI Crédito R$</th>
+            <th scope="col">IPI Custo R$</th>
+            <th scope="col">TX.SISC. (R$)</th>
+            <th scope="col">PIS Pago R$</th>
+            <th scope="col">PIS Crédito R$</th>
+            <th scope="col">PIS Custo R$</th>
+            <th scope="col">COFINS Pago R$</th>
+            <th scope="col">COFINS Crédito R$</th>
+            <th scope="col">COFINS Custo R$</th>
+            <th scope="col">Base Calc. ICMS R$</th>
+            <th scope="col">ICMS Pago R$</th>
+            <th scope="col">ICMS Crédito R$</th>
+            <th scope="col">ICMS Custo R$</th>
+            <th scope="col">AFRMM R$</th>
+            <th scope="col">Desp. Adu R$</th>
+            <th scope="col">Frete Nac R$</th>
+            <th scope="col">Custo Total Com Impostos</th>
+            <th scope="col">CUSTO UNIT Com Impostos</th>
+            <th scope="col">Soma Impostos Que Creditam (R$)</th>
+            <th scope="col">Soma Impostos Com Creditos (R$)</th>
+            <th scope="col">Total Imp. Efetivos</th>
+            <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
+            <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
+            <th scope="col">PREÇO VENDA UNIT. R$ Brasil</th>
+            <th scope="col">PREÇO VENDA Total. R$ Brasil</th>
+            <th scope="col">LUCRO UNIT. (R$)</th>
+            <th scope="col">LUCRO TOTAL LINHA (R$)</th>
+            <th scope="col">MARGEM LUCRO UNIT. %</th>
+        `;
+
         items.forEach(item => {
             const row = resultTbody.insertRow();
             let lucroCellStyle = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin);
@@ -2077,38 +2198,69 @@
             let lucroDisplay = 'N/A';
             if (item.lucroPercentualUnitario !== null) {
                 if (!isFinite(item.lucroPercentualUnitario)) { lucroDisplay = (item.lucroPercentualUnitario > 0 ? "+Inf" : "-Inf") + "%" }
-                else { lucroDisplay = item.lucroPercentualUnitario.toFixed(2) + '%'; }
+                else { lucroDisplay = item.lucroPercentualUnitario.toFixed(2).replace('.',',') + '%'; }
             }
             
-            const totalImpostosEfetivosItemComII = item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo;
-            const fobUnitarioBRL = item.precoCustoUnitME * taxaCambio;
-            const seguroRateadoBRL = item.seguroME_item * taxaCambio;
-            const outrasDespesasRateadasBRL = item.outrasDespesasME_item * taxaCambio;
             const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
-            const participacaoPesoUnitItem = item.percRateioPesoUnit.toFixed(2) + '%';
-
+            const seguroBRL_item = item.seguroME_item * taxaCambio;
+            const outrasDespesasBRL_item = item.outrasDespesasME_item * taxaCambio;
+            const totalImpostosEfetivosItemComII = item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo;
+            
             row.innerHTML = `
-                <td>${item.index + 1}</td> <td>${item.codInterno || ''}</td> <td>${item.descricao || ''}</td> <td>${item.ncm || ''}</td>
-                <td>${item.quantidade || 0}</td> <td>${(item.pesoUnitKG || 0).toFixed(3)}</td> <td>${(item.pesoTotalKG || 0).toFixed(3)}</td>
-                <td>${participacaoPesoUnitItem}</td> <td>${formatBRL(item.freteExibicaoPorPesoUnitarioBRL)}</td>
-                <td>${formatCurrency(item.precoCustoUnitME, moedaLabel)}</td> <td>${formatCurrency(item.precoCustoTotalME, moedaLabel)}</td>
-                <td>${formatBRL(fobUnitarioBRL)}</td> <td>${formatBRL(item.fobBRL_item)}</td> <td>${item.fobPercent.toFixed(2).replace('.',',')}%</td>
-                <td>${formatBRL(seguroRateadoBRL)}</td> <td>${formatBRL(outrasDespesasRateadasBRL)}</td> <td>${formatBRL(item.CIF_Total_BRL)}</td>
-                <td>${formatBRL(item.valorII)}</td> <td>${formatBRL(item.valorTotalNF_BRL)}</td> <td>${formatBRL(item.valorUnitarioNF_BRL)}</td>
-                <td>${formatBRL(item.ipi_pago)}</td> <td>${formatBRL(item.ipi_creditado)}</td> <td>${formatBRL(item.ipi_efetivo)}</td>
-                <td>${formatBRL(item.taxaSiscomexRateada_BRL_item)}</td> <td>${formatBRL(item.pis_pago)}</td> <td>${formatBRL(item.pis_creditado)}</td>
-                <td>${formatBRL(item.pis_efetivo)}</td> <td>${formatBRL(item.cofins_pago)}</td> <td>${formatBRL(item.cofins_creditado)}</td>
-                <td>${formatBRL(item.cofins_efetivo)}</td> <td>${formatBRL(item.baseCalcICMS_item)}</td> <td>${formatBRL(item.icms_pago)}</td>
-                <td>${formatBRL(item.icms_creditado)}</td> <td>${formatBRL(item.icms_efetivo)}</td> <td>${formatBRL(item.valorAFRMM)}</td>
-                <td>${formatBRL(item.despesasAduaneirasBRL_item)}</td> <td>${formatBRL(item.freteNacionalBRL_item)}</td>
-                <td>${formatBRL(item.custoTotalComTodosImpostos_BRL)}</td> <td>${formatBRL(item.custoUnitarioComTodosImpostos_BRL)}</td>
-                <td>${formatBRL(item.somaImpostosQueCreditam_BRL)}</td> <td>${formatBRL(item.somaImpostosComCreditos_BRL)}</td>
-                <td>${formatBRL(totalImpostosEfetivosItemComII)}</td> <td>${formatBRL(item.custoUnitarioItem)}</td>
-                <td>${formatBRL(item.custoTotalLinha)}</td> <td>${formatBRL(item.valorVendaUnitBR)}</td> <td>${formatBRL(item.precoVendaTotalBrasil)}</td>
-                <td>${formatBRL(lucroUnitarioRS)}</td> <td>${formatBRL(lucroTotalLinhaRS)}</td> <td ${lucroCellStyle}>${lucroDisplay}</td>
+                <td>${item.index + 1}</td>
+                <td>${item.codInterno || ''}</td>
+                <td style="white-space: normal; min-width: 150px;">${item.descricao || ''}</td>
+                <td>${item.ncm || ''}</td>
+                <td class="text-right">${item.quantidade.toLocaleString('pt-BR')}</td>
+                <td class="text-right">${(item.pesoUnitKG || 0).toFixed(3)}</td>
+                <td class="text-right">${(item.pesoTotalKG || 0).toFixed(3)}</td>
+                <td class="text-right">${item.percRateioPesoUnit.toFixed(2)}%</td>
+                <td class="text-right">${formatBRL(item.freteExibicaoPorPesoUnitarioBRL)}</td>
+                <td class="text-right">${formatCurrency(item.precoCustoUnitME, moedaLabel)}</td>
+                <td class="text-right">${formatCurrency(item.precoCustoTotalME, moedaLabel)}</td>
+                <td class="text-right">${formatBRL(item.precoCustoUnitME * taxaCambio)}</td>
+                <td class="text-right">${formatBRL(item.fobBRL_item)}</td>
+                <td class="text-right">${item.fobPercent.toFixed(2)}%</td>
+                <td class="text-right">${formatBRL(seguroBRL_item)}</td>
+                <td class="text-right">${formatBRL(outrasDespesasBRL_item)}</td>
+                <td class="text-right">${formatBRL(item.CIF_Total_BRL)}</td>
+                <td class="text-right">${formatBRL(item.valorII)}</td>
+                <td class="text-right">${formatBRL(item.valorTotalNF_BRL)}</td>
+                <td class="text-right">${formatBRL(item.valorUnitarioNF_BRL)}</td>
+                <td class="text-right">${formatBRL(item.ipi_pago)}</td>
+                <td class="text-right" style="color: var(--theme-accent-green);">${formatBRL(item.ipi_creditado)}</td>
+                <td class="text-right">${formatBRL(item.ipi_efetivo)}</td>
+                <td class="text-right">${formatBRL(item.taxaSiscomexRateada_BRL_item)}</td>
+                <td class="text-right">${formatBRL(item.pis_pago)}</td>
+                <td class="text-right" style="color: var(--theme-accent-green);">${formatBRL(item.pis_creditado)}</td>
+                <td class="text-right">${formatBRL(item.pis_efetivo)}</td>
+                <td class="text-right">${formatBRL(item.cofins_pago)}</td>
+                <td class="text-right" style="color: var(--theme-accent-green);">${formatBRL(item.cofins_creditado)}</td>
+                <td class="text-right">${formatBRL(item.cofins_efetivo)}</td>
+                <td class="text-right">${formatBRL(item.baseCalcICMS_item)}</td>
+                <td class="text-right">${formatBRL(item.icms_pago)}</td>
+                <td class="text-right" style="color: var(--theme-accent-green);">${formatBRL(item.icms_creditado)}</td>
+                <td class="text-right">${formatBRL(item.icms_efetivo)}</td>
+                <td class="text-right">${formatBRL(item.valorAFRMM)}</td>
+                <td class="text-right">${formatBRL(item.despesasAduaneirasBRL_item)}</td>
+                <td class="text-right">${formatBRL(item.freteNacionalBRL_item)}</td>
+                <td class="text-right">${formatBRL(item.custoTotalComTodosImpostos_BRL)}</td>
+                <td class="text-right" style="font-weight: bold;">${formatBRL(item.custoUnitarioComTodosImpostos_BRL)}</td>
+                <td class="text-right">${formatBRL(item.somaImpostosQueCreditam_BRL)}</td>
+                <td class="text-right">${formatBRL(item.somaImpostosComCreditos_BRL)}</td>
+                <td class="text-right">${formatBRL(totalImpostosEfetivosItemComII)}</td>
+                <td class="text-right" style="font-weight: bold;">${formatBRL(item.custoUnitarioItem)}</td>
+                <td class="text-right" style="font-weight: bold;">${formatBRL(item.custoTotalLinha)}</td>
+                <td class="text-right">${formatBRL(item.valorVendaUnitBR)}</td>
+                <td class="text-right">${formatBRL(item.precoVendaTotalBrasil)}</td>
+                <td class="text-right">${formatBRL(lucroUnitarioRS)}</td>
+                <td class="text-right">${formatBRL(lucroTotalLinhaRS)}</td>
+                <td ${lucroCellStyle} style="font-weight: bold;">${lucroDisplay}</td>
             `;
         });
+        
+        applyTranslations(geId('idiomaSelect').value);
     }
 
     function renderSummary(results) {
@@ -2338,7 +2490,6 @@
         const diProcesso = geId('diProcesso').value || 'N/A';
         const appVersion = geId('appVersion')?.textContent || '';
 
-        // Colors from CSS variables
         const primaryColor = '#007bff';
         const textColor = '#212529';
         const secondaryTextColor = '#495057';
@@ -2348,7 +2499,6 @@
         const pageWidth = doc.internal.pageSize.getWidth();
         let finalY = 0;
 
-        // --- HEADER and FOOTER ---
         const pageHeader = (data) => {
             doc.setFontSize(16);
             doc.setTextColor(primaryColor);
@@ -2365,8 +2515,6 @@
             doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
         };
         
-        // --- PAGE 1: SUMMARY ---
-        // Basic Info
         doc.setFontSize(9);
         doc.setTextColor(secondaryTextColor);
         doc.text(`Fornecedor: ${nomeFornecedor}`, 14, 28);
@@ -2374,7 +2522,6 @@
         doc.text(`DI/Processo: ${diProcesso}`, 14, 38);
         doc.text(`Data do Cálculo: ${dataCalculo}`, pageWidth - 14, 28, { align: 'right' });
         
-        // Financial Summary
         doc.setFontSize(12);
         doc.setTextColor(primaryColor);
         doc.setFont(undefined, 'bold');
@@ -2400,7 +2547,6 @@
         });
         finalY = doc.lastAutoTable.finalY + 10;
 
-        // KPI Summary
         doc.setFontSize(12);
         doc.setTextColor(primaryColor);
         doc.setFont(undefined, 'bold');
@@ -2422,7 +2568,6 @@
         });
         finalY = doc.lastAutoTable.finalY;
 
-        // --- PAGE 2+: ITEM LIST ---
         doc.addPage();
 
         doc.setFontSize(12);
@@ -2478,7 +2623,6 @@
             }
         });
 
-        // Add header and footer to the first page manually
         pageHeader({pageNumber: 1});
         pageFooter({pageNumber: 1});
 
@@ -2506,11 +2650,9 @@
 
         const formatCSVCell = (value) => {
             let output = (value === null || value === undefined) ? '' : String(value);
-            // For numbers, replace decimal point with comma for Brazilian locale
             if (typeof value === 'number') {
                 output = value.toFixed(2).replace('.', ',');
             }
-            // Escape quotes by doubling them and wrap the whole cell in quotes if it contains delimiter, newline or quotes
             if (output.includes('"') || output.includes(delimiter) || output.includes('\n')) {
                 output = `"${output.replace(/"/g, '""')}"`;
             }
@@ -2581,7 +2723,7 @@
     
         html2canvas(areaToCapture, {
             backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff',
-            scale: 2 // Aumenta a resolução
+            scale: 2 
         }).then(canvas => {
             screenshotImg.src = canvas.toDataURL('image/png');
             modal.style.display = 'flex';
@@ -2833,9 +2975,93 @@
         document.documentElement.lang = lang;
         saveState();
     }
+    
+    // --- LÓGICA DA ANÁLISE DE SENSIBILIDADE (CORRIGIDA) ---
+    function runSensitivityAnalysis() {
+        if (!latestCalculationResults) {
+            showToast('Por favor, execute o cálculo principal primeiro para poder simular.', 'warning');
+            return;
+        }
+
+        const { items: originalItems, valorTotalVendaBrasil, taxaCambio: taxaCambioOriginal, acc } = latestCalculationResults;
+        const freteMEOriginal = TxtToNum('totalFreteME');
+
+        const simTaxaCambioInput = geId('simTaxaCambio');
+        const simFreteMEInput = geId('simTotalFreteME');
+
+        const taxaCambio = TxtToNum(simTaxaCambioInput.value, false) || taxaCambioOriginal;
+        const totalFreteME_global = TxtToNum(simFreteMEInput.value, false) || freteMEOriginal;
+
+        const totalSeguroME_global = TxtToNum('totalSeguroME');
+        const totalOutrasDespesasME_global = TxtToNum('totalOutrasDespesasME');
+        const taxaSiscomexBRL_global = TxtToNum('taxaSiscomexBRL');
+        const despesasAduaneirasBRL_global = TxtToNum('despesasAduaneirasBRL');
+        const freteNacionalBRL_global = TxtToNum('freteNacionalBRL');
+        const aliqAFRMM_global_dec = TxtToNum('aliquotaAFRMM') / 100;
+
+        const percCreditoPIS_dec = geId('percCreditoPIS').disabled ? 0 : TxtToNum('percCreditoPIS') / 100;
+        const percCreditoCOFINS_dec = geId('percCreditoCOFINS').disabled ? 0 : TxtToNum('percCreditoCOFINS') / 100;
+        const percCreditoIPI_dec = geId('percCreditoIPI').disabled ? 0 : TxtToNum('percCreditoIPI') / 100;
+        const percCreditoICMS_dec = geId('percCreditoICMS').disabled ? 0 : TxtToNum('percCreditoICMS') / 100;
+
+        try {
+            let valorFOBTotalME = 0;
+            originalItems.forEach(item => { valorFOBTotalME += item.precoCustoTotalME; });
+            
+            let custoTotalGeralSimulado = 0;
+            
+            originalItems.forEach(item => {
+                const fobPercent = (valorFOBTotalME > 0) ? (item.precoCustoTotalME / valorFOBTotalME) : (1 / originalItems.length);
+                const pesoPercent = (acc.totalPesoKG > 0) ? (item.pesoTotalKG / acc.totalPesoKG) : (1 / originalItems.length);
+
+                const fobBRL_item_sim = item.precoCustoTotalME * taxaCambio;
+                const freteBRL_item_sim = (totalFreteME_global * taxaCambio) * fobPercent;
+                const seguroBRL_item_sim = (totalSeguroME_global * taxaCambio) * fobPercent;
+                const outrasDespesasBRL_item_sim = (totalOutrasDespesasME_global * taxaCambio) * fobPercent;
+                const taxaSiscomexRateada_BRL_item_sim = taxaSiscomexBRL_global * fobPercent;
+                
+                const despesasAduaneirasBRL_item_sim = despesasAduaneirasBRL_global * pesoPercent;
+                const freteNacionalBRL_item_sim = freteNacionalBRL_global * pesoPercent;
+                
+                const CIF_Total_BRL_sim = fobBRL_item_sim + freteBRL_item_sim + seguroBRL_item_sim + outrasDespesasBRL_item_sim;
+                
+                const valorII_sim = CIF_Total_BRL_sim * item.aliqII;
+                
+                const baseIPI_sim = CIF_Total_BRL_sim + valorII_sim;
+                const ipi_pago_sim = baseIPI_sim * item.aliqIPI;
+                const ipi_efetivo_sim = ipi_pago_sim * (1 - percCreditoIPI_dec);
+                
+                const pis_pago_sim = CIF_Total_BRL_sim * item.aliqPIS;
+                const pis_efetivo_sim = pis_pago_sim * (1 - percCreditoPIS_dec);
+                
+                const cofins_pago_sim = CIF_Total_BRL_sim * item.aliqCOFINS;
+                const cofins_efetivo_sim = cofins_pago_sim * (1 - percCreditoCOFINS_dec);
+                
+                const valorAFRMM_sim = freteBRL_item_sim * aliqAFRMM_global_dec;
+
+                const baseCalcICMS_sim = (CIF_Total_BRL_sim + valorII_sim + ipi_pago_sim + pis_pago_sim + cofins_pago_sim + taxaSiscomexRateada_BRL_item_sim) / (1 - item.aliqICMS);
+                const icms_pago_sim = baseCalcICMS_sim * item.aliqICMS;
+                const icms_efetivo_sim = icms_pago_sim * (1 - percCreditoICMS_dec);
+
+                const custoItemSimulado = CIF_Total_BRL_sim + valorII_sim + ipi_efetivo_sim + pis_efetivo_sim + cofins_efetivo_sim + icms_efetivo_sim + valorAFRMM_sim + taxaSiscomexRateada_BRL_item_sim + despesasAduaneirasBRL_item_sim + freteNacionalBRL_item_sim;
+                custoTotalGeralSimulado += custoItemSimulado;
+            });
+
+            const novoLucro = valorTotalVendaBrasil - custoTotalGeralSimulado;
+
+            const simNovoLucroElem = geId('simNovoLucro');
+            simNovoLucroElem.textContent = formatBRL(novoLucro);
+            simNovoLucroElem.classList.remove('profit-positive', 'profit-negative');
+            simNovoLucroElem.classList.add(novoLucro >= 0 ? 'profit-positive' : 'profit-negative');
+
+        } catch (e) {
+            console.error("Erro na análise de sensibilidade:", e);
+            showToast("Ocorreu um erro ao simular.", "error");
+        }
+    }
 
 
-    // --- Tornar funções globalmente acessíveis ---
+    // --- FUNÇÕES GLOBAIS ---
     window.calcularCustosMultiItem = calcularCustosMultiItem;
     window.gerarPDF = gerarPDF;
     window.exportTableToCSV = exportTableToCSV;
@@ -2850,7 +3076,7 @@
     window.carregarImpostosPadrao = carregarImpostosPadrao;
     window.renderizarGraficoCustos = renderizarGraficoCustos;
     window.applyTranslations = applyTranslations;
-    window.runSensitivityAnalysis = function() {}; // Definir a função globalmente
+    window.runSensitivityAnalysis = runSensitivityAnalysis;
 
 })();
 </script>
