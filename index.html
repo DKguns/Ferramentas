@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.1</title>
+    <title>Ferramenta de Calculo de Importação V42.2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -936,7 +936,7 @@
 
             <section class="item-inputs" aria-labelledby="headingItensEmbarque">
                 <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque">Itens do Embarque</h2>
-                <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.</p>
+                <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Custo Unit. Nacional" é para comparação.</p>
                 <div class="table-wrapper">
                     <table id="itemInputTable" class="item-table-input">
                         <caption>Tabela de entrada de itens para cálculo de importação</caption>
@@ -955,7 +955,7 @@
                                 <th scope="col" data-translate-key="thPIS">PIS (%)</th>
                                 <th scope="col" data-translate-key="thCOFINS">COFINS (%)</th>
                                 <th scope="col" data-translate-key="thICMS">ICMS (%)</th>
-                                <th scope="col" data-translate-key="thPrecoVendaUnitBR">Pr. Venda Unit. R$ Brasil</th>
+                                <th scope="col" data-translate-key="thCustoUnitBR">Custo Unit. Nacional (R$)</th>
                                 <th scope="col" data-translate-key="thPrecoCustoTotalME">Pr. Custo Total $</th>
                                 <th scope="col" data-translate-key="thPesoTotalKG">Peso Total KG</th>
                                 <th scope="col" data-translate-key="thAcoes" style="min-width: 140px;">Ações</th>
@@ -1029,11 +1029,11 @@
                                 <th scope="col">Total Imp. Efetivos</th>
                                 <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
                                 <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
-                                <th scope="col">PREÇO VENDA UNIT. R$ Brasil</th>
-                                <th scope="col">PREÇO VENDA Total. R$ Brasil</th>
+                                <th scope="col">CUSTO UNIT. NACIONAL (R$)</th>
                                 <th scope="col">LUCRO UNIT. (R$)</th>
                                 <th scope="col">LUCRO TOTAL LINHA (R$)</th>
                                 <th scope="col">MARGEM LUCRO UNIT. %</th>
+                                <th scope="col">MARKUP S/ CUSTO %</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -1558,7 +1558,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td class="grid-item"><label class="sr-only" for="aliqPISItem${index}">Alíquota PIS (%) do Item ${index + 1}</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
             <td class="grid-item"><label class="sr-only" for="aliqCOFINSItem${index}">Alíquota COFINS (%) do Item ${index + 1}</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
             <td class="grid-item"><label class="sr-only" for="aliqICMSItem${index}">Alíquota ICMS (%) do Item ${index + 1}</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
-            <td><label class="sr-only" for="valVendaUnitBRItem${index}">Preço Venda Unit. R$ Brasil do Item ${index + 1}</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
+            <td><label class="sr-only" for="valVendaUnitBRItem${index}">Custo Unit. Nacional (R$) do Item ${index + 1}</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
             <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Preço Custo Total $ do Item ${index + 1}</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
             <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG do Item ${index + 1}</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
             <td>
@@ -1947,12 +1947,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let valorFOBTotalME = 0;
         let pesoTotalEmbarqueKG = 0;
-        let valorTotalVendaBrasil = 0;
+        let valorTotalCustoBrasil = 0;
 
         itemsData.forEach(item => {
             valorFOBTotalME += item.precoCustoTotalME;
             pesoTotalEmbarqueKG += item.pesoTotalKG;
-            valorTotalVendaBrasil += item.valorVendaUnitBR * item.quantidade;
+            valorTotalCustoBrasil += item.valorCustoUnitarioNacional * item.quantidade;
         });
 
         let acc = {
@@ -1993,7 +1993,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newItem.valorII = newItem.CIF_Total_BRL * newItem.aliqII;
             newItem.valorTotalNF_BRL = newItem.CIF_Total_BRL + newItem.valorII;
             newItem.valorUnitarioNF_BRL = newItem.quantidade > 0 ? newItem.valorTotalNF_BRL / newItem.quantidade : 0;
-            newItem.precoVendaTotalBrasil = newItem.valorVendaUnitBR * newItem.quantidade;
+            
             const baseIPI = newItem.CIF_Total_BRL + newItem.valorII;
             newItem.ipi_pago = baseIPI * newItem.aliqIPI;
             newItem.ipi_creditado = newItem.ipi_pago * percCreditoIPI_dec;
@@ -2006,7 +2006,6 @@ document.addEventListener('DOMContentLoaded', function() {
             newItem.cofins_efetivo = newItem.cofins_pago - newItem.cofins_creditado;
             newItem.valorAFRMM = (freteTotalGlobalBRL * (newItem.fobPercent / 100)) * aliqAFRMM_global_dec;
 
-            // CORREÇÃO: A base de cálculo do ICMS deve incluir todas as despesas aduaneiras.
             const baseICMS_antes_imposto = newItem.CIF_Total_BRL + newItem.valorII + newItem.ipi_pago + newItem.pis_pago + newItem.cofins_pago + newItem.taxaSiscomexRateada_BRL_item + newItem.valorAFRMM + newItem.despesasAduaneirasBRL_item;
             newItem.baseCalcICMS_item = baseICMS_antes_imposto / (1 - newItem.aliqICMS);
             
@@ -2015,7 +2014,10 @@ document.addEventListener('DOMContentLoaded', function() {
             newItem.icms_efetivo = newItem.icms_pago - newItem.icms_creditado;
             newItem.custoTotalLinha = newItem.CIF_Total_BRL + newItem.valorII + newItem.ipi_efetivo + newItem.pis_efetivo + newItem.cofins_efetivo + newItem.valorAFRMM + newItem.taxaSiscomexRateada_BRL_item + newItem.despesasAduaneirasBRL_item + newItem.icms_efetivo + newItem.freteNacionalBRL_item;
             newItem.custoUnitarioItem = newItem.quantidade > 0 ? newItem.custoTotalLinha / newItem.quantidade : 0;
-            newItem.lucroPercentualUnitario = newItem.valorVendaUnitBR > 0 ? ((newItem.valorVendaUnitBR - newItem.custoUnitarioItem) / newItem.valorVendaUnitBR) * 100 : null;
+            
+            const lucroUnitario = newItem.valorCustoUnitarioNacional - newItem.custoUnitarioItem;
+            newItem.lucroPercentualUnitario = newItem.valorCustoUnitarioNacional > 0 ? (lucroUnitario / newItem.valorCustoUnitarioNacional) * 100 : 0;
+            newItem.markupSobreCusto = newItem.custoUnitarioItem > 0 ? (lucroUnitario / newItem.custoUnitarioItem) * 100 : 0;
             
             acc.fob_BRL += newItem.fobBRL_item; acc.frete_BRL += newItem.freteExibicaoPorPesoUnitarioBRL; acc.seguro_BRL += seguroBRL_item; acc.outrasDespME_BRL += outrasDespesasBRL_item; acc.CIF_Total_BRL_acumulado += newItem.CIF_Total_BRL; acc.ii_BRL += newItem.valorII; acc.ipi_pago_BRL += newItem.ipi_pago; acc.ipi_creditado_BRL += newItem.ipi_creditado; acc.ipi_efetivo_BRL += newItem.ipi_efetivo; acc.pis_pago_BRL += newItem.pis_pago; acc.pis_creditado_BRL += newItem.pis_creditado; acc.pis_efetivo_BRL += newItem.pis_efetivo; acc.cofins_pago_BRL += newItem.cofins_pago; acc.cofins_creditado_BRL += newItem.cofins_creditado; acc.cofins_efetivo_BRL += newItem.cofins_efetivo; acc.baseCalcICMS_BRL_total += newItem.baseCalcICMS_item; acc.icms_pago_BRL += newItem.icms_pago; acc.icms_creditado_BRL += newItem.icms_creditado; acc.icms_efetivo_BRL += newItem.icms_efetivo; acc.afrmm_BRL += newItem.valorAFRMM; acc.totalCreditosFiscais_BRL += newItem.ipi_creditado + newItem.pis_creditado + newItem.cofins_creditado + newItem.icms_creditado; acc.totalQtdItens += newItem.quantidade; acc.valorTotalNF_BRL_acumulado += newItem.valorTotalNF_BRL; acc.siscomex_BRL += newItem.taxaSiscomexRateada_BRL_item;
 
@@ -2036,7 +2038,7 @@ document.addEventListener('DOMContentLoaded', function() {
             lucroAltoMin: inputs.lucroAltoMin,
             lucroMedioMin: inputs.lucroMedioMin,
             lucroBaixoMin: inputs.lucroBaixoMin,
-            valorTotalVendaBrasil,
+            valorTotalCustoBrasil,
             valorFOBTotalME,
             taxaCambio
         };
@@ -2065,7 +2067,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         precoCustoTotalME: qtd * precoCustoUnitME,
                         pesoUnitKG: TxtToNum(`pesoUnitKGItem${i}`),
                         pesoTotalKG: qtd * TxtToNum(`pesoUnitKGItem${i}`),
-                        valorVendaUnitBR: TxtToNum(`valVendaUnitBRItem${i}`),
+                        valorCustoUnitarioNacional: TxtToNum(`valVendaUnitBRItem${i}`), // Nome corrigido
                         aliqII: TxtToNum(`aliqIIItem${i}`) / 100,
                         aliqIPI: TxtToNum(`aliqIPIItem${i}`) / 100,
                         aliqPIS: TxtToNum(`aliqPISItem${i}`) / 100,
@@ -2097,7 +2099,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             lastCalculationInputs = currentInputs;
             latestCalculationResults = performCalculationLogic(currentInputs);
-
+            
             renderResultsTable(latestCalculationResults);
             renderSummary(latestCalculationResults);
             renderDashboard(latestCalculationResults);
@@ -2131,11 +2133,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!isFinite(item.lucroPercentualUnitario)) { lucroDisplay = (item.lucroPercentualUnitario > 0 ? "+Inf" : "-Inf") + "%" }
                 else { lucroDisplay = item.lucroPercentualUnitario.toFixed(2).replace('.',',') + '%'; }
             }
+
+            let markupDisplay = 'N/A';
+            if (item.markupSobreCusto !== null && isFinite(item.markupSobreCusto)) {
+                markupDisplay = item.markupSobreCusto.toFixed(2).replace('.', ',') + '%';
+            }
             
-            const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
+            const lucroUnitarioRS = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const totalImpostosEfetivosItemComII = item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo;
-
+            
+            // Note as colunas extras no final para as novas métricas
             row.innerHTML = `<td>${item.index + 1}</td>
                 <td>${item.codInterno || ''}</td>
                 <td style="white-space: normal; min-width: 150px;">${item.descricao || ''}</td>
@@ -2162,14 +2170,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${formatBRL(item.ipi_pago + item.pis_pago + item.cofins_pago + item.icms_pago)}</td>
                 <td>${formatBRL(item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo + item.valorAFRMM)}</td>
                 <td>${formatBRL(totalImpostosEfetivosItemComII)}</td><td style="font-weight: bold;">${formatBRL(item.custoUnitarioItem)}</td>
-                <td style="font-weight: bold;">${formatBRL(item.custoTotalLinha)}</td><td>${formatBRL(item.valorVendaUnitBR)}</td>
-                <td>${formatBRL(item.precoVendaTotalBrasil)}</td><td>${formatBRL(lucroUnitarioRS)}</td>
-                <td>${formatBRL(lucroTotalLinhaRS)}</td><td ${lucroCellStyle} style="font-weight: bold;">${lucroDisplay}</td>`;
+                <td style="font-weight: bold;">${formatBRL(item.custoTotalLinha)}</td>
+                <td>${formatBRL(item.valorCustoUnitarioNacional)}</td>
+                <td>${formatBRL(lucroUnitarioRS)}</td>
+                <td>${formatBRL(lucroTotalLinhaRS)}</td>
+                <td ${lucroCellStyle} style="font-weight: bold;">${lucroDisplay}</td>
+                <td ${lucroCellStyle} style="font-weight: bold;">${markupDisplay}</td>`;
         });
     }
 
     function renderSummary(results) { 
-        const { acc } = results;
+        const { acc, valorTotalCustoBrasil } = results;
+        const lucroTotalRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
+
         const summaryDiv = geId('resultsSummary');
         if (summaryDiv) {
             summaryDiv.innerHTML = `
@@ -2205,9 +2218,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     function renderDashboard(results) { 
-        const { acc, items, moedaLabel, valorFOBTotalME, valorTotalVendaBrasil, lucroAltoMin, lucroMedioMin, lucroBaixoMin } = results;
-        const lucroTotalPedidoRS = valorTotalVendaBrasil - acc.totalGeral_BRL;
-        const lucroTotalPedidoPerc = (valorTotalVendaBrasil > 0) ? (lucroTotalPedidoRS / valorTotalVendaBrasil) * 100 : 0;
+        const { acc, items, moedaLabel, valorFOBTotalME, valorTotalCustoBrasil, lucroAltoMin, lucroMedioMin, lucroBaixoMin } = results;
+        const lucroTotalPedidoRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
+        const lucroTotalPedidoPerc = (valorTotalCustoBrasil > 0) ? (lucroTotalPedidoRS / valorTotalCustoBrasil) * 100 : 0;
         const percFreteSobreFOB = acc.fob_BRL > 0 ? (acc.frete_BRL / acc.fob_BRL) * 100 : 0;
         
         const totalCustoProduto = acc.fob_BRL;
@@ -2246,7 +2259,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setInnerTextDashboard('dbValorPedidoME', valorFOBTotalME, true, moedaLabel, 'blue-highlight');
         setInnerTextDashboard('dbTotalCustoImp', acc.totalGeral_BRL, true, '', 'orange-highlight');
-        setInnerTextDashboard('dbReceitaTotalBrasil', valorTotalVendaBrasil, true);
+        setInnerTextDashboard('dbReceitaTotalBrasil', valorTotalCustoBrasil, true);
         setInnerTextDashboard('dbLucroTotalPedidoRS', lucroTotalPedidoRS, true, '', lucroTotalPedidoRS >= 0 ? 'profit-positive' : 'profit-negative');
         setInnerTextDashboard('dbLucroTotalPedidoPerc', isFinite(lucroTotalPedidoPerc) ? lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%' : 'N/A', false, '', lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
         
@@ -2370,8 +2383,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const simulationResults = performCalculationLogic(simulationInputs);
 
-        const { acc, valorTotalVendaBrasil } = simulationResults;
-        const novoLucroTotal = valorTotalVendaBrasil - acc.totalGeral_BRL;
+        const { acc, valorTotalCustoBrasil } = simulationResults;
+        const novoLucroTotal = valorTotalCustoBrasil - acc.totalGeral_BRL;
 
         simLucroElem.textContent = formatBRL(novoLucroTotal);
         simLucroElem.classList.remove('profit-positive', 'profit-negative');
@@ -2415,7 +2428,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
         const logoData = await getLogoBase64();
 
-        const { items, acc, valorTotalVendaBrasil } = latestCalculationResults;
+        const { items, acc, valorTotalCustoBrasil } = latestCalculationResults;
         const nomeUsuario = geId('nomeUsuario').value || 'N/A';
         const nomeFornecedor = geId('nomeFornecedor').value || 'N/A';
         const dataCalculo = geId('dataCalculo').value ? new Date(geId('dataCalculo').value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
@@ -2468,7 +2481,7 @@ document.addEventListener('DOMContentLoaded', function() {
         doc.text('Resumo Financeiro (BRL)', 14, 48);
         doc.setFont(undefined, 'normal');
         
-        const lucroTotalRS = valorTotalVendaBrasil - acc.totalGeral_BRL;
+        const lucroTotalRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
         const lucroCor = lucroTotalRS >= 0 ? greenColor : redColor;
 
         doc.autoTable({
@@ -2476,8 +2489,8 @@ document.addEventListener('DOMContentLoaded', function() {
             theme: 'plain',
             body: [
                 ['Custo Total Geral (Líquido):', formatBRL(acc.totalGeral_BRL)],
-                ['Receita Total Estimada:', formatBRL(valorTotalVendaBrasil)],
-                [{ content: 'Lucro Total Estimado:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]
+                ['Custo Total Nacional (Ref.):', formatBRL(valorTotalCustoBrasil)],
+                [{ content: 'Economia Total Estimada:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]
             ],
             styles: { fontSize: 10, cellPadding: 2 },
             columnStyles: {
@@ -2523,13 +2536,13 @@ document.addEventListener('DOMContentLoaded', function() {
         doc.setFont(undefined, 'normal');
         
         const tableBody = items.map((item, index) => {
-            const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
+            const lucroUnitarioRS = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
             return [
                 index + 1,
                 item.descricao,
                 item.quantidade,
                 formatBRL(item.custoUnitarioItem),
-                formatBRL(item.valorVendaUnitBR),
+                formatBRL(item.valorCustoUnitarioNacional),
                 formatBRL(lucroUnitarioRS),
                 `${(item.lucroPercentualUnitario || 0).toFixed(2)}%`
             ]
@@ -2537,7 +2550,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         doc.autoTable({
             startY: 34,
-            head: [['#', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Venda Unit.', 'Lucro Unit.', 'Margem %']],
+            head: [['#', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Custo Unit. Nac.', 'Economia Unit.', 'Margem %']],
             body: tableBody,
             theme: 'grid',
             headStyles: { fillColor: primaryColor, textColor: '#ffffff', fontSize: 9 },
@@ -2583,8 +2596,8 @@ document.addEventListener('DOMContentLoaded', function() {
             '#', 'Cód. Interno', 'Descrição', 'NCM', 'Qtd',
             'Custo Unit. ME', 'Custo Total ME',
             'Custo Unit. Líquido (BRL)', 'Custo Total Linha (BRL)',
-            'Preço Venda Unit. (BRL)', 'Preço Venda Total (BRL)',
-            'Lucro Unit. (BRL)', 'Lucro Total Linha (BRL)', 'Margem Lucro (%)',
+            'Custo Unit. Nacional (BRL)',
+            'Lucro Unit. (BRL)', 'Lucro Total Linha (BRL)', 'Margem Lucro (%)', 'Markup s/ Custo (%)',
             'II (BRL)', 'IPI Efetivo (BRL)', 'PIS Efetivo (BRL)', 'COFINS Efetivo (BRL)', 'ICMS Efetivo (BRL)',
             'AFRMM (BRL)', 'Outras Despesas (BRL)'
         ];
@@ -2601,7 +2614,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         const rows = items.map((item, index) => {
-            const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
+            const lucroUnitarioRS = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const outrasDespesasRateadas = (item.despesasAduaneirasBRL_item || 0) + (item.freteNacionalBRL_item || 0);
 
@@ -2609,8 +2622,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 index + 1, item.codInterno, item.descricao, item.ncm, item.quantidade,
                 item.precoCustoUnitME, item.precoCustoTotalME,
                 item.custoUnitarioItem, item.custoTotalLinha,
-                item.valorVendaUnitBR, item.precoVendaTotalBrasil,
-                lucroUnitarioRS, lucroTotalLinhaRS, item.lucroPercentualUnitario,
+                item.valorCustoUnitarioNacional,
+                lucroUnitarioRS, lucroTotalLinhaRS, item.lucroPercentualUnitario, item.markupSobreCusto,
                 item.valorII, item.ipi_efetivo, item.pis_efetivo, item.cofins_efetivo, item.icms_efetivo,
                 item.valorAFRMM, outrasDespesasRateadas
             ].map(formatCSVCell).join(delimiter);
