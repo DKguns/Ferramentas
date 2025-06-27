@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.2</title>
+    <title>Ferramenta de Calculo de Importação V42.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -1030,9 +1030,9 @@
                                 <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
                                 <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
                                 <th scope="col">CUSTO UNIT. NACIONAL (R$)</th>
-                                <th scope="col">LUCRO UNIT. (R$)</th>
-                                <th scope="col">LUCRO TOTAL LINHA (R$)</th>
-                                <th scope="col">MARGEM LUCRO UNIT. %</th>
+                                <th scope="col">ECONOMIA UNIT. (R$)</th>
+                                <th scope="col">ECONOMIA TOTAL (R$)</th>
+                                <th scope="col">ECONOMIA (s/ Custo Nac.) %</th>
                                 <th scope="col">MARKUP S/ CUSTO %</th>
                             </tr>
                         </thead>
@@ -1156,7 +1156,7 @@
                              </button>
                         </div>
                         <div class="grid-item">
-                            <strong data-translate-key="labelSimNovoLucro">Novo Lucro Total (R$):</strong>
+                            <strong data-translate-key="labelSimNovoLucro">Nova Economia Total (R$):</strong>
                             <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em; transition: color 0.3s ease;"></span>
                         </div>
                     </div>
@@ -1183,12 +1183,12 @@
 
                 <div class="top-items-grid-container">
                     <section aria-labelledby="headingTopLucrativos" class="top-items-section">
-                        <h3 id="headingTopLucrativos" data-translate-key="headingTopLucrativos">Top 10 Itens Mais Lucrativos (Margem %)</h3>
+                        <h3 id="headingTopLucrativos" data-translate-key="headingTopLucrativos">Top 10 Itens Mais Econômicos (Economia %)</h3>
                         <ul id="topLucrativosList" class="top-items-list">
                         </ul>
                     </section>
                      <section aria-labelledby="headingTopMenosLucrativos" class="top-items-section">
-                        <h3 id="headingTopMenosLucrativos" data-translate-key="headingTopMenosLucrativos">Top 10 Itens Menos Lucrativos (Margem %)</h3>
+                        <h3 id="headingTopMenosLucrativos" data-translate-key="headingTopMenosLucrativos">Top 10 Itens Menos Econômicos (Economia %)</h3>
                         <ul id="topMenosLucrativosList" class="top-items-list">
                              </ul>
                     </section>
@@ -1249,17 +1249,17 @@
                 <h3 id="headingLimitesLucroModal" data-translate-key="modalLucroTitle">Configurações de Margem de Lucro (%)</h3>
                  <div class="grid-container">
                     <div class="grid-item">
-                        <label for="modalLucroAltoMin"><span class="profit-color-indicator green"></span><span data-translate-key="modalLucroAltoLabel">Mín. Lucro Alto (Verde):</span></label>
+                        <label for="modalLucroAltoMin"><span class="profit-color-indicator green"></span><span data-translate-key="modalLucroAltoLabel">Mín. Economia Alta (Verde):</span></label>
                         <input type="number" id="modalLucroAltoMin" step="1" value="40" placeholder="Ex: 40">
                         <small class="field-description" data-translate-key="modalLucroAltoDesc">Margem mínima para cor verde (lucro alto).</small>
                     </div>
                     <div class="grid-item">
-                        <label for="modalLucroMedioMin"><span class="profit-color-indicator yellow"></span><span data-translate-key="modalLucroMedioLabel">Mín. Lucro Médio (Amarelo):</span></label>
+                        <label for="modalLucroMedioMin"><span class="profit-color-indicator yellow"></span><span data-translate-key="modalLucroMedioLabel">Mín. Economia Média (Amarelo):</span></label>
                         <input type="number" id="modalLucroMedioMin" step="1" value="30" placeholder="Ex: 30">
                         <small class="field-description" data-translate-key="modalLucroMedioDesc">Margem mínima para cor amarela (lucro médio).</small>
                     </div>
                     <div class="grid-item">
-                        <label for="modalLucroBaixoMin"><span class="profit-color-indicator orange"></span><span data-translate-key="modalLucroBaixoLabel">Mín. Lucro Baixo (Laranja):</span></label>
+                        <label for="modalLucroBaixoMin"><span class="profit-color-indicator orange"></span><span data-translate-key="modalLucroBaixoLabel">Mín. Economia Baixa (Laranja):</span></label>
                         <input type="number" id="modalLucroBaixoMin" step="1" value="20" placeholder="Ex: 20">
                         <small class="field-description" data-translate-key="modalLucroBaixoDesc">Margem mínima para cor laranja (lucro baixo). Abaixo disso será vermelho.</small>
                     </div>
@@ -2597,7 +2597,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'Custo Unit. ME', 'Custo Total ME',
             'Custo Unit. Líquido (BRL)', 'Custo Total Linha (BRL)',
             'Custo Unit. Nacional (BRL)',
-            'Lucro Unit. (BRL)', 'Lucro Total Linha (BRL)', 'Margem Lucro (%)', 'Markup s/ Custo (%)',
+            'Economia Unit. (BRL)', 'Economia Total (BRL)', 'Economia (s/ Custo Nac.) %', 'Markup s/ Custo (%)',
             'II (BRL)', 'IPI Efetivo (BRL)', 'PIS Efetivo (BRL)', 'COFINS Efetivo (BRL)', 'ICMS Efetivo (BRL)',
             'AFRMM (BRL)', 'Outras Despesas (BRL)'
         ];
