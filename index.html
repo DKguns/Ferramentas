@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação v30.6</title>
+    <title>Ferramenta de Calculo de Importação v30.7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -207,7 +207,8 @@
         .results-summary-section,
         .dashboard-section,
         .top-items-section,
-        .cost-components-section {
+        .cost-components-section,
+        .saved-calculations-section {
             margin-bottom: 25px; padding: var(--theme-element-padding);
             border-radius: var(--theme-card-border-radius); background-color: var(--theme-bg-secondary);
             border: 1px solid var(--theme-border-primary); box-shadow: 0 4px 15px var(--theme-shadow-color);
@@ -573,7 +574,7 @@
         }
 
         .action-buttons { margin-top: 25px; margin-bottom: 20px; text-align: center; }
-        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button {
+        button.main-calculate-button, button.pdf-button, button.clear-button, button.whatsapp-button, button.csv-button, .saved-calculations-section button {
             color: white; padding: 12px 20px; font-size: 16px; font-weight: bold;
             display: inline-block; width: auto; margin: 5px 10px; border: none;
             border-radius: 8px; cursor: pointer;
@@ -624,8 +625,8 @@
         
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-        .top-items-section, .cost-components-section { margin-top: 30px; }
-        .top-items-section h3, .cost-components-section h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.1em; color: var(--theme-text-primary); border-bottom: 1px solid var(--theme-border-secondary); padding-bottom: 10px; }
+        .top-items-section, .cost-components-section, .sensitivity-analysis-section { margin-top: 30px; }
+        .top-items-section h3, .cost-components-section h3, .sensitivity-analysis-section h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.1em; color: var(--theme-text-primary); border-bottom: 1px solid var(--theme-border-secondary); padding-bottom: 10px; }
         
         .top-items-grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; margin-bottom: 25px; }
         .top-items-list { list-style: none; padding: 0; margin: 0; }
@@ -854,6 +855,27 @@
                 </section>
             </section>
 
+            <section class="saved-calculations-section" aria-labelledby="headingSavedCalculations">
+                <h2 id="headingSavedCalculations" data-translate-key="headingSavedCalculations">Gestão de Cálculos Salvos</h2>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <label for="calculationName" data-translate-key="labelCalculationName">Nome do Cálculo:</label>
+                        <input type="text" id="calculationName" placeholder="Ex: Importação China - Junho">
+                    </div>
+                    <div class="grid-item" style="display: flex; align-items: flex-end; gap: 10px;">
+                        <button type="button" id="saveCalculationBtn" class="main-calculate-button" style="flex-grow: 1;"><i class="fas fa-save"></i> <span data-translate-key="btnSalvarCalculo">Salvar Cálculo Atual</span></button>
+                    </div>
+                    <div class="grid-item">
+                        <label for="savedCalculations" data-translate-key="labelSavedCalculations">Carregar Cálculo:</label>
+                        <select id="savedCalculations"></select>
+                    </div>
+                     <div class="grid-item" style="display: flex; align-items: flex-end; gap: 10px;">
+                        <button type="button" id="loadCalculationBtn" class="pdf-button" style="flex-grow: 1;"><i class="fas fa-upload"></i> <span data-translate-key="btnCarregar">Carregar</span></button>
+                        <button type="button" id="deleteCalculationBtn" class="clear-button" style="flex-grow: 1;"><i class="fas fa-trash"></i> <span data-translate-key="btnExcluir">Excluir</span></button>
+                    </div>
+                </div>
+            </section>
+
             <section class="item-inputs" aria-labelledby="headingItensEmbarque">
                 <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque">Itens do Embarque</h2>
                 <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Pr. Venda Unit. R$ Brasil" é o preço unitário de venda.</p>
@@ -949,6 +971,7 @@
                                 <th scope="col" data-translate-key="resThCustoTotalLinhaLiquido">CUSTO TOTAL LINHA R$ (Líquido)</th>
                                 <th scope="col" data-translate-key="resThPrecoVendaUnitBR">PREÇO VENDA UNIT. R$ Brasil</th>
                                 <th scope="col" data-translate-key="resThPrecoVendaTotalBR">PREÇO VENDA Total. R$ Brasil</th>
+                                <th scope="col" data-translate-key="resThVendaMin">VENDA MÍNIMA (R$)</th>
                                 <th scope="col" data-translate-key="resThLucroUnit">LUCRO UNIT. (R$)</th>
                                 <th scope="col" data-translate-key="resThLucroTotalLinha">LUCRO TOTAL LINHA (R$)</th>
                                 <th scope="col" data-translate-key="resThMargemLucroUnit">MARGEM LUCRO UNIT. %</th>
@@ -1056,6 +1079,24 @@
                         <i class="fab fa-whatsapp"></i> Compartilhar Dashboard
                     </button>
                 </div>
+
+                <section class="sensitivity-analysis-section" aria-labelledby="headingSensitivityAnalysis">
+                    <h3 id="headingSensitivityAnalysis" data-translate-key="headingSensitivityAnalysis">Análise de Sensibilidade (What-If)</h3>
+                    <div class="grid-container">
+                        <div class="grid-item">
+                            <label for="simTaxaCambio" data-translate-key="labelSimTaxaCambio">Simular Taxa de Câmbio:</label>
+                            <input type="number" id="simTaxaCambio" step="0.01" oninput="runSensitivityAnalysis()">
+                        </div>
+                        <div class="grid-item">
+                            <label for="simTotalFreteME" data-translate-key="labelSimFreteME">Simular Frete Intl. ($):</label>
+                            <input type="number" id="simTotalFreteME" step="0.01" oninput="runSensitivityAnalysis()">
+                        </div>
+                        <div class="grid-item">
+                            <strong data-translate-key="labelSimNovoLucro">Novo Lucro Total (R$):</strong>
+                            <span id="simNovoLucro" style="font-weight: bold; font-size: 1.2em;"></span>
+                        </div>
+                    </div>
+                </section>
 
                 <section aria-labelledby="headingDistribuicaoCusto" class="cost-distribution-section">
                     <h3 id="headingDistribuicaoCusto" data-translate-key="headingDistribuicaoCusto">Distribuição Percentual Estimada do Custo Total Geral (Líquido de Créditos):</h3>
@@ -2809,6 +2850,7 @@
     window.carregarImpostosPadrao = carregarImpostosPadrao;
     window.renderizarGraficoCustos = renderizarGraficoCustos;
     window.applyTranslations = applyTranslations;
+    window.runSensitivityAnalysis = function() {}; // Definir a função globalmente
 
 })();
 </script>
