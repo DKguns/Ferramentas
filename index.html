@@ -2375,10 +2375,302 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast("Simulação concluída!", "success");
     }
 
-    function gerarPDF() { /* ... Lógica de geração de PDF ... */ }
-    function exportTableToCSV() { /* ... Lógica de exportação para CSV ... */ }
-    function shareDashboardViaWhatsApp() { /* ... Lógica de compartilhamento ... */ }
-    function setupDragAndDrop() { /* ... Lógica de arrastar e soltar ... */ }
+    function gerarPDF() {
+        if (!latestCalculationResults) {
+            showToast('Calcule primeiro para gerar o PDF.', 'warning');
+            return;
+        }
+        showToast('Iniciando geração do PDF...', 'success');
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'p',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const { items, acc, valorTotalVendaBrasil } = latestCalculationResults;
+        const nomeUsuario = geId('nomeUsuario').value || 'N/A';
+        const nomeFornecedor = geId('nomeFornecedor').value || 'N/A';
+        const dataCalculo = geId('dataCalculo').value ? new Date(geId('dataCalculo').value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
+        const refInterna = geId('refInterna').value || 'N/A';
+        const diProcesso = geId('diProcesso').value || 'N/A';
+        const appVersion = geId('appVersion')?.textContent || '';
+
+        const primaryColor = '#007bff';
+        const textColor = '#212529';
+        const secondaryTextColor = '#495057';
+        const greenColor = '#20c997';
+        const redColor = '#dc3545';
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        let finalY = 0;
+
+        const pageHeader = (data) => {
+            doc.setFontSize(16);
+            doc.setTextColor(primaryColor);
+            doc.setFont(undefined, 'bold');
+            doc.text('Relatório de Custo de Importação', pageWidth / 2, 15, { align: 'center' });
+            doc.setFont(undefined, 'normal');
+        };
+
+        const pageFooter = (data) => {
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(8);
+            doc.setTextColor(secondaryTextColor);
+            const footerText = `Gerado por: ${nomeUsuario} | Ferramenta de Importação ${appVersion} | Página ${data.pageNumber} de ${pageCount}`;
+            doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        };
+        
+        doc.setFontSize(9);
+        doc.setTextColor(secondaryTextColor);
+        doc.text(`Fornecedor: ${nomeFornecedor}`, 14, 28);
+        doc.text(`Referência: ${refInterna}`, 14, 33);
+        doc.text(`DI/Processo: ${diProcesso}`, 14, 38);
+        doc.text(`Data do Cálculo: ${dataCalculo}`, pageWidth - 14, 28, { align: 'right' });
+        
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor);
+        doc.setFont(undefined, 'bold');
+        doc.text('Resumo Financeiro (BRL)', 14, 50);
+        doc.setFont(undefined, 'normal');
+        
+        const lucroTotalRS = valorTotalVendaBrasil - acc.totalGeral_BRL;
+        const lucroCor = lucroTotalRS >= 0 ? greenColor : redColor;
+
+        doc.autoTable({
+            startY: 54,
+            theme: 'plain',
+            body: [
+                ['Custo Total Geral (Líquido):', formatBRL(acc.totalGeral_BRL)],
+                ['Receita Total Estimada:', formatBRL(valorTotalVendaBrasil)],
+                [{ content: 'Lucro Total Estimado:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]
+            ],
+            styles: { fontSize: 10, cellPadding: 2 },
+            columnStyles: {
+                0: { cellWidth: 50, fontStyle: 'bold', textColor: textColor },
+                1: { cellWidth: 'auto', halign: 'right' }
+            }
+        });
+        finalY = doc.lastAutoTable.finalY + 10;
+
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor);
+        doc.setFont(undefined, 'bold');
+        doc.text('Principais Indicadores (BRL)', 14, finalY);
+        doc.setFont(undefined, 'normal');
+
+        doc.autoTable({
+            startY: finalY + 4,
+            theme: 'grid',
+            head: [['Indicador', 'Valor', 'Indicador', 'Valor']],
+            body: [
+                ['Valor FOB', formatBRL(acc.fob_BRL), 'Total Impostos Pagos (Bruto)', formatBRL(acc.totalImpostosPagosBruto)],
+                ['Frete + Seguro Intl.', formatBRL(acc.frete_BRL + acc.seguro_BRL), 'Total Impostos Efetivos', formatBRL(acc.totalImpostosEfetivosGlobal)],
+                ['Despesas Nacionais', formatBRL(acc.despAduan_BRL + acc.freteNac_BRL), 'Total Créditos Fiscais', formatBRL(acc.totalCreditosFiscais_BRL)],
+            ],
+            headStyles: { fillColor: primaryColor, textColor: '#ffffff' },
+            styles: { fontSize: 9, cellPadding: 2 },
+            alternateRowStyles: { fillColor: '#f8f9fa' }
+        });
+        finalY = doc.lastAutoTable.finalY;
+
+        doc.addPage();
+
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor);
+        doc.setFont(undefined, 'bold');
+        doc.text('Resultados Detalhados por Item', 14, 20);
+        doc.setFont(undefined, 'normal');
+        
+        const tableBody = items.map((item, index) => {
+            const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
+            return [
+                index + 1,
+                item.codInterno || '-',
+                item.descricao,
+                item.quantidade,
+                formatBRL(item.custoUnitarioItem),
+                formatBRL(item.valorVendaUnitBR),
+                formatBRL(lucroUnitarioRS),
+                `${(item.lucroPercentualUnitario || 0).toFixed(2)}%`
+            ]
+        });
+
+        doc.autoTable({
+            startY: 24,
+            head: [['#', 'Cód.', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Venda Unit.', 'Lucro Unit.', 'Margem %']],
+            body: tableBody,
+            theme: 'grid',
+            headStyles: { fillColor: primaryColor, textColor: '#ffffff', fontSize: 9 },
+            foot: [['Total', '', '', acc.totalQtdItens.toLocaleString('pt-BR'), '', '', formatBRL(lucroTotalRS), '']],
+            footStyles: { fillColor: '#e9ecef', textColor: textColor, fontStyle: 'bold' },
+            styles: { fontSize: 8, cellPadding: 1.5, overflow: 'linebreak' },
+            columnStyles: {
+                0: { halign: 'center', cellWidth: 8 },
+                1: { cellWidth: 15 },
+                2: { cellWidth: 50 },
+                3: { halign: 'right' },
+                4: { halign: 'right' },
+                5: { halign: 'right' },
+                6: { halign: 'right' },
+                7: { halign: 'right' }
+            },
+            didDrawPage: function(data) {
+                pageHeader(data);
+                pageFooter(data);
+            },
+            didParseCell: function(data) {
+                if (data.column.index === 7 && data.section === 'body') {
+                    const lucroPerc = parseFloat(data.cell.raw.toString().replace('%',''));
+                    if (lucroPerc < (TxtToNum('modalLucroBaixoMin') || 20)) {
+                        data.cell.styles.textColor = redColor;
+                    }
+                }
+            }
+        });
+
+        pageHeader({pageNumber: 1});
+        pageFooter({pageNumber: 1});
+
+        doc.save(`Relatorio_Importacao_${refInterna.replace(/[\s/]/g, '_')}.pdf`);
+    }
+
+    function exportTableToCSV(filename) {
+        if (!latestCalculationResults) {
+            showToast('Calcule primeiro para exportar.', 'warning');
+            return;
+        }
+
+        const { items } = latestCalculationResults;
+        const delimiter = ';'; 
+
+        const headers = [
+            '#', 'Cód. Interno', 'Descrição', 'NCM', 'Qtd',
+            'Custo Unit. ME', 'Custo Total ME',
+            'Custo Unit. Líquido (BRL)', 'Custo Total Linha (BRL)',
+            'Preço Venda Unit. (BRL)', 'Preço Venda Total (BRL)',
+            'Lucro Unit. (BRL)', 'Lucro Total Linha (BRL)', 'Margem Lucro (%)',
+            'II (BRL)', 'IPI Efetivo (BRL)', 'PIS Efetivo (BRL)', 'COFINS Efetivo (BRL)', 'ICMS Efetivo (BRL)',
+            'AFRMM (BRL)', 'Outras Despesas (BRL)'
+        ];
+
+        const formatCSVCell = (value) => {
+            let output = (value === null || value === undefined) ? '' : String(value);
+            if (typeof value === 'number') {
+                output = value.toFixed(2).replace('.', ',');
+            }
+            if (output.includes('"') || output.includes(delimiter) || output.includes('\n')) {
+                output = `"${output.replace(/"/g, '""')}"`;
+            }
+            return output;
+        };
+
+        const rows = items.map((item, index) => {
+            const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
+            const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
+            const outrasDespesasRateadas = (item.despesasAduaneirasBRL_item || 0) + (item.freteNacionalBRL_item || 0);
+
+            return [
+                index + 1,
+                item.codInterno,
+                item.descricao,
+                item.ncm,
+                item.quantidade,
+                item.precoCustoUnitME,
+                item.precoCustoTotalME,
+                item.custoUnitarioItem,
+                item.custoTotalLinha,
+                item.valorVendaUnitBR,
+                item.precoVendaTotalBrasil,
+                lucroUnitarioRS,
+                lucroTotalLinhaRS,
+                item.lucroPercentualUnitario,
+                item.valorII,
+                item.ipi_efetivo,
+                item.pis_efetivo,
+                item.cofins_efetivo,
+                item.icms_efetivo,
+                item.valorAFRMM,
+                outrasDespesasRateadas
+            ].map(formatCSVCell).join(delimiter);
+        });
+
+        const csvContent = [headers.join(delimiter), ...rows].join('\r\n');
+        
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        showToast('CSV exportado com sucesso!', 'success');
+    }
+
+    function shareDashboardViaWhatsApp() {
+        if (!latestCalculationResults) {
+            showToast('Calcule primeiro para compartilhar.', 'warning');
+            return;
+        }
+    
+        const modal = geId('shareImageModal');
+        const screenshotImg = geId('dashboardScreenshot');
+        const areaToCapture = geId('dashboardScreenshotArea');
+        
+        showToast('Gerando imagem do dashboard...', 'success');
+    
+        html2canvas(areaToCapture, {
+            backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff',
+            scale: 2 
+        }).then(canvas => {
+            screenshotImg.src = canvas.toDataURL('image/png');
+            openModal('shareImageModal');
+        }).catch(err => {
+            console.error('Erro ao gerar a imagem:', err);
+            showToast('Falha ao gerar a imagem do dashboard.', 'error');
+        });
+    }
+
+    function setupDragAndDrop() {
+        const tbody = geId('itemInputTable').querySelector('tbody');
+        if (!tbody) return;
+
+        tbody.addEventListener('dragstart', (e) => {
+            draggedRow = e.target;
+            if (draggedRow.tagName !== 'TR') return;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', draggedRow.innerHTML);
+            setTimeout(() => {
+                draggedRow.classList.add('dragging');
+            }, 0);
+        });
+
+        tbody.addEventListener('dragend', (e) => {
+            if (draggedRow) {
+                draggedRow.classList.remove('dragging');
+                draggedRow = null;
+                renumerarLinhas();
+                saveState();
+            }
+        });
+        
+        tbody.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const targetRow = e.target.closest('tr');
+            if (targetRow && targetRow !== draggedRow) {
+                const rect = targetRow.getBoundingClientRect();
+                const nextSibling = (e.clientY - rect.top) > (rect.height / 2) ? targetRow.nextSibling : targetRow;
+                tbody.insertBefore(draggedRow, nextSibling);
+            }
+        });
+    }
 
     function limparTodosOsCampos(clearStorage = true) {
         if(clearStorage){
