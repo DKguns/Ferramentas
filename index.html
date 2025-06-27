@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.3</title>
+    <title>Ferramenta de Calculo de Importação V42.4</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -776,6 +776,35 @@
             box-sizing: border-box;
         }
 
+        /* Estilos para a legenda das colunas */
+        .column-legend-section {
+            margin-top: 30px;
+            padding: var(--theme-element-padding);
+            background-color: var(--theme-surface-primary);
+            border: 1px solid var(--theme-border-primary);
+            border-radius: var(--theme-card-border-radius);
+        }
+        .column-legend-section h2 {
+            margin-top: 0;
+        }
+        .column-legend-section dl {
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .column-legend-section dt {
+            font-weight: 700;
+            color: var(--theme-accent-blue);
+            font-size: 0.9em;
+        }
+        .column-legend-section dd {
+            margin-left: 0;
+            font-size: 0.85em;
+            color: var(--theme-text-secondary);
+        }
+
     </style>
 </head>
 <body>
@@ -1039,6 +1068,31 @@
                         <tbody></tbody>
                     </table>
                 </div>
+                <section class="column-legend-section" aria-labelledby="legendTitle">
+                    <h2 id="legendTitle">Legenda de Colunas e Cálculos</h2>
+                    <dl>
+                        <div>
+                            <dt>CUSTO UNIT. R$ (Líquido)</dt>
+                            <dd>Custo final do produto importado após a dedução de todos os créditos fiscais (IPI, PIS, COFINS, ICMS).</dd>
+                        </div>
+                        <div>
+                            <dt>ECONOMIA UNIT. (R$)</dt>
+                            <dd>Diferença monetária entre o Custo Unit. Nacional e o Custo Unit. R$ (Líquido) do importado. Fórmula: [Custo Nacional] - [Custo Líquido].</dd>
+                        </div>
+                        <div>
+                            <dt>ECONOMIA (s/ Custo Nac.) %</dt>
+                            <dd>Percentual de economia em relação ao custo do produto nacional. Fórmula: ([Economia Unit.] / [Custo Nacional]) * 100.</dd>
+                        </div>
+                        <div>
+                            <dt>MARKUP S/ CUSTO %</dt>
+                            <dd>Rentabilidade da economia sobre o custo do produto importado. Mostra o retorno sobre o investimento. Fórmula: ([Economia Unit.] / [Custo Líquido]) * 100.</dd>
+                        </div>
+                        <div>
+                            <dt>Base de Cálculo do ICMS</dt>
+                            <dd>Valor base sobre o qual a alíquota de ICMS é aplicada. Inclui CIF, II, IPI, PIS, COFINS e todas as despesas aduaneiras.</dd>
+                        </div>
+                    </dl>
+                </section>
             </section>
         </section>
 
