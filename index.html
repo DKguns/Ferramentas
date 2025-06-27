@@ -1299,6 +1299,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let custoTotalChartInstance = null;
     let saveTimeout;
     let latestCalculationResults = null;
+    let lastCalculationInputs = null;
     let draggedRow = null;
 
     let lastFocusedElement;
@@ -1925,6 +1926,117 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // --- LÓGICA DE CÁLCULO PRINCIPAL ---
+    
+    function performCalculationLogic(inputs) {
+        const {
+            itemsData,
+            taxaCambio,
+            totalFreteME_global,
+            totalSeguroME_global,
+            totalOutrasDespesasME_global,
+            taxaSiscomexBRL_global,
+            despesasAduaneirasBRL_global,
+            freteNacionalBRL_global,
+            aliqAFRMM_global_dec,
+            percCreditoPIS_dec,
+            percCreditoCOFINS_dec,
+            percCreditoIPI_dec,
+            percCreditoICMS_dec
+        } = inputs;
+
+        let valorFOBTotalME = 0;
+        let pesoTotalEmbarqueKG = 0;
+        let valorTotalVendaBrasil = 0;
+
+        itemsData.forEach(item => {
+            valorFOBTotalME += item.precoCustoTotalME;
+            pesoTotalEmbarqueKG += item.pesoTotalKG;
+            valorTotalVendaBrasil += item.valorVendaUnitBR * item.quantidade;
+        });
+
+        let acc = {
+            fob_BRL: 0, frete_BRL: 0, seguro_BRL: 0, outrasDespME_BRL: 0, CIF_Total_BRL_acumulado: 0,
+            ii_BRL: 0,
+            ipi_pago_BRL: 0, ipi_creditado_BRL: 0, ipi_efetivo_BRL: 0,
+            pis_pago_BRL: 0, pis_creditado_BRL: 0, pis_efetivo_BRL: 0,
+            cofins_pago_BRL: 0, cofins_creditado_BRL: 0, cofins_efetivo_BRL: 0,
+            baseCalcICMS_BRL_total: 0,
+            icms_pago_BRL: 0, icms_creditado_BRL: 0, icms_efetivo_BRL: 0,
+            afrmm_BRL: 0, siscomex_BRL: 0, despAduan_BRL: 0, freteNac_BRL: 0,
+            totalCreditosFiscais_BRL: 0, totalGeral_BRL: 0,
+            totalPesoKG: pesoTotalEmbarqueKG,
+            totalQtdItens: 0, totalImpostosPagosBruto: 0, custoMedioPorKG: 0,
+            totalImpostosEfetivosGlobal: 0,
+            valorTotalNF_BRL_acumulado: 0
+        };
+
+        const freteTotalGlobalBRL = totalFreteME_global * taxaCambio;
+
+        const calculatedItems = itemsData.map(item => {
+            const newItem = { ...item };
+            
+            newItem.fobBRL_item = newItem.precoCustoTotalME * taxaCambio;
+            newItem.fobPercent = (valorFOBTotalME > 0) ? (newItem.precoCustoTotalME / valorFOBTotalME * 100) : 0;
+            let percParticipacaoPesoTotalLinha = (acc.totalPesoKG > 0) ? (newItem.pesoTotalKG / acc.totalPesoKG) : (itemsData.length > 0 ? 1 / itemsData.length : 0);
+            
+            newItem.freteExibicaoPorPesoUnitarioBRL = freteTotalGlobalBRL * (newItem.fobPercent / 100);
+            newItem.seguroME_item = totalSeguroME_global * (newItem.fobPercent / 100);
+            newItem.outrasDespesasME_item = totalOutrasDespesasME_global * (newItem.fobPercent / 100);
+            const seguroBRL_item = newItem.seguroME_item * taxaCambio;
+            const outrasDespesasBRL_item = newItem.outrasDespesasME_item * taxaCambio;
+            newItem.taxaSiscomexRateada_BRL_item = taxaSiscomexBRL_global * (newItem.fobPercent / 100);
+            newItem.despesasAduaneirasBRL_item = despesasAduaneirasBRL_global * percParticipacaoPesoTotalLinha;
+            newItem.freteNacionalBRL_item = freteNacionalBRL_global * percParticipacaoPesoTotalLinha;
+            
+            newItem.CIF_Total_BRL = newItem.fobBRL_item + newItem.freteExibicaoPorPesoUnitarioBRL + seguroBRL_item + outrasDespesasBRL_item;
+            newItem.valorII = newItem.CIF_Total_BRL * newItem.aliqII;
+            newItem.valorTotalNF_BRL = newItem.CIF_Total_BRL + newItem.valorII;
+            newItem.valorUnitarioNF_BRL = newItem.quantidade > 0 ? newItem.valorTotalNF_BRL / newItem.quantidade : 0;
+            newItem.precoVendaTotalBrasil = newItem.valorVendaUnitBR * newItem.quantidade;
+            const baseIPI = newItem.CIF_Total_BRL + newItem.valorII;
+            newItem.ipi_pago = baseIPI * newItem.aliqIPI;
+            newItem.ipi_creditado = newItem.ipi_pago * percCreditoIPI_dec;
+            newItem.ipi_efetivo = newItem.ipi_pago - newItem.ipi_creditado;
+            newItem.pis_pago = newItem.CIF_Total_BRL * newItem.aliqPIS;
+            newItem.pis_creditado = newItem.pis_pago * percCreditoPIS_dec;
+            newItem.pis_efetivo = newItem.pis_pago - newItem.pis_creditado;
+            newItem.cofins_pago = newItem.CIF_Total_BRL * newItem.aliqCOFINS;
+            newItem.cofins_creditado = newItem.cofins_pago * percCreditoCOFINS_dec;
+            newItem.cofins_efetivo = newItem.cofins_pago - newItem.cofins_creditado;
+            newItem.valorAFRMM = (freteTotalGlobalBRL * (newItem.fobPercent / 100)) * aliqAFRMM_global_dec;
+            newItem.baseCalcICMS_item = (newItem.CIF_Total_BRL + newItem.valorII + newItem.ipi_pago + newItem.pis_pago + newItem.cofins_pago + newItem.taxaSiscomexRateada_BRL_item) / (1 - newItem.aliqICMS);
+            newItem.icms_pago = newItem.baseCalcICMS_item * newItem.aliqICMS;
+            newItem.icms_creditado = newItem.icms_pago * percCreditoICMS_dec;
+            newItem.icms_efetivo = newItem.icms_pago - newItem.icms_creditado;
+            newItem.custoTotalLinha = newItem.CIF_Total_BRL + newItem.valorII + newItem.ipi_efetivo + newItem.pis_efetivo + newItem.cofins_efetivo + newItem.valorAFRMM + newItem.taxaSiscomexRateada_BRL_item + newItem.despesasAduaneirasBRL_item + newItem.icms_efetivo + newItem.freteNacionalBRL_item;
+            newItem.custoUnitarioItem = newItem.quantidade > 0 ? newItem.custoTotalLinha / newItem.quantidade : 0;
+            newItem.lucroPercentualUnitario = newItem.valorVendaUnitBR > 0 ? ((newItem.valorVendaUnitBR - newItem.custoUnitarioItem) / newItem.valorVendaUnitBR) * 100 : null;
+            
+            acc.fob_BRL += newItem.fobBRL_item; acc.frete_BRL += newItem.freteExibicaoPorPesoUnitarioBRL; acc.seguro_BRL += seguroBRL_item; acc.outrasDespME_BRL += outrasDespesasBRL_item; acc.CIF_Total_BRL_acumulado += newItem.CIF_Total_BRL; acc.ii_BRL += newItem.valorII; acc.ipi_pago_BRL += newItem.ipi_pago; acc.ipi_creditado_BRL += newItem.ipi_creditado; acc.ipi_efetivo_BRL += newItem.ipi_efetivo; acc.pis_pago_BRL += newItem.pis_pago; acc.pis_creditado_BRL += newItem.pis_creditado; acc.pis_efetivo_BRL += newItem.pis_efetivo; acc.cofins_pago_BRL += newItem.cofins_pago; acc.cofins_creditado_BRL += newItem.cofins_creditado; acc.cofins_efetivo_BRL += newItem.cofins_efetivo; acc.baseCalcICMS_BRL_total += newItem.baseCalcICMS_item; acc.icms_pago_BRL += newItem.icms_pago; acc.icms_creditado_BRL += newItem.icms_creditado; acc.icms_efetivo_BRL += newItem.icms_efetivo; acc.afrmm_BRL += newItem.valorAFRMM; acc.totalCreditosFiscais_BRL += newItem.ipi_creditado + newItem.pis_creditado + newItem.cofins_creditado + newItem.icms_creditado; acc.totalQtdItens += newItem.quantidade; acc.valorTotalNF_BRL_acumulado += newItem.valorTotalNF_BRL; acc.siscomex_BRL += newItem.taxaSiscomexRateada_BRL_item;
+
+            return newItem;
+        });
+
+        acc.despAduan_BRL = despesasAduaneirasBRL_global; 
+        acc.freteNac_BRL = freteNacionalBRL_global;
+        acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
+        acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
+        acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
+        acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
+        
+        return {
+            items: calculatedItems,
+            acc,
+            moedaLabel: inputs.moedaLabel,
+            lucroAltoMin: inputs.lucroAltoMin,
+            lucroMedioMin: inputs.lucroMedioMin,
+            lucroBaixoMin: inputs.lucroBaixoMin,
+            valorTotalVendaBrasil,
+            valorFOBTotalME,
+            taxaCambio
+        };
+    }
+    
     function calcularCustosMultiItem() {
         if (!validateForm()) {
             showToast("Por favor, corrija os campos obrigatórios em vermelho.", 'error');
@@ -1932,53 +2044,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const lucroAltoMin = TxtToNum('modalLucroAltoMin') || 40;
-            const lucroMedioMin = TxtToNum('modalLucroMedioMin') || 30;
-            const lucroBaixoMin = TxtToNum('modalLucroBaixoMin') || 20;
-
-            let percCreditoPIS_dec = TxtToNum('percCreditoPIS') / 100;
-            let percCreditoCOFINS_dec = TxtToNum('percCreditoCOFINS') / 100;
-            let percCreditoIPI_dec = TxtToNum('percCreditoIPI') / 100;
-            let percCreditoICMS_dec = TxtToNum('percCreditoICMS') / 100;
-
-            if (geId('percCreditoPIS').disabled) percCreditoPIS_dec = 0;
-            if (geId('percCreditoCOFINS').disabled) percCreditoCOFINS_dec = 0;
-            if (geId('percCreditoIPI').disabled) percCreditoIPI_dec = 0;
-            if (geId('percCreditoICMS').disabled) percCreditoICMS_dec = 0;
-
-            const moedaEstrangeiraElem = geId('moedaEstrangeira');
-            const moedaLabel = moedaEstrangeiraElem ? (moedaEstrangeiraElem.value.toUpperCase() || "USD") : "USD";
-            
-            const taxaCambio = TxtToNum('taxaCambio');
-            const totalFreteME_global = TxtToNum('totalFreteME');
-            const totalSeguroME_global = TxtToNum('totalSeguroME');
-            const totalOutrasDespesasME_global = TxtToNum('totalOutrasDespesasME');
-            const taxaSiscomexBRL_global = TxtToNum('taxaSiscomexBRL');
-            const despesasAduaneirasBRL_global = TxtToNum('despesasAduaneirasBRL');
-            const freteNacionalBRL_global = TxtToNum('freteNacionalBRL');
-            const aliqAFRMM_global_dec = TxtToNum('aliquotaAFRMM') / 100;
-
-            let items = [];
-            let valorFOBTotalME = 0;
-            let pesoTotalEmbarqueKG = 0;
-            let valorTotalVendaBrasil = 0;
-            let somaTotalPesosUnitariosKG = 0;
-
+            const itemsData = [];
             const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
             for (let i = 0; i < itemRows.length; i++) {
                 const qtd = TxtToNum(`qtdItem${i}`);
                 const precoCustoUnitME = TxtToNum(`precoCustoUnitMEItem${i}`);
-
                 if (precoCustoUnitME > 0 || qtd > 0) {
-                    items.push({
-                        index: i, 
-                        descricao: geId(`descItem${i}`).value || `Item ${i+1}`, 
-                        codInterno: geId(`codInternoItem${i}`).value, 
-                        ncm: geId(`ncmItem${i}`).value, 
+                     itemsData.push({
+                        index: i,
+                        descricao: geId(`descItem${i}`).value || `Item ${i+1}`,
+                        codInterno: geId(`codInternoItem${i}`).value,
+                        ncm: geId(`ncmItem${i}`).value,
                         quantidade: qtd,
-                        precoCustoUnitME: precoCustoUnitME, 
+                        precoCustoUnitME: precoCustoUnitME,
                         precoCustoTotalME: qtd * precoCustoUnitME,
-                        pesoUnitKG: TxtToNum(`pesoUnitKGItem${i}`), 
+                        pesoUnitKG: TxtToNum(`pesoUnitKGItem${i}`),
                         pesoTotalKG: qtd * TxtToNum(`pesoUnitKGItem${i}`),
                         valorVendaUnitBR: TxtToNum(`valVendaUnitBRItem${i}`),
                         aliqII: TxtToNum(`aliqIIItem${i}`) / 100,
@@ -1987,75 +2067,42 @@ document.addEventListener('DOMContentLoaded', function() {
                         aliqCOFINS: TxtToNum(`aliqCOFINSItem${i}`) / 100,
                         aliqICMS: TxtToNum(`aliqICMSItem${i}`) / 100
                     });
-                    valorFOBTotalME += items[items.length-1].precoCustoTotalME;
-                    pesoTotalEmbarqueKG += items[items.length-1].pesoTotalKG;
-                    valorTotalVendaBrasil += items[items.length-1].valorVendaUnitBR * qtd;
-                    somaTotalPesosUnitariosKG += items[items.length-1].pesoUnitKG;
                 }
             }
-            
-            let acc = { fob_BRL: 0, frete_BRL: 0, seguro_BRL: 0, outrasDespME_BRL: 0, CIF_Total_BRL_acumulado: 0, ii_BRL: 0, ipi_pago_BRL: 0, ipi_creditado_BRL: 0, ipi_efetivo_BRL: 0, pis_pago_BRL: 0, pis_creditado_BRL: 0, pis_efetivo_BRL: 0, cofins_pago_BRL: 0, cofins_creditado_BRL: 0, cofins_efetivo_BRL: 0, baseCalcICMS_BRL_total: 0, icms_pago_BRL: 0, icms_creditado_BRL: 0, icms_efetivo_BRL: 0, afrmm_BRL: 0, siscomex_BRL: 0, despAduan_BRL: 0, freteNac_BRL: 0, totalCreditosFiscais_BRL: 0, totalGeral_BRL: 0, totalPesoKG: pesoTotalEmbarqueKG, totalQtdItens: 0, totalImpostosPagosBruto: 0, custoMedioPorKG: 0, totalImpostosEfetivosGlobal: 0, valorTotalNF_BRL_acumulado: 0 };
-            const freteTotalGlobalBRL = totalFreteME_global * taxaCambio;
 
-            items.forEach(item => {
-                item.fobBRL_item = item.precoCustoTotalME * taxaCambio;
-                item.fobPercent = (valorFOBTotalME > 0) ? (item.precoCustoTotalME / valorFOBTotalME * 100) : 0;
-                let percParticipacaoPesoTotalLinha = (acc.totalPesoKG > 0) ? (item.pesoTotalKG / acc.totalPesoKG) : (items.length > 0 ? 1 / items.length : 0);
-                
-                item.freteExibicaoPorPesoUnitarioBRL = freteTotalGlobalBRL * (item.fobPercent / 100);
-                item.seguroME_item = totalSeguroME_global * (item.fobPercent / 100);
-                item.outrasDespesasME_item = totalOutrasDespesasME_global * (item.fobPercent / 100);
-                const seguroBRL_item = item.seguroME_item * taxaCambio;
-                const outrasDespesasBRL_item = item.outrasDespesasME_item * taxaCambio;
-                item.taxaSiscomexRateada_BRL_item = taxaSiscomexBRL_global * (item.fobPercent / 100);
-                item.despesasAduaneirasBRL_item = despesasAduaneirasBRL_global * percParticipacaoPesoTotalLinha;
-                item.freteNacionalBRL_item = freteNacionalBRL_global * percParticipacaoPesoTotalLinha;
-                
-                item.CIF_Total_BRL = item.fobBRL_item + item.freteExibicaoPorPesoUnitarioBRL + seguroBRL_item + outrasDespesasBRL_item;
-                item.valorII = item.CIF_Total_BRL * item.aliqII;
-                item.valorTotalNF_BRL = item.CIF_Total_BRL + item.valorII;
-                item.valorUnitarioNF_BRL = item.quantidade > 0 ? item.valorTotalNF_BRL / item.quantidade : 0;
-                item.precoVendaTotalBrasil = item.valorVendaUnitBR * item.quantidade;
-                const baseIPI = item.CIF_Total_BRL + item.valorII;
-                item.ipi_pago = baseIPI * item.aliqIPI;
-                item.ipi_creditado = item.ipi_pago * percCreditoIPI_dec;
-                item.ipi_efetivo = item.ipi_pago - item.ipi_creditado;
-                item.pis_pago = item.CIF_Total_BRL * item.aliqPIS;
-                item.pis_creditado = item.pis_pago * percCreditoPIS_dec;
-                item.pis_efetivo = item.pis_pago - item.pis_creditado;
-                item.cofins_pago = item.CIF_Total_BRL * item.aliqCOFINS;
-                item.cofins_creditado = item.cofins_pago * percCreditoCOFINS_dec;
-                item.cofins_efetivo = item.cofins_pago - item.cofins_creditado;
-                item.valorAFRMM = (freteTotalGlobalBRL * (item.fobPercent / 100)) * aliqAFRMM_global_dec;
-                item.baseCalcICMS_item = (item.CIF_Total_BRL + item.valorII + item.ipi_pago + item.pis_pago + item.cofins_pago + item.taxaSiscomexRateada_BRL_item) / (1 - item.aliqICMS);
-                item.icms_pago = item.baseCalcICMS_item * item.aliqICMS;
-                item.icms_creditado = item.icms_pago * percCreditoICMS_dec;
-                item.icms_efetivo = item.icms_pago - item.icms_creditado;
-                item.custoTotalLinha = item.CIF_Total_BRL + item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.valorAFRMM + item.taxaSiscomexRateada_BRL_item + item.despesasAduaneirasBRL_item + item.icms_efetivo + item.freteNacionalBRL_item;
-                item.custoUnitarioItem = item.quantidade > 0 ? item.custoTotalLinha / item.quantidade : 0;
-                item.lucroPercentualUnitario = item.valorVendaUnitBR > 0 ? ((item.valorVendaUnitBR - item.custoUnitarioItem) / item.valorVendaUnitBR) * 100 : null;
-                
-                acc.fob_BRL += item.fobBRL_item; acc.frete_BRL += item.freteExibicaoPorPesoUnitarioBRL; acc.seguro_BRL += seguroBRL_item; acc.outrasDespME_BRL += outrasDespesasBRL_item; acc.CIF_Total_BRL_acumulado += item.CIF_Total_BRL; acc.ii_BRL += item.valorII; acc.ipi_pago_BRL += item.ipi_pago; acc.ipi_creditado_BRL += item.ipi_creditado; acc.ipi_efetivo_BRL += item.ipi_efetivo; acc.pis_pago_BRL += item.pis_pago; acc.pis_creditado_BRL += item.pis_creditado; acc.pis_efetivo_BRL += item.pis_efetivo; acc.cofins_pago_BRL += item.cofins_pago; acc.cofins_creditado_BRL += item.cofins_creditado; acc.cofins_efetivo_BRL += item.cofins_efetivo; acc.baseCalcICMS_BRL_total += item.baseCalcICMS_item; acc.icms_pago_BRL += item.icms_pago; acc.icms_creditado_BRL += item.icms_creditado; acc.icms_efetivo_BRL += item.icms_efetivo; acc.afrmm_BRL += item.valorAFRMM; acc.totalCreditosFiscais_BRL += item.ipi_creditado + item.pis_creditado + item.cofins_creditado + item.icms_creditado; acc.totalQtdItens += item.quantidade; acc.valorTotalNF_BRL_acumulado += item.valorTotalNF_BRL; acc.siscomex_BRL += item.taxaSiscomexRateada_BRL_item;
-            });
+            const currentInputs = {
+                itemsData,
+                taxaCambio: TxtToNum('taxaCambio'),
+                totalFreteME_global: TxtToNum('totalFreteME'),
+                totalSeguroME_global: TxtToNum('totalSeguroME'),
+                totalOutrasDespesasME_global: TxtToNum('totalOutrasDespesasME'),
+                taxaSiscomexBRL_global: TxtToNum('taxaSiscomexBRL'),
+                despesasAduaneirasBRL_global: TxtToNum('despesasAduaneirasBRL'),
+                freteNacionalBRL_global: TxtToNum('freteNacionalBRL'),
+                aliqAFRMM_global_dec: TxtToNum('aliquotaAFRMM') / 100,
+                percCreditoPIS_dec: geId('percCreditoPIS').disabled ? 0 : TxtToNum('percCreditoPIS') / 100,
+                percCreditoCOFINS_dec: geId('percCreditoCOFINS').disabled ? 0 : TxtToNum('percCreditoCOFINS') / 100,
+                percCreditoIPI_dec: geId('percCreditoIPI').disabled ? 0 : TxtToNum('percCreditoIPI') / 100,
+                percCreditoICMS_dec: geId('percCreditoICMS').disabled ? 0 : TxtToNum('percCreditoICMS') / 100,
+                moedaLabel: geId('moedaEstrangeira')?.value.toUpperCase() || "USD",
+                lucroAltoMin: TxtToNum('modalLucroAltoMin') || 40,
+                lucroMedioMin: TxtToNum('modalLucroMedioMin') || 30,
+                lucroBaixoMin: TxtToNum('modalLucroBaixoMin') || 20,
+            };
 
-            acc.despAduan_BRL = despesasAduaneirasBRL_global; acc.freteNac_BRL = freteNacionalBRL_global;
-            acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-            acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-            acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
-            acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
-            
-            latestCalculationResults = { items, acc, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, valorTotalVendaBrasil, valorFOBTotalME, taxaCambio };
+            lastCalculationInputs = currentInputs;
+            latestCalculationResults = performCalculationLogic(currentInputs);
 
             renderResultsTable(latestCalculationResults);
             renderSummary(latestCalculationResults);
             renderDashboard(latestCalculationResults);
+            renderizarGraficoCustos(
+                [latestCalculationResults.acc.fob_BRL, (latestCalculationResults.acc.frete_BRL + latestCalculationResults.acc.seguro_BRL + latestCalculationResults.acc.outrasDespME_BRL), latestCalculationResults.acc.ii_BRL, (latestCalculationResults.acc.ipi_efetivo_BRL + latestCalculationResults.acc.pis_efetivo_BRL + latestCalculationResults.acc.cofins_efetivo_BRL), latestCalculationResults.acc.icms_efetivo_BRL, (latestCalculationResults.acc.afrmm_BRL + latestCalculationResults.acc.siscomex_BRL), (currentInputs.despesasAduaneirasBRL_global + currentInputs.freteNacionalBRL_global)],
+                ['FOB', 'Frete/Seg. Intl.', 'II', 'IPI/PIS/COFINS Efet.', 'ICMS Efet.', 'Taxas (AFRMM/Sisc.)', 'Desp. Nacionais']
+            );
 
             showToast("Cálculo realizado com sucesso!", "success");
             showScreen('telaDashboardPanel');
-            renderizarGraficoCustos(
-                [acc.fob_BRL, (acc.frete_BRL + acc.seguro_BRL + acc.outrasDespME_BRL), acc.ii_BRL, (acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL), acc.icms_efetivo_BRL, (acc.afrmm_BRL + acc.siscomex_BRL), (despesasAduaneirasBRL_global + freteNacionalBRL_global)],
-                ['FOB', 'Frete/Seg. Intl.', 'II', 'IPI/PIS/COFINS Efet.', 'ICMS Efet.', 'Taxas (AFRMM/Sisc.)', 'Desp. Nacionais']
-            );
 
         } catch (e) {
             console.error("Erro detalhado em calcularCustosMultiItem:", e, e.stack);
@@ -2065,7 +2112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- FUNÇÕES DE RENDERIZAÇÃO ---
     function renderResultsTable(results) {
-        const { items, acc, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, taxaCambio } = results;
+        const { items, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, taxaCambio } = results;
         const resultTbody = geId('itemResultTable')?.getElementsByTagName('tbody')[0];
         if (!resultTbody) return;
         resultTbody.innerHTML = '';
@@ -2082,7 +2129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const lucroUnitarioRS = item.valorVendaUnitBR - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
-            const outrasDespesasRateadas = (item.despesasAduaneirasBRL_item || 0) + (item.freteNacionalBRL_item || 0);
+            const totalImpostosEfetivosItemComII = item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo;
 
             row.innerHTML = `<td>${item.index + 1}</td>
                 <td>${item.codInterno || ''}</td>
@@ -2109,7 +2156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td style="font-weight: bold;">${formatBRL(item.quantidade > 0 ? (item.custoTotalLinha + item.totalCreditosItem) / item.quantidade : 0)}</td>
                 <td>${formatBRL(item.ipi_pago + item.pis_pago + item.cofins_pago + item.icms_pago)}</td>
                 <td>${formatBRL(item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo + item.valorAFRMM)}</td>
-                <td>${formatBRL(item.totalImpostosEspecificosItem)}</td><td style="font-weight: bold;">${formatBRL(item.custoUnitarioItem)}</td>
+                <td>${formatBRL(totalImpostosEfetivosItemComII)}</td><td style="font-weight: bold;">${formatBRL(item.custoUnitarioItem)}</td>
                 <td style="font-weight: bold;">${formatBRL(item.custoTotalLinha)}</td><td>${formatBRL(item.valorVendaUnitBR)}</td>
                 <td>${formatBRL(item.precoVendaTotalBrasil)}</td><td>${formatBRL(lucroUnitarioRS)}</td>
                 <td>${formatBRL(lucroTotalLinhaRS)}</td><td ${lucroCellStyle} style="font-weight: bold;">${lucroDisplay}</td>`;
@@ -2296,7 +2343,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    function runSensitivityAnalysis() { /* ... Lógica da análise de sensibilidade ... */ }
+
+    function runSensitivityAnalysis() {
+        if (!lastCalculationInputs) {
+            showToast("Por favor, realize um cálculo principal primeiro.", "warning");
+            return;
+        }
+
+        const simTaxaCambio = TxtToNum('simTaxaCambio');
+        const simTotalFreteME = TxtToNum('simTotalFreteME');
+        const simLucroElem = geId('simNovoLucro');
+
+        const simulationInputs = JSON.parse(JSON.stringify(lastCalculationInputs)); 
+
+        if (simTaxaCambio > 0) {
+            simulationInputs.taxaCambio = simTaxaCambio;
+        }
+        if (simTotalFreteME > 0) {
+            simulationInputs.totalFreteME_global = simTotalFreteME;
+        }
+
+        const simulationResults = performCalculationLogic(simulationInputs);
+
+        const { acc, valorTotalVendaBrasil } = simulationResults;
+        const novoLucroTotal = valorTotalVendaBrasil - acc.totalGeral_BRL;
+
+        simLucroElem.textContent = formatBRL(novoLucroTotal);
+        simLucroElem.classList.remove('profit-positive', 'profit-negative');
+        simLucroElem.classList.add(novoLucroTotal >= 0 ? 'profit-positive' : 'profit-negative');
+
+        showToast("Simulação concluída!", "success");
+    }
+
     function gerarPDF() { /* ... Lógica de geração de PDF ... */ }
     function exportTableToCSV() { /* ... Lógica de exportação para CSV ... */ }
     function shareDashboardViaWhatsApp() { /* ... Lógica de compartilhamento ... */ }
