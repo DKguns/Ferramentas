@@ -1001,6 +1001,7 @@
                                 <th scope="col" data-translate-key="thCOFINS">COFINS (%)</th>
                                 <th scope="col" data-translate-key="thICMS">ICMS (%)</th>
                                 <th scope="col" data-translate-key="thCustoUnitBR">Custo Unit. Nacional (R$)</th>
+                                <th scope="col">Aplicar Template</th>
                                 <th scope="col" data-translate-key="thAcoes" style="min-width: 140px;">Ações</th>
                             </tr>
                         </thead>
@@ -1551,6 +1552,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!modal) return;
         modal.classList.add('active');
         modal.addEventListener('keydown', handleModalKeydown);
+        if(modalId === 'settingsModal') {
+            renderTaxTemplatesList();
+        }
         const firstFocusableElement = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
         if (firstFocusableElement) {
             firstFocusableElement.focus();
@@ -2920,6 +2924,14 @@ document.addEventListener('DOMContentLoaded', function() {
              if (event.target === geId('shareImageModal')) {
                 closeModal('shareImageModal');
              }
+        });
+
+        geId('saveTemplateBtn').addEventListener('click', saveTaxTemplate);
+        geId('taxTemplatesList').addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-template-btn')) {
+                const templateName = e.target.dataset.templateName;
+                deleteTaxTemplate(templateName);
+            }
         });
     }
     
