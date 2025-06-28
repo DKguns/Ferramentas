@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.8</title>
+    <title>Ferramenta de Calculo de Importação V43.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -573,7 +573,7 @@
         #itemInputTable th:nth-child(4), #itemInputTable td:nth-child(4) { min-width: 100px; }
         #itemInputTable td:nth-child(4) input[type="text"] { width: 100%; }
 
-        #itemInputTable th:nth-child(5), #itemInputTable td:nth-child(5) { min-width: 90px; }
+        #itemInputTable th:nth-child(5), #itemInputTable td:nth-child(5) { min-width: 110px; } /* Ajustado para caber botão */
         #itemInputTable td:nth-child(5) input[type="text"] { width: 100%; }
 
         #itemInputTable td:nth-child(6) input[type="number"],
@@ -804,7 +804,31 @@
             font-size: 0.85em;
             color: var(--theme-text-secondary);
         }
+        
+        /* == ESTILOS NOVOS PARA BUSCA DE NCM == */
+        .ncm-search-btn {
+            padding: 6px 10px;
+            font-size: 13px;
+            background-color: var(--theme-accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            flex-shrink: 0; /* Impede que o botão encolha */
+        }
 
+        .ncm-search-btn:hover {
+            background-color: var(--theme-accent-blue-darker);
+        }
+
+        /* Ajusta o spinner para ser menor e se alinhar corretamente */
+        .ncm-spinner {
+            position: relative;
+            margin: 0;
+            border-width: 2px;
+        }
+        /* == FIM DOS ESTILOS NOVOS == */
     </style>
 </head>
 <body>
@@ -1118,7 +1142,7 @@
                 
                 <div id="dashboardScreenshotArea">
                     <div id="prominentProfitCard" class="prominent-profit-indicator" style="display: none;">
-                        <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
+                        <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Economia Total do Pedido (%):</span>
                         <strong id="dbProminentLucroTotalPedidoPerc" role="status" aria-live="polite"></strong>
                     </div>
 
@@ -1140,21 +1164,21 @@
                         <article class="dashboard-kpi">
                             <div class="kpi-icon-container"><i class="fas fa-cash-register" aria-hidden="true"></i></div>
                             <div class="kpi-content">
-                                <span class="kpi-label" data-translate-key="labelReceitaTotalBrasil">Receita Total Brasil (R$):</span>
+                                <span class="kpi-label" data-translate-key="labelReceitaTotalBrasil">Ref. Custo Nacional (R$):</span>
                                 <strong id="dbReceitaTotalBrasil"></strong>
                             </div>
                         </article>
                         <article class="dashboard-kpi">
                             <div class="kpi-icon-container"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
                             <div class="kpi-content">
-                                <span class="kpi-label" data-translate-key="labelLucroTotalPedidoRS">Lucro Total Pedido (R$):</span>
+                                <span class="kpi-label" data-translate-key="labelLucroTotalPedidoRS">Economia Total (R$):</span>
                                 <strong id="dbLucroTotalPedidoRS"></strong>
                             </div>
                         </article>
                         <article class="dashboard-kpi">
                             <div class="kpi-icon-container"><i class="fas fa-percent" aria-hidden="true"></i></div>
                             <div class="kpi-content">
-                                <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Lucro Total Pedido (%):</span>
+                                <span class="kpi-label" data-translate-key="labelLucroTotalPedidoPerc">Economia Total (%):</span>
                                 <strong id="dbLucroTotalPedidoPerc"></strong>
                             </div>
                         </article>
@@ -1222,7 +1246,7 @@
                         </div>
                         <div class="grid-item">
                              <button type="button" id="runSimulationBtn" class="main-calculate-button" style="padding: 10px 18px; font-size: 1em; width: 100%;">
-                                <i class="fas fa-play"></i> Simular Novo Lucro
+                                <i class="fas fa-play"></i> Simular Nova Economia
                              </button>
                         </div>
                         <div class="grid-item">
@@ -1316,22 +1340,22 @@
             </section>
 
             <section class="modal-section" aria-labelledby="headingLimitesLucroModal">
-                <h3 id="headingLimitesLucroModal" data-translate-key="modalLucroTitle">Configurações de Margem de Lucro (%)</h3>
+                <h3 id="headingLimitesLucroModal" data-translate-key="modalLucroTitle">Configurações de Margem de Economia (%)</h3>
                  <div class="grid-container">
                     <div class="grid-item">
                         <label for="modalLucroAltoMin"><span class="profit-color-indicator green"></span><span data-translate-key="modalLucroAltoLabel">Mín. Economia Alta (Verde):</span></label>
                         <input type="number" id="modalLucroAltoMin" step="1" value="40" placeholder="Ex: 40">
-                        <small class="field-description" data-translate-key="modalLucroAltoDesc">Margem mínima para cor verde (lucro alto).</small>
+                        <small class="field-description" data-translate-key="modalLucroAltoDesc">Margem mínima para cor verde (economia alta).</small>
                     </div>
                     <div class="grid-item">
                         <label for="modalLucroMedioMin"><span class="profit-color-indicator yellow"></span><span data-translate-key="modalLucroMedioLabel">Mín. Economia Média (Amarelo):</span></label>
                         <input type="number" id="modalLucroMedioMin" step="1" value="30" placeholder="Ex: 30">
-                        <small class="field-description" data-translate-key="modalLucroMedioDesc">Margem mínima para cor amarela (lucro médio).</small>
+                        <small class="field-description" data-translate-key="modalLucroMedioDesc">Margem mínima para cor amarela (economia média).</small>
                     </div>
                     <div class="grid-item">
                         <label for="modalLucroBaixoMin"><span class="profit-color-indicator orange"></span><span data-translate-key="modalLucroBaixoLabel">Mín. Economia Baixa (Laranja):</span></label>
                         <input type="number" id="modalLucroBaixoMin" step="1" value="20" placeholder="Ex: 20">
-                        <small class="field-description" data-translate-key="modalLucroBaixoDesc">Margem mínima para cor laranja (lucro baixo). Abaixo disso será vermelho.</small>
+                        <small class="field-description" data-translate-key="modalLucroBaixoDesc">Margem mínima para cor laranja (economia baixa). Abaixo disso será vermelho.</small>
                     </div>
                 </div>
             </section>
@@ -1363,6 +1387,12 @@
 <script>
 // IIFE para garantir que o script rode após o carregamento do DOM e evite poluir o escopo global
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // == CONSTANTES NOVAS PARA BUSCA DE NCM ==
+    const NCM_API_ENDPOINT = 'https://brasilapi.com.br/api/ncm/v1/';
+    const NCM_CACHE_KEY = 'importCalculator_ncmCache';
+    const NCM_CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias em milissegundos
+    // == FIM DAS CONSTANTES NOVAS ==
     
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
@@ -1449,26 +1479,26 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCotacaoButtonLabel() {
         const moedaInput = geId('moedaEstrangeira');
         const moeda = moedaInput ? (moedaInput.value.toUpperCase() || "USD") : "USD";
-        let currencySymbol = moeda;
+        let symbol = moeda;
         if (moeda === "USD") symbol = "$";
         else if (moeda === "EUR") symbol = "€";
         else if (moeda === "CNY") symbol = "¥";
         
         const freteLabelElem = document.querySelector('label[for="totalFreteME"]');
-        if(freteLabelElem) freteLabelElem.innerText = `Frete Int. TOTAL (${currencySymbol}):`;
+        if(freteLabelElem) freteLabelElem.innerText = `Frete Int. TOTAL (${symbol}):`;
         
         const seguroLabelElem = document.querySelector('label[for="totalSeguroME"]');
-        if(seguroLabelElem) seguroLabelElem.innerText = `Seguro Int. TOTAL (${currencySymbol}):`;
+        if(seguroLabelElem) seguroLabelElem.innerText = `Seguro Int. TOTAL (${symbol}):`;
         
         const outrasDespLabelElem = document.querySelector('label[for="totalOutrasDespesasME"]');
-        if(outrasDespLabelElem) outrasDespLabelElem.innerText = `Outras Desp. Origem TOTAIS (${currencySymbol}):`;
+        if(outrasDespLabelElem) outrasDespLabelElem.innerText = `Outras Desp. Origem TOTAIS (${symbol}):`;
 
         const itemInputTableHead = geId('itemInputTable')?.querySelector('thead');
         if (itemInputTableHead) {
             const thCustoUnit = itemInputTableHead.querySelector('th:nth-child(7)');
-            if(thCustoUnit) thCustoUnit.innerText = `Pr. Custo Unit. ${currencySymbol}`;
+            if(thCustoUnit) thCustoUnit.innerText = `Pr. Custo Unit. ${symbol}`;
             const thCustoTotal = itemInputTableHead.querySelector('th:nth-child(15)');
-            if(thCustoTotal) thCustoTotal.innerText = `Pr. Custo Total ${currencySymbol}`;
+            if(thCustoTotal) thCustoTotal.innerText = `Pr. Custo Total ${symbol}`;
         }
     }
 
@@ -1611,7 +1641,14 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>${index + 1}</td>
             <td><label class="sr-only" for="descItem${index}">Descrição do Item ${index + 1}</label><input type="text" id="descItem${index}" value="${data.desc}" placeholder="Descrição do Produto"></td>
             <td><label class="sr-only" for="codInternoItem${index}">Código Interno do Item ${index + 1}</label><input type="text" id="codInternoItem${index}" value="${data.codInterno}" placeholder="Cód."></td>
-            <td><label class="sr-only" for="ncmItem${index}">NCM do Item ${index + 1}</label><input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM"></td>
+            <td>
+                <label class="sr-only" for="ncmItem${index}">NCM do Item ${index + 1}</label>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM" style="flex-grow: 1;">
+                    <button type="button" class="ncm-search-btn" aria-label="Buscar NCM"><i class="fas fa-search"></i></button>
+                    <span class="spinner ncm-spinner" style="display: none; width: 1em; height: 1em; border-top-color: var(--theme-accent-blue);"></span>
+                </div>
+            </td>
             <td class="grid-item">
                 <label class="sr-only" for="qtdItem${index}">Quantidade do Item ${index + 1}</label>
                 <input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" aria-describedby="qtdItem${index}Error">
@@ -1646,6 +1683,9 @@ document.addEventListener('DOMContentLoaded', function() {
         geId(`pesoUnitKGItem${index}`).addEventListener('input', () => updateItemCalculatedFields(index));
         row.querySelector('.remove-item-btn').addEventListener('click', function() { removerLinhaItem(this); });
         row.querySelector('.load-defaults-btn').addEventListener('click', function() { carregarImpostosPadrao(this); });
+        
+        // Adiciona o listener para o novo botão de busca de NCM
+        row.querySelector('.ncm-search-btn').addEventListener('click', () => handleNcmSearch(index));
     }
     
     function adicionarLinhaItem() {
@@ -1684,7 +1724,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = rows[i];
             row.cells[1].textContent = i + 1;
             
-            row.querySelectorAll('input, label, span.error-message').forEach(elem => {
+            row.querySelectorAll('input, label, span.error-message, button').forEach(elem => {
                 if (elem.id) {
                     const idBase = elem.id.replace(/\d+$/, '');
                     elem.id = idBase + i;
@@ -1698,6 +1738,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     elem.setAttribute('aria-describedby', descBase + i);
                 }
             });
+            // Reassocia os eventos para garantir que os índices estejam corretos
             setupRowEventListeners(row, i);
         }
     }
@@ -1766,6 +1807,123 @@ document.addEventListener('DOMContentLoaded', function() {
             tab.setAttribute('tabindex', isActive ? '0' : '-1');
         });
     }
+
+    // --- FUNÇÕES NOVAS PARA BUSCA DE NCM ---
+
+    /**
+     * Função principal que coordena a busca por NCM.
+     * @param {number} rowIndex O índice da linha na tabela.
+     */
+    async function handleNcmSearch(rowIndex) {
+        const ncmInput = geId(`ncmItem${rowIndex}`);
+        const ncmValue = ncmInput.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+        const row = ncmInput.closest('tr');
+        const spinner = row.querySelector('.ncm-spinner');
+        const searchButton = row.querySelector('.ncm-search-btn');
+
+        if (ncmValue.length < 2) { // NCMs têm no mínimo 2 dígitos
+            showToast("Por favor, insira um código NCM válido.", "warning");
+            return;
+        }
+        
+        searchButton.style.display = 'none';
+        spinner.style.display = 'inline-block';
+
+        try {
+            // 1. Tenta buscar do cache
+            const cachedData = getFromNcmCache(ncmValue);
+            if (cachedData) {
+                console.log(`NCM ${ncmValue} encontrado no cache.`);
+                updateRowWithNcmData(rowIndex, cachedData);
+                showToast(`NCM ${ncmValue} carregado do cache.`, "success");
+                return; // Encerra se encontrou no cache
+            }
+
+            // 2. Se não estiver no cache, busca na API
+            console.log(`Buscando NCM ${ncmValue} na API...`);
+            const apiData = await fetchNcmFromApi(ncmValue);
+            updateRowWithNcmData(rowIndex, apiData);
+            saveToNcmCache(ncmValue, apiData); // Salva no cache para uso futuro
+            showToast(`NCM ${ncmValue} encontrado e preenchido.`, "success");
+
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            spinner.style.display = 'none';
+            searchButton.style.display = 'inline-block';
+        }
+    }
+
+    /**
+     * Busca dados de um NCM na BrasilAPI.
+     * @param {string} ncm O código NCM.
+     * @returns {Promise<object>} Os dados do NCM.
+     */
+    async function fetchNcmFromApi(ncm) {
+        const response = await fetch(`${NCM_API_ENDPOINT}${ncm}`);
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error(`NCM ${ncm} não encontrado.`);
+            }
+            throw new Error("Falha ao se comunicar com a API de NCM.");
+        }
+        return await response.json();
+    }
+
+    /**
+     * Preenche os campos da linha da tabela com os dados do NCM.
+     * @param {number} rowIndex O índice da linha.
+     * @param {object} data Os dados do NCM.
+     */
+    function updateRowWithNcmData(rowIndex, data) {
+        // Preenche a descrição do item se estiver vazia
+        const descInput = geId(`descItem${rowIndex}`);
+        if (!descInput.value && data.descricao) {
+            descInput.value = data.descricao;
+        }
+
+        // Preenche as alíquotas, usando ?? para valores padrão caso a API não retorne
+        geId(`aliqIIItem${rowIndex}`).value = data.aliquota_ii ?? '0';
+        geId(`aliqIPIItem${rowIndex}`).value = data.aliquota_ipi ?? '0';
+        geId(`aliqPISItem${rowIndex}`).value = data.aliquota_pis_cofins?.aliquota_pis ?? '2.10';
+        geId(`aliqCOFINSItem${rowIndex}`).value = data.aliquota_pis_cofins?.aliquota_cofins ?? '10.65';
+        
+        // Dispara o evento 'input' para que a lógica de salvamento automático seja acionada
+        geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // --- Funções de Gerenciamento de Cache ---
+    function getFromNcmCache(ncm) {
+        const cache = JSON.parse(localStorage.getItem(NCM_CACHE_KEY) || '{}');
+        const item = cache[ncm];
+
+        if (!item) return null;
+
+        // Verifica se o cache expirou
+        const isExpired = (Date.now() - item.timestamp) > NCM_CACHE_DURATION_MS;
+        if (isExpired) {
+            delete cache[ncm];
+            localStorage.setItem(NCM_CACHE_KEY, JSON.stringify(cache));
+            console.log(`Cache para NCM ${ncm} expirou e foi removido.`);
+            return null;
+        }
+        return item.data;
+    }
+
+    function saveToNcmCache(ncm, data) {
+        try {
+            const cache = JSON.parse(localStorage.getItem(NCM_CACHE_KEY) || '{}');
+            cache[ncm] = {
+                data: data,
+                timestamp: Date.now()
+            };
+            localStorage.setItem(NCM_CACHE_KEY, JSON.stringify(cache));
+        } catch(e) {
+            console.error("Erro ao salvar NCM no cache, possível estouro de limite:", e);
+            // Poderia implementar uma lógica para limpar o cache antigo aqui se necessário
+        }
+    }
+
 
     // --- PERSISTÊNCIA DE DADOS ---
     function getCurrentStateAsObject() {
@@ -2143,7 +2301,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         precoCustoTotalME: qtd * precoCustoUnitME,
                         pesoUnitKG: TxtToNum(`pesoUnitKGItem${i}`),
                         pesoTotalKG: qtd * TxtToNum(`pesoUnitKGItem${i}`),
-                        valorCustoUnitarioNacional: TxtToNum(`valVendaUnitBRItem${i}`), // Nome corrigido
+                        valorCustoUnitarioNacional: TxtToNum(`valVendaUnitBRItem${i}`),
                         aliqII: TxtToNum(`aliqIIItem${i}`) / 100,
                         aliqIPI: TxtToNum(`aliqIPIItem${i}`) / 100,
                         aliqPIS: TxtToNum(`aliqPISItem${i}`) / 100,
@@ -2220,7 +2378,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const totalImpostosEfetivosItemComII = item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo;
             
-            // Note as colunas extras no final para as novas métricas
             row.innerHTML = `<td>${item.index + 1}</td>
                 <td>${item.codInterno || ''}</td>
                 <td style="white-space: normal; min-width: 150px;">${item.descricao || ''}</td>
@@ -2365,7 +2522,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     listElement.appendChild(li);
                 });
             } else {
-                listElement.innerHTML = '<li>Nenhum item com lucro calculável para exibir.</li>';
+                listElement.innerHTML = '<li>Nenhum item com economia calculável para exibir.</li>';
             }
         };
 
@@ -2450,7 +2607,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const simLucroElem = geId('simNovoLucro');
 
         const simulationInputs = JSON.parse(JSON.stringify(lastCalculationInputs)); 
-
+_
         if (simTaxaCambio > 0) {
             simulationInputs.taxaCambio = simTaxaCambio;
         }
