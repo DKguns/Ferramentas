@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.6</title>
+    <title>Ferramenta de Calculo de Importação V42.7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -2802,6 +2802,59 @@ document.addEventListener('DOMContentLoaded', function() {
         showScreen('telaEntradaPanel');
     }
 
+    function handleCsvImport() {
+        const fileInput = geId('csvFileInput');
+        if (!fileInput.files.length) {
+            showToast('Por favor, selecione um ficheiro CSV primeiro.', 'warning');
+            return;
+        }
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const csv = event.target.result;
+            const lines = csv.split(/[\r\n]+/).filter(line => line.trim() !== '');
+
+            if (lines.length <= 1) {
+                showToast('Ficheiro CSV está vazio ou contém apenas o cabeçalho.', 'warning');
+                return;
+            }
+
+            const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = ''; // Limpa a tabela antes de importar
+
+            const header = lines.shift(); // Remove o cabeçalho
+
+            lines.forEach((line, index) => {
+                const values = line.split(';').map(v => v.trim().replace(/"/g, ''));
+                
+                const itemData = {
+                    desc: values[0] || '',
+                    codInterno: values[1] || '',
+                    ncm: values[2] || '',
+                    qtd: values[3] || '',
+                    precoCustoUnitME: values[4] || '',
+                    pesoUnitKG: values[5] || '',
+                    aliqII: values[6] || '',
+                    aliqIPI: values[7] || '',
+                    aliqPIS: values[8] || '',
+                    aliqCOFINS: values[9] || '',
+                    aliqICMS: values[10] || '',
+                    valVendaUnitBR: values[11] || ''
+                };
+                createItemInputRow(index, itemData);
+            });
+            showToast(`${lines.length} itens importados com sucesso!`, 'success');
+            saveState();
+        };
+
+        reader.onerror = function() {
+            showToast('Erro ao ler o ficheiro.', 'error');
+        };
+
+        reader.readAsText(file, 'UTF-8');
+    }
+
     // --- SETUP DE EVENTOS ---
     function setupEventListeners() {
         const tablist = document.querySelector('[role="tablist"]');
@@ -2833,6 +2886,7 @@ document.addEventListener('DOMContentLoaded', function() {
         geId('shareWppBtn').addEventListener('click', shareDashboardViaWhatsApp);
         
         geId('runSimulationBtn').addEventListener('click', runSensitivityAnalysis);
+        geId('importCsvBtn').addEventListener('click', handleCsvImport);
 
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         geId('moedaEstrangeira').addEventListener('input', updateCotacaoButtonLabel);
