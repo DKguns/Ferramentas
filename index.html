@@ -2970,8 +2970,28 @@ document.addEventListener('DOMContentLoaded', function() {
         footerInfoElem.textContent = `Criado por Diego Karloh | ${versionSpan ? versionSpan.textContent : 'Ferramenta de Calculo de Importação'}`;
     }
 
+  // ...código anterior...
+    const footerInfoElem = geId('footerInfo');
+    if(footerInfoElem) {
+        const versionSpan = geId('appVersion');
+        footerInfoElem.textContent = `Criado por Diego Karloh | ${versionSpan ? versionSpan.textContent : 'Ferramenta de Calculo de Importação'}`;
+    }
+    // O código antigo termina EXATAMENTE AQUI.
+
+    // AQUI COMEÇA O CÓDIGO NOVO QUE VOCÊ COLOU (com as 5 funções)
+    // --- GESTÃO DE TEMPLATES DE IMPOSTOS ---
+    function saveTaxTemplate() {
+        // ...
+    }
+    function populateTemplateDropdowns() {
+        // ...
+    }
+    // ... (e as outras 3 funções) ...
+    function deleteTaxTemplate(templateName) {
+        //...
+    }
+    
+    // E DEPOIS DE TODO O CÓDIGO NOVO, VEM O FINAL ORIGINAL:
     showScreen('telaEntradaPanel');
 });
 </script>
-</body>
-</html>
