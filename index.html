@@ -2935,46 +2935,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // --- INICIALIZAÇÃO ---
-    loadState();
-    populateSavedCalculationsDropdown();
-    setupEventListeners();
-    updateCotacaoButtonLabel();
-    handleRegimeChange();
-    setupDragAndDrop();
     
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        applyTheme(savedTheme);
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        applyTheme('theme-dark');
-    }
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        if (!localStorage.getItem('theme_manually_set')) {
-            applyTheme(event.matches ? "theme-dark" : "theme-light");
-        }
-    });
-
-    const appVersionElem = geId('appVersion');
-    if (appVersionElem) {
-        const titleText = document.title;
-        const versionMatch = titleText.match(/v\d+\.\d+(\.\d+)?/);
-        if (versionMatch) {
-            appVersionElem.textContent = versionMatch[0];
-        }
-    }
-    const footerInfoElem = geId('footerInfo');
-    if(footerInfoElem) {
-        const versionSpan = geId('appVersion');
-        footerInfoElem.textContent = `Criado por Diego Karloh | ${versionSpan ? versionSpan.textContent : 'Ferramenta de Calculo de Importação'}`;
-    }
-
-  // ...código anterior...
-    const footerInfoElem = geId('footerInfo');
-    if(footerInfoElem) {
-        const versionSpan = geId('appVersion');
-        footerInfoElem.textContent = `Criado por Diego Karloh | ${versionSpan ? versionSpan.textContent : 'Ferramenta de Calculo de Importação'}`;
     }
     // O código antigo termina EXATAMENTE AQUI.
 
