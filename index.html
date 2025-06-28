@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.8</title>
+    <title>Ferramenta de Calculo de Importação V42.9</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -1001,8 +1001,6 @@
                                 <th scope="col" data-translate-key="thCOFINS">COFINS (%)</th>
                                 <th scope="col" data-translate-key="thICMS">ICMS (%)</th>
                                 <th scope="col" data-translate-key="thCustoUnitBR">Custo Unit. Nacional (R$)</th>
-                                <th scope="col" data-translate-key="thPrecoCustoTotalME">Pr. Custo Total $</th>
-                                <th scope="col" data-translate-key="thPesoTotalKG">Peso Total KG</th>
                                 <th scope="col" data-translate-key="thAcoes" style="min-width: 140px;">Ações</th>
                             </tr>
                         </thead>
@@ -1336,6 +1334,20 @@
                 </div>
             </section>
 
+            <section class="modal-section" aria-labelledby="headingTemplatesModal">
+                <h3 id="headingTemplatesModal">Templates de Impostos</h3>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <label for="templateNameInput">Nome do Novo Template:</label>
+                        <input type="text" id="templateNameInput" placeholder="Ex: Eletrônicos Padrão">
+                    </div>
+                    <div class="grid-item" style="align-self: end;">
+                        <button type="button" id="saveTemplateBtn" class="main-calculate-button" style="width: 100%;">Salvar Impostos da 1ª Linha como Template</button>
+                    </div>
+                </div>
+                <div id="taxTemplatesList" style="margin-top: 15px;"></div>
+            </section>
+
             <div class="modal-actions">
                 <button type="button" id="saveSettingsBtn" class="main-calculate-button" data-translate-key="modalBtnSalvar">Salvar e Fechar</button>
             </div>
@@ -1366,6 +1378,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
+    const TAX_TEMPLATES_KEY = 'importCalculator_taxTemplates';
+
 
     let custoTotalChartInstance = null;
     let saveTimeout;
@@ -1629,13 +1643,13 @@ document.addEventListener('DOMContentLoaded', function() {
             <td class="grid-item"><label class="sr-only" for="aliqCOFINSItem${index}">Alíquota COFINS (%) do Item ${index + 1}</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
             <td class="grid-item"><label class="sr-only" for="aliqICMSItem${index}">Alíquota ICMS (%) do Item ${index + 1}</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
             <td><label class="sr-only" for="valVendaUnitBRItem${index}">Custo Unit. Nacional (R$) do Item ${index + 1}</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
-            <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Preço Custo Total $ do Item ${index + 1}</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
-            <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG do Item ${index + 1}</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
+            <td style="min-width: 120px;"><label class="sr-only" for="templateSelectItem${index}">Aplicar Template</label><select id="templateSelectItem${index}" class="template-select"><option value="">Aplicar Template</option></select></td>
             <td>
                 <button type="button" class="remove-item-btn" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" aria-label="Remover Item"><i class="fas fa-trash-alt"></i></button>
                 <button type="button" class="load-defaults-btn" style="padding: 5px 10px; font-size: 12px;" aria-label="Carregar Impostos Padrão"><i class="fas fa-bolt"></i> Padrão</button>
             </td>
         `;
+        populateTemplateDropdowns();
         setupRowEventListeners(row, index);
         updateItemCalculatedFields(index);
     }
@@ -1646,6 +1660,8 @@ document.addEventListener('DOMContentLoaded', function() {
         geId(`pesoUnitKGItem${index}`).addEventListener('input', () => updateItemCalculatedFields(index));
         row.querySelector('.remove-item-btn').addEventListener('click', function() { removerLinhaItem(this); });
         row.querySelector('.load-defaults-btn').addEventListener('click', function() { carregarImpostosPadrao(this); });
+        row.querySelector('.template-select').addEventListener('change', function(e) { applyTaxTemplate(e, index); });
+
     }
     
     function adicionarLinhaItem() {
@@ -1684,7 +1700,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = rows[i];
             row.cells[1].textContent = i + 1;
             
-            row.querySelectorAll('input, label, span.error-message').forEach(elem => {
+            row.querySelectorAll('input, label, span.error-message, select').forEach(elem => {
                 if (elem.id) {
                     const idBase = elem.id.replace(/\d+$/, '');
                     elem.id = idBase + i;
