@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V42.5</title>
+    <title>Ferramenta de Calculo de Importação V42.6</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -972,7 +972,16 @@
 
             <section class="item-inputs" aria-labelledby="headingItensEmbarque">
                 <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque">Itens do Embarque</h2>
-                <p class="currency-note" data-translate-key="noteItensEmbarque">Insira as alíquotas para cada item (ex: 10 para 10%). Peso é informativo. "Custo Unit. Nacional" é para comparação.</p>
+                <div class="grid-container" style="align-items: flex-end; gap: 10px; margin-bottom: 15px;">
+                    <div class="grid-item">
+                        <label for="csvFileInput">Importar Itens de um Ficheiro CSV:</label>
+                        <input type="file" id="csvFileInput" accept=".csv" style="padding: 5px;">
+                        <small class="field-description">O CSV deve ter as colunas na ordem: Descrição, Cód. Interno, NCM, Qtd, Pr. Custo Unit. $, Peso Unit. KG, II, IPI, PIS, COFINS, ICMS, Custo Unit. Nacional</small>
+                    </div>
+                    <div class="grid-item" style="align-self: end;">
+                         <button type="button" id="importCsvBtn" class="main-calculate-button" style="background-color: var(--theme-accent-orange);"><i class="fas fa-file-import"></i> Importar CSV</button>
+                    </div>
+                </div>
                 <div class="table-wrapper">
                     <table id="itemInputTable" class="item-table-input">
                         <caption>Tabela de entrada de itens para cálculo de importação</caption>
@@ -1441,9 +1450,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const moedaInput = geId('moedaEstrangeira');
         const moeda = moedaInput ? (moedaInput.value.toUpperCase() || "USD") : "USD";
         let currencySymbol = moeda;
-        if (moeda === "USD") currencySymbol = "$";
-        else if (moeda === "EUR") currencySymbol = "€";
-        else if (moeda === "CNY") currencySymbol = "¥";
+        if (moeda === "USD") symbol = "$";
+        else if (moeda === "EUR") symbol = "€";
+        else if (moeda === "CNY") symbol = "¥";
         
         const freteLabelElem = document.querySelector('label[for="totalFreteME"]');
         if(freteLabelElem) freteLabelElem.innerText = `Frete Int. TOTAL (${currencySymbol}):`;
