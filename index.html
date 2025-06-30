@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V43.0</title>
+    <title>Ferramenta de Calculo de Importação V43.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -876,7 +876,6 @@
             <section class="data-section global-inputs" aria-labelledby="headingDadosGlobais">
                 <h2 id="headingDadosGlobais" data-translate-key="headingDadosGlobais">Dados Globais do Embarque</h2>
                 
-                <!-- CORREÇÃO DE ACESSIBILIDADE: Usando fieldset e legend para agrupar campos semanticamente -->
                 <fieldset>
                     <legend class="section-separator"><span data-translate-key="sepInfoOrganizacionais">Informações Organizacionais</span></legend>
                     <div class="grid-container">
@@ -926,6 +925,40 @@
                     <legend class="section-separator"><span data-translate-key="sepRegimeTributario">Regime Tributário e Créditos</span></legend>
                     <div class="grid-container">
                         <div class="grid-item"><label for="regimeTributario"><span data-translate-key="labelRegimeTributario">Regime Tributário Federal:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipRegimeTributario">Define o regime de tributação da empresa, impactando os créditos fiscais. Lucro Real permite mais créditos, enquanto Simples Nacional não permite.</span></span></label><select id="regimeTributario"><option value="Lucro Real" selected>Lucro Real</option><option value="Lucro Presumido">Lucro Presumido</option><option value="Simples Nacional">Simples Nacional</option></select></div>
+                        <!-- NOVO CAMPO ESTADO DE DESTINO -->
+                        <div class="grid-item">
+                            <label for="estadoDestino"><span data-translate-key="labelEstadoDestino">Estado de Destino (UF):</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipEstadoDestino">Selecione o estado para cálculo do ICMS. Isso influenciará a alíquota de ICMS preenchida na busca de NCM.</span></span></label>
+                            <select id="estadoDestino">
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC" selected>Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
                         <div class="grid-item"><label for="percCreditoPIS"><span data-translate-key="labelPercCreditoPIS">% Crédito PIS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoPIS">Percentual de crédito de PIS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.</span></span></label><input type="number" id="percCreditoPIS" step="0.01" value="100.00"></div>
                         <div class="grid-item"><label for="percCreditoCOFINS"><span data-translate-key="labelPercCreditoCOFINS">% Crédito COFINS:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoCOFINS">Percentual de crédito de COFINS a ser aproveitado. Geralmente 100% para Lucro Real e 0% para outros.</span></span></label><input type="number" id="percCreditoCOFINS" step="0.01" value="100.00"></div>
                         <div class="grid-item"><label for="percCreditoIPI"><span data-translate-key="labelPercCreditoIPI">% Crédito IPI:</span><span class="tooltip-container"><i class="fas fa-question-circle tooltip-icon"></i><span class="tooltip-text" data-translate-key="tooltipCreditoIPI">Percentual de crédito de IPI. Geralmente 100% para indústrias no Lucro Real e 0% para os demais.</span></span></label><input type="number" id="percCreditoIPI" step="0.01" value="100.00"></div>
@@ -1041,7 +1074,7 @@
             </section>
             
             <div class="action-buttons">
-                <button id="calculateCostsBtn" class="main-calculate-button" data-translate-key="btnCalcular">Calcular Custos, Lucro e Indicadores</button>
+                <button id="calculateCostsBtn" class="main-calculate-button" data-translate-key="btnCalcular">Calcular Custos, Economia e Indicadores</button>
                 <button id="clearFieldsBtn" type="button" class="clear-button" data-translate-key="btnLimparCampos">Limpar Todos os Campos</button>
             </div>
         </section>
@@ -1321,7 +1354,6 @@
     </main>
 
     <!-- Modals -->
-    <!-- CORREÇÃO DE ACESSIBILIDADE: Adicionado role, aria-modal e aria-labelledby -->
     <div id="settingsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
         <div class="modal-content">
             <button id="closeSettingsModalBtn" class="modal-close-btn" aria-label="Fechar Configurações">&times;</button>
@@ -1366,8 +1398,6 @@
         </div>
     </div>
     
-    <!-- Modal para compartilhar imagem -->
-    <!-- CORREÇÃO DE ACESSIBILIDADE: Adicionado role, aria-modal e aria-labelledby -->
     <div id="shareImageModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
         <div id="shareImageModalContent">
             <h3 id="shareModalTitle" data-translate-key="shareModalTitle">Compartilhar Dashboard</h3>
@@ -1385,14 +1415,11 @@
     </div>
 
 <script>
-// IIFE para garantir que o script rode após o carregamento do DOM e evite poluir o escopo global
 document.addEventListener('DOMContentLoaded', function() {
     
-    // == CONSTANTES NOVAS PARA BUSCA DE NCM ==
     const NCM_API_ENDPOINT = 'https://brasilapi.com.br/api/ncm/v1/';
     const NCM_CACHE_KEY = 'importCalculator_ncmCache';
-    const NCM_CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias em milissegundos
-    // == FIM DAS CONSTANTES NOVAS ==
+    const NCM_CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
     
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
@@ -1402,12 +1429,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let latestCalculationResults = null;
     let lastCalculationInputs = null;
     let draggedRow = null;
-
     let lastFocusedElement;
 
     function geId(id) { return document.getElementById(id); }
 
-    // --- SISTEMA DE NOTIFICAÇÃO ---
     function showToast(message, type = 'success') {
         const container = geId('toast-container');
         const toast = document.createElement('div');
@@ -1434,18 +1459,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setTimeout(() => {
             toast.classList.remove('show');
-            toast.addEventListener('transitionend', () => {
-                toast.remove();
-            });
+            toast.addEventListener('transitionend', () => toast.remove());
         }, 4000);
     }
 
-    // --- FUNÇÕES UTILITÁRIAS ---
     function TxtToNum(elementIdOrValue, isElement = true) {
         let valStr;
         if (isElement) {
             const elem = geId(elementIdOrValue);
-            if (!elem) { console.warn(`Elemento com ID '${elementIdOrValue}' não encontrado em TxtToNum.`); return 0; }
+            if (!elem) { console.warn(`Elemento com ID '${elementIdOrValue}' não encontrado.`); return 0; }
             if (elem.type === 'date') { return elem.value; }
             valStr = String(elem.value);
         } else {
@@ -1456,14 +1478,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return isNaN(num) ? 0 : num;
     }
 
-    function formatBRL(value) { return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-    
+    function formatBRL(value) { return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
     function formatCurrency(value, currencyCode = "USD", locale = 'pt-BR') {
         if (currencyCode === "BRL") return formatBRL(value);
         let symbol = currencyCode;
         if (currencyCode === "USD") symbol = "$"; else if (currencyCode === "EUR") symbol = "€"; else if (currencyCode === "CNY") symbol = "¥";
         try {
-            return (value || 0).toLocaleString(locale, { style: 'currency', currency: currencyCode, minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return (value || 0).toLocaleString(locale, { style: 'currency', currency: currencyCode });
         } catch (e) { return `${symbol} ${(value || 0).toFixed(2)}`; }
     }
 
@@ -1475,7 +1496,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'class="profit-loss"';
     }
     
-    // --- FUNÇÕES DE UI/UX ---
     function updateCotacaoButtonLabel() {
         const moedaInput = geId('moedaEstrangeira');
         const moeda = moedaInput ? (moedaInput.value.toUpperCase() || "USD") : "USD";
@@ -1510,10 +1530,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         button.classList.add('button-loading');
         button.disabled = true;
-
         infoSpan.textContent = "Buscando cotação...";
         infoSpan.classList.remove('error');
-
         const startTime = Date.now();
 
         try {
@@ -1560,7 +1578,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if(manual) localStorage.setItem('theme_manually_set', 'true');
     }
 
-    // --- FUNÇÕES DE ACESSIBILIDADE E UI ---
     function openModal(modalId) {
         lastFocusedElement = document.activeElement;
         const modal = geId(modalId);
@@ -1624,7 +1641,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- FUNÇÕES DA TABELA DINÂMICA ---
     function createItemInputRow(index, itemData = null) {
         const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
         const row = tbody.insertRow();
@@ -1639,35 +1655,27 @@ document.addEventListener('DOMContentLoaded', function() {
         row.innerHTML = `
             <td class="drag-handle" title="Arraste para reordenar"><i class="fas fa-grip-vertical"></i></td>
             <td>${index + 1}</td>
-            <td><label class="sr-only" for="descItem${index}">Descrição do Item ${index + 1}</label><input type="text" id="descItem${index}" value="${data.desc}" placeholder="Descrição do Produto"></td>
-            <td><label class="sr-only" for="codInternoItem${index}">Código Interno do Item ${index + 1}</label><input type="text" id="codInternoItem${index}" value="${data.codInterno}" placeholder="Cód."></td>
+            <td><label class="sr-only" for="descItem${index}">Descrição</label><input type="text" id="descItem${index}" value="${data.desc}" placeholder="Descrição do Produto"></td>
+            <td><label class="sr-only" for="codInternoItem${index}">Cód. Interno</label><input type="text" id="codInternoItem${index}" value="${data.codInterno}" placeholder="Cód."></td>
             <td>
-                <label class="sr-only" for="ncmItem${index}">NCM do Item ${index + 1}</label>
+                <label class="sr-only" for="ncmItem${index}">NCM</label>
                 <div style="display: flex; align-items: center; gap: 5px;">
                     <input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM" style="flex-grow: 1;">
                     <button type="button" class="ncm-search-btn" aria-label="Buscar NCM"><i class="fas fa-search"></i></button>
                     <span class="spinner ncm-spinner" style="display: none; width: 1em; height: 1em; border-top-color: var(--theme-accent-blue);"></span>
                 </div>
             </td>
-            <td class="grid-item">
-                <label class="sr-only" for="qtdItem${index}">Quantidade do Item ${index + 1}</label>
-                <input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" aria-describedby="qtdItem${index}Error">
-                <span class="error-message" id="qtdItem${index}Error">Obrigatório</span>
-            </td>
-            <td class="grid-item">
-                <label class="sr-only" for="precoCustoUnitMEItem${index}">Preço Custo Unit. $ do Item ${index + 1}</label>
-                <input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" aria-describedby="precoCustoUnitMEItem${index}Error">
-                <span class="error-message" id="precoCustoUnitMEItem${index}Error">Obrigatório</span>
-            </td>
-            <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG do Item ${index + 1}</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000"></td>
-            <td class="grid-item"><label class="sr-only" for="aliqIIItem${index}">Alíquota II (%) do Item ${index + 1}</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
-            <td class="grid-item"><label class="sr-only" for="aliqIPIItem${index}">Alíquota IPI (%) do Item ${index + 1}</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
-            <td class="grid-item"><label class="sr-only" for="aliqPISItem${index}">Alíquota PIS (%) do Item ${index + 1}</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
-            <td class="grid-item"><label class="sr-only" for="aliqCOFINSItem${index}">Alíquota COFINS (%) do Item ${index + 1}</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
-            <td class="grid-item"><label class="sr-only" for="aliqICMSItem${index}">Alíquota ICMS (%) do Item ${index + 1}</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
-            <td><label class="sr-only" for="valVendaUnitBRItem${index}">Custo Unit. Nacional (R$) do Item ${index + 1}</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
-            <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Preço Custo Total $ do Item ${index + 1}</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
-            <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG do Item ${index + 1}</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
+            <td class="grid-item"><label class="sr-only" for="qtdItem${index}">Qtd.</label><input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" aria-describedby="qtdItem${index}Error"><span class="error-message" id="qtdItem${index}Error">Obrigatório</span></td>
+            <td class="grid-item"><label class="sr-only" for="precoCustoUnitMEItem${index}">Pr. Custo Unit. $</label><input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" aria-describedby="precoCustoUnitMEItem${index}Error"><span class="error-message" id="precoCustoUnitMEItem${index}Error">Obrigatório</span></td>
+            <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000"></td>
+            <td><label class="sr-only" for="aliqIIItem${index}">II (%)</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
+            <td><label class="sr-only" for="aliqIPIItem${index}">IPI (%)</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
+            <td><label class="sr-only" for="aliqPISItem${index}">PIS (%)</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
+            <td><label class="sr-only" for="aliqCOFINSItem${index}">COFINS (%)</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
+            <td><label class="sr-only" for="aliqICMSItem${index}">ICMS (%)</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
+            <td><label class="sr-only" for="valVendaUnitBRItem${index}">Custo Unit. Nacional (R$)</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
+            <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Pr. Custo Total $</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
+            <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
             <td>
                 <button type="button" class="remove-item-btn" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" aria-label="Remover Item"><i class="fas fa-trash-alt"></i></button>
                 <button type="button" class="load-defaults-btn" style="padding: 5px 10px; font-size: 12px;" aria-label="Carregar Impostos Padrão"><i class="fas fa-bolt"></i> Padrão</button>
@@ -1683,8 +1691,6 @@ document.addEventListener('DOMContentLoaded', function() {
         geId(`pesoUnitKGItem${index}`).addEventListener('input', () => updateItemCalculatedFields(index));
         row.querySelector('.remove-item-btn').addEventListener('click', function() { removerLinhaItem(this); });
         row.querySelector('.load-defaults-btn').addEventListener('click', function() { carregarImpostosPadrao(this); });
-        
-        // Adiciona o listener para o novo botão de busca de NCM
         row.querySelector('.ncm-search-btn').addEventListener('click', () => handleNcmSearch(index));
     }
     
@@ -1723,7 +1729,6 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
             row.cells[1].textContent = i + 1;
-            
             row.querySelectorAll('input, label, span.error-message, button').forEach(elem => {
                 if (elem.id) {
                     const idBase = elem.id.replace(/\d+$/, '');
@@ -1738,7 +1743,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     elem.setAttribute('aria-describedby', descBase + i);
                 }
             });
-            // Reassocia os eventos para garantir que os índices estejam corretos
             setupRowEventListeners(row, i);
         }
     }
@@ -1764,23 +1768,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const percCredIPIInput = geId('percCreditoIPI');
         const percCredICMSInput = geId('percCreditoICMS');
 
-        if(!percCredPISInput || !percCredCOFINSInput || !percCredIPIInput || !percCredICMSInput) {
-            console.warn("Um ou mais campos de crédito não foram encontrados em handleRegimeChange.");
-            return;
-        }
+        if(!percCredPISInput || !percCredCOFINSInput || !percCredIPIInput || !percCredICMSInput) return;
         
         let pisCred = 0, cofinsCred = 0, ipiCred = 0, icmsCred = 100;
         let pisDisabled = true, cofinsDisabled = true, ipiDisabled = true, icmsDisabled = false;
 
         if (regime === "Lucro Real") {
-            pisCred = 100.00;
-            cofinsCred = 100.00;
-            ipiCred = 100.00;
-            icmsCred = 100.00;
+            pisCred = 100.00; cofinsCred = 100.00; ipiCred = 100.00; icmsCred = 100.00;
             pisDisabled = false; cofinsDisabled = false; ipiDisabled = false; icmsDisabled = false;
         } else if (regime === "Lucro Presumido") {
-            pisCred = 0; cofinsCred = 0; ipiCred = 0;
-            icmsCred = 100;
+            pisCred = 0; cofinsCred = 0; ipiCred = 0; icmsCred = 100;
             pisDisabled = true; cofinsDisabled = true; ipiDisabled = true; icmsDisabled = false;
         } else if (regime === "Simples Nacional") {
             pisCred = 0; cofinsCred = 0; ipiCred = 0; icmsCred = 0;
@@ -1794,34 +1791,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function showScreen(screenIdToShow) {
-        const screens = document.querySelectorAll('section[role="tabpanel"]');
-        const tabs = document.querySelectorAll('button[role="tab"]');
-
-        screens.forEach(screen => {
+        document.querySelectorAll('section[role="tabpanel"]').forEach(screen => {
             screen.hidden = (screen.id !== screenIdToShow);
         });
-
-        tabs.forEach(tab => {
+        document.querySelectorAll('button[role="tab"]').forEach(tab => {
             const isActive = tab.getAttribute('aria-controls') === screenIdToShow;
-            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            tab.setAttribute('aria-selected', String(isActive));
             tab.setAttribute('tabindex', isActive ? '0' : '-1');
         });
     }
 
-    // --- FUNÇÕES NOVAS PARA BUSCA DE NCM ---
-
-    /**
-     * Função principal que coordena a busca por NCM.
-     * @param {number} rowIndex O índice da linha na tabela.
-     */
     async function handleNcmSearch(rowIndex) {
         const ncmInput = geId(`ncmItem${rowIndex}`);
-        const ncmValue = ncmInput.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+        const ncmValue = ncmInput.value.replace(/\D/g, '');
         const row = ncmInput.closest('tr');
         const spinner = row.querySelector('.ncm-spinner');
         const searchButton = row.querySelector('.ncm-search-btn');
+        const uf = geId('estadoDestino').value;
 
-        if (ncmValue.length < 2) { // NCMs têm no mínimo 2 dígitos
+        if (ncmValue.length < 2) {
             showToast("Por favor, insira um código NCM válido.", "warning");
             return;
         }
@@ -1830,20 +1818,18 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.style.display = 'inline-block';
 
         try {
-            // 1. Tenta buscar do cache
-            const cachedData = getFromNcmCache(ncmValue);
+            const cachedData = getFromNcmCache(ncmValue, uf);
             if (cachedData) {
-                console.log(`NCM ${ncmValue} encontrado no cache.`);
+                console.log(`NCM ${ncmValue} (UF: ${uf || 'N/A'}) encontrado no cache.`);
                 updateRowWithNcmData(rowIndex, cachedData);
                 showToast(`NCM ${ncmValue} carregado do cache.`, "success");
-                return; // Encerra se encontrou no cache
+                return;
             }
 
-            // 2. Se não estiver no cache, busca na API
-            console.log(`Buscando NCM ${ncmValue} na API...`);
-            const apiData = await fetchNcmFromApi(ncmValue);
+            console.log(`Buscando NCM ${ncmValue} (UF: ${uf || 'N/A'}) na API...`);
+            const apiData = await fetchNcmFromApi(ncmValue, uf);
             updateRowWithNcmData(rowIndex, apiData);
-            saveToNcmCache(ncmValue, apiData); // Salva no cache para uso futuro
+            saveToNcmCache(ncmValue, uf, apiData);
             showToast(`NCM ${ncmValue} encontrado e preenchido.`, "success");
 
         } catch (error) {
@@ -1854,87 +1840,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    /**
-     * Busca dados de um NCM na BrasilAPI.
-     * @param {string} ncm O código NCM.
-     * @returns {Promise<object>} Os dados do NCM.
-     */
-    async function fetchNcmFromApi(ncm) {
-        const response = await fetch(`${NCM_API_ENDPOINT}${ncm}`);
+    async function fetchNcmFromApi(ncm, uf = '') {
+        let url = `${NCM_API_ENDPOINT}${ncm}`;
+        if (uf) {
+            url += `?uf=${uf}`;
+        }
+        const response = await fetch(url);
         if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error(`NCM ${ncm} não encontrado.`);
-            }
+            if (response.status === 404) throw new Error(`NCM ${ncm} não encontrado.`);
             throw new Error("Falha ao se comunicar com a API de NCM.");
         }
         return await response.json();
     }
 
-    /**
-     * Preenche os campos da linha da tabela com os dados do NCM.
-     * @param {number} rowIndex O índice da linha.
-     * @param {object} data Os dados do NCM.
-     */
     function updateRowWithNcmData(rowIndex, data) {
-        // Preenche a descrição do item se estiver vazia
         const descInput = geId(`descItem${rowIndex}`);
         if (!descInput.value && data.descricao) {
             descInput.value = data.descricao;
         }
 
-        // Preenche as alíquotas, usando ?? para valores padrão caso a API não retorne
         geId(`aliqIIItem${rowIndex}`).value = data.aliquota_ii ?? '0';
         geId(`aliqIPIItem${rowIndex}`).value = data.aliquota_ipi ?? '0';
-        geId(`aliqPISItem${rowIndex}`).value = data.aliquota_pis_cofins?.aliquota_pis ?? '2.10';
-        geId(`aliqCOFINSItem${rowIndex}`).value = data.aliquota_pis_cofins?.aliquota_cofins ?? '10.65';
+        geId(`aliqPISItem${rowIndex}`).value = data.aliquota_pis_cofins?.aliquota_pis ?? IMPOSTOS_PADRAO.aliqPIS;
+        geId(`aliqCOFINSItem${rowIndex}`).value = data.aliquota_pis_cofins?.aliquota_cofins ?? IMPOSTOS_PADRAO.aliqCOFINS;
         
-        // Dispara o evento 'input' para que a lógica de salvamento automático seja acionada
+        // Apenas atualiza o ICMS se a API retornar um valor para o estado consultado
+        if (data.aliquota_icms?.aliquota) {
+            geId(`aliqICMSItem${rowIndex}`).value = data.aliquota_icms.aliquota;
+        }
+        
         geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    // --- Funções de Gerenciamento de Cache ---
-    function getFromNcmCache(ncm) {
-        const cache = JSON.parse(localStorage.getItem(NCM_CACHE_KEY) || '{}');
+    function getFromNcmCache(ncm, uf) {
+        const cacheKey = `${NCM_CACHE_KEY}_${uf || 'geral'}`;
+        const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
         const item = cache[ncm];
-
         if (!item) return null;
 
-        // Verifica se o cache expirou
         const isExpired = (Date.now() - item.timestamp) > NCM_CACHE_DURATION_MS;
         if (isExpired) {
             delete cache[ncm];
-            localStorage.setItem(NCM_CACHE_KEY, JSON.stringify(cache));
-            console.log(`Cache para NCM ${ncm} expirou e foi removido.`);
+            localStorage.setItem(cacheKey, JSON.stringify(cache));
+            console.log(`Cache para NCM ${ncm} (UF: ${uf}) expirou.`);
             return null;
         }
         return item.data;
     }
 
-    function saveToNcmCache(ncm, data) {
+    function saveToNcmCache(ncm, uf, data) {
         try {
-            const cache = JSON.parse(localStorage.getItem(NCM_CACHE_KEY) || '{}');
+            const cacheKey = `${NCM_CACHE_KEY}_${uf || 'geral'}`;
+            const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
             cache[ncm] = {
                 data: data,
                 timestamp: Date.now()
             };
-            localStorage.setItem(NCM_CACHE_KEY, JSON.stringify(cache));
+            localStorage.setItem(cacheKey, JSON.stringify(cache));
         } catch(e) {
-            console.error("Erro ao salvar NCM no cache, possível estouro de limite:", e);
-            // Poderia implementar uma lógica para limpar o cache antigo aqui se necessário
+            console.error("Erro ao salvar NCM no cache:", e);
         }
     }
 
-
-    // --- PERSISTÊNCIA DE DADOS ---
     function getCurrentStateAsObject() {
-        const data = {
-            global: {},
-            items: [],
-            lang: geId('idiomaSelect').value,
-            calculationName: geId('calculationName').value
-        };
-
-        const globalFields = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo', 'moedaEstrangeira', 'taxaCambio', 'incoterm', 'modalidadeTransporte', 'regimeTributario', 'percCreditoPIS', 'percCreditoCOFINS', 'percCreditoIPI', 'percCreditoICMS', 'totalFreteME', 'totalSeguroME', 'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais', 'metodoCalculoICMS'];
+        const data = { global: {}, items: [], lang: geId('idiomaSelect').value, calculationName: geId('calculationName').value };
+        const globalFields = ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo', 'moedaEstrangeira', 'taxaCambio', 'incoterm', 'modalidadeTransporte', 'regimeTributario', 'estadoDestino', 'percCreditoPIS', 'percCreditoCOFINS', 'percCreditoIPI', 'percCreditoICMS', 'totalFreteME', 'totalSeguroME', 'totalOutrasDespesasME', 'taxaSiscomexBRL', 'despesasAduaneirasBRL', 'freteNacionalBRL', 'aliquotaAFRMM', 'observacoesGerais', 'metodoCalculoICMS'];
         globalFields.forEach(id => {
             const elem = geId(id);
             if (elem) data.global[id] = elem.value;
@@ -1956,27 +1926,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyState(data) {
         if (!data) return;
         try {
-            if (data.lang) {
-                geId('idiomaSelect').value = data.lang;
-                // applyTranslations(data.lang); 
-            }
-
+            if (data.lang) geId('idiomaSelect').value = data.lang;
             if (data.global) {
                 for (const id in data.global) {
                     const elem = geId(id);
                     if (elem) elem.value = data.global[id];
                 }
             }
-             if (data.calculationName) {
-                geId('calculationName').value = data.calculationName;
-            }
+             if (data.calculationName) geId('calculationName').value = data.calculationName;
 
             const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
             if (data.items && data.items.length > 0) {
-                data.items.forEach((item, index) => {
-                    createItemInputRow(index, item);
-                });
+                data.items.forEach((item, index) => createItemInputRow(index, item));
             } else {
                 createItemInputRow(0); 
             }
@@ -2017,16 +1979,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 limparTodosOsCampos(false); 
                 return;
             }
-            const data = JSON.parse(savedData);
-            applyState(data);
-            console.log("Último estado carregado do localStorage.");
+            applyState(JSON.parse(savedData));
+            console.log("Último estado carregado.");
         } catch (e) {
             console.error("Erro ao carregar o estado:", e);
             limparTodosOsCampos(true); 
         }
     }
     
-    // --- GESTÃO DE CÁLCULOS SALVOS ---
     function populateSavedCalculationsDropdown() {
         const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
         const dropdown = geId('savedCalculations');
@@ -2048,11 +2008,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
-        const dataToSave = getCurrentStateAsObject();
-        
-        savedCalcs[name] = dataToSave;
+        savedCalcs[name] = getCurrentStateAsObject();
         localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
-        
         populateSavedCalculationsDropdown();
         geId('savedCalculations').value = name;
         showToast(`Cálculo "${name}" salvo com sucesso!`, 'success');
@@ -2060,16 +2017,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function loadSelectedCalculation() {
         const name = geId('savedCalculations').value;
-        if (!name) {
-            showToast("Nenhum cálculo selecionado para carregar.", 'warning');
-            return;
-        }
-
+        if (!name) return;
         const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
-        const dataToLoad = savedCalcs[name];
-
-        if (dataToLoad) {
-            applyState(dataToLoad);
+        if (savedCalcs[name]) {
+            applyState(savedCalcs[name]);
             showToast(`Cálculo "${name}" carregado.`, 'success');
         } else {
             showToast(`Cálculo "${name}" não encontrado.`, 'error');
@@ -2078,11 +2029,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function deleteSelectedCalculation() {
         const name = geId('savedCalculations').value;
-        if (!name) {
-            showToast("Nenhum cálculo selecionado para excluir.", 'warning');
-            return;
-        }
-        
+        if (!name) return;
         const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
         delete savedCalcs[name];
         localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
@@ -2090,7 +2037,6 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast(`Cálculo "${name}" excluído.`, 'success');
     }
 
-    // --- VALIDAÇÃO DE FORMULÁRIO ---
     function validateForm() {
         let isValid = true;
         clearValidations();
@@ -2102,45 +2048,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
             let isInvalid = false;
             if (isNumeric) {
-                const value = elem.value.trim();
-                if (value === '' || isNaN(parseFloat(value.replace(',', '.'))) || parseFloat(value.replace(',', '.')) < 0) {
-                    isInvalid = true;
-                }
+                if (elem.value.trim() === '' || isNaN(parseFloat(elem.value.replace(',', '.'))) || parseFloat(elem.value.replace(',', '.')) < 0) isInvalid = true;
             } else {
-                if (elem.value.trim() === '') {
-                    isInvalid = true;
-                }
+                if (elem.value.trim() === '') isInvalid = true;
             }
     
             if (isInvalid) {
                 elem.classList.add('invalid-field');
                 elem.setAttribute('aria-invalid', 'true');
-                if (errorElem) {
-                    errorElem.style.display = 'block';
-                }
+                if (errorElem) errorElem.style.display = 'block';
                 isValid = false;
             }
         };
     
         ['nomeUsuario', 'nomeFornecedor', 'refInterna', 'numeroPI', 'diProcesso', 'dataCalculo'].forEach(id => checkField(id, false));
-        ['taxaCambio', 'totalFreteME', 'taxaSiscomexBRL'].forEach(id => checkField(id, true));
+        ['taxaCambio', 'totalFreteME', 'taxaSiscomexBRL'].forEach(id => checkField(id));
     
-        const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
         let hasAtLeastOneItem = false;
-        for (let i = 0; i < itemRows.length; i++) {
-            const qtd = geId(`qtdItem${i}`).value.trim();
-            const preco = geId(`precoCustoUnitMEItem${i}`).value.trim();
-            if (qtd || preco) {
+        for (let i = 0; i < geId('itemInputTable').getElementsByTagName('tbody')[0].rows.length; i++) {
+            if (geId(`qtdItem${i}`).value.trim() || geId(`precoCustoUnitMEItem${i}`).value.trim()) {
                  hasAtLeastOneItem = true;
-                 ['qtdItem', 'precoCustoUnitMEItem'].forEach(fieldBase => {
-                     checkField(`${fieldBase}${i}`, true);
-                 });
+                 ['qtdItem', 'precoCustoUnitMEItem'].forEach(fieldBase => checkField(`${fieldBase}${i}`));
             }
         }
         
         if (!hasAtLeastOneItem) {
             isValid = false;
-            showToast("Adicione pelo menos um item com quantidade e preço para calcular.", "warning");
+            showToast("Adicione pelo menos um item com quantidade e preço.", "warning");
         }
     
         return isValid;
@@ -2154,29 +2088,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
     }
     
-    // --- LÓGICA DE CÁLCULO PRINCIPAL ---
-    
     function performCalculationLogic(inputs) {
-        const {
-            itemsData,
-            taxaCambio,
-            totalFreteME_global,
-            totalSeguroME_global,
-            totalOutrasDespesasME_global,
-            taxaSiscomexBRL_global,
-            despesasAduaneirasBRL_global,
-            freteNacionalBRL_global,
-            aliqAFRMM_global_dec,
-            percCreditoPIS_dec,
-            percCreditoCOFINS_dec,
-            percCreditoIPI_dec,
-            percCreditoICMS_dec,
-            metodoCalculoICMS
-        } = inputs;
-
-        let valorFOBTotalME = 0;
-        let pesoTotalEmbarqueKG = 0;
-        let valorTotalCustoBrasil = 0;
+        const { itemsData, taxaCambio, totalFreteME_global, totalSeguroME_global, totalOutrasDespesasME_global, taxaSiscomexBRL_global, despesasAduaneirasBRL_global, freteNacionalBRL_global, aliqAFRMM_global_dec, percCreditoPIS_dec, percCreditoCOFINS_dec, percCreditoIPI_dec, percCreditoICMS_dec, metodoCalculoICMS } = inputs;
+        let valorFOBTotalME = 0, pesoTotalEmbarqueKG = 0, valorTotalCustoBrasil = 0;
 
         itemsData.forEach(item => {
             valorFOBTotalME += item.precoCustoTotalME;
@@ -2184,27 +2098,11 @@ document.addEventListener('DOMContentLoaded', function() {
             valorTotalCustoBrasil += item.valorCustoUnitarioNacional * item.quantidade;
         });
 
-        let acc = {
-            fob_BRL: 0, frete_BRL: 0, seguro_BRL: 0, outrasDespME_BRL: 0, CIF_Total_BRL_acumulado: 0,
-            ii_BRL: 0,
-            ipi_pago_BRL: 0, ipi_creditado_BRL: 0, ipi_efetivo_BRL: 0,
-            pis_pago_BRL: 0, pis_creditado_BRL: 0, pis_efetivo_BRL: 0,
-            cofins_pago_BRL: 0, cofins_creditado_BRL: 0, cofins_efetivo_BRL: 0,
-            baseCalcICMS_BRL_total: 0,
-            icms_pago_BRL: 0, icms_creditado_BRL: 0, icms_efetivo_BRL: 0,
-            afrmm_BRL: 0, siscomex_BRL: 0, despAduan_BRL: 0, freteNac_BRL: 0,
-            totalCreditosFiscais_BRL: 0, totalGeral_BRL: 0,
-            totalPesoKG: pesoTotalEmbarqueKG,
-            totalQtdItens: 0, totalImpostosPagosBruto: 0, custoMedioPorKG: 0,
-            totalImpostosEfetivosGlobal: 0,
-            valorTotalNF_BRL_acumulado: 0
-        };
+        let acc = { fob_BRL: 0, frete_BRL: 0, seguro_BRL: 0, outrasDespME_BRL: 0, CIF_Total_BRL_acumulado: 0, ii_BRL: 0, ipi_pago_BRL: 0, ipi_creditado_BRL: 0, ipi_efetivo_BRL: 0, pis_pago_BRL: 0, pis_creditado_BRL: 0, pis_efetivo_BRL: 0, cofins_pago_BRL: 0, cofins_creditado_BRL: 0, cofins_efetivo_BRL: 0, baseCalcICMS_BRL_total: 0, icms_pago_BRL: 0, icms_creditado_BRL: 0, icms_efetivo_BRL: 0, afrmm_BRL: 0, siscomex_BRL: 0, despAduan_BRL: 0, freteNac_BRL: 0, totalCreditosFiscais_BRL: 0, totalGeral_BRL: 0, totalPesoKG: pesoTotalEmbarqueKG, totalQtdItens: 0, totalImpostosPagosBruto: 0, custoMedioPorKG: 0, totalImpostosEfetivosGlobal: 0, valorTotalNF_BRL_acumulado: 0 };
 
         const freteTotalGlobalBRL = totalFreteME_global * taxaCambio;
-
         const calculatedItems = itemsData.map(item => {
             const newItem = { ...item };
-            
             newItem.fobBRL_item = newItem.precoCustoTotalME * taxaCambio;
             newItem.fobPercent = (valorFOBTotalME > 0) ? (newItem.precoCustoTotalME / valorFOBTotalME * 100) : 0;
             let percParticipacaoPesoTotalLinha = (acc.totalPesoKG > 0) ? (newItem.pesoTotalKG / acc.totalPesoKG) : (itemsData.length > 0 ? 1 / itemsData.length : 0);
@@ -2236,12 +2134,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newItem.valorAFRMM = (freteTotalGlobalBRL * (newItem.fobPercent / 100)) * aliqAFRMM_global_dec;
 
             const baseICMS_antes_imposto = newItem.CIF_Total_BRL + newItem.valorII + newItem.ipi_pago + newItem.pis_pago + newItem.cofins_pago + newItem.taxaSiscomexRateada_BRL_item + newItem.valorAFRMM + newItem.despesasAduaneirasBRL_item;
-            
-            if(metodoCalculoICMS === 'fora') {
-                 newItem.baseCalcICMS_item = baseICMS_antes_imposto;
-            } else { // "por dentro" é o padrão
-                 newItem.baseCalcICMS_item = baseICMS_antes_imposto / (1 - newItem.aliqICMS);
-            }
+            newItem.baseCalcICMS_item = (metodoCalculoICMS === 'fora') ? baseICMS_antes_imposto : baseICMS_antes_imposto / (1 - newItem.aliqICMS);
             
             newItem.icms_pago = newItem.baseCalcICMS_item * newItem.aliqICMS;
             newItem.icms_creditado = newItem.icms_pago * percCreditoICMS_dec;
@@ -2253,7 +2146,13 @@ document.addEventListener('DOMContentLoaded', function() {
             newItem.lucroPercentualUnitario = newItem.valorCustoUnitarioNacional > 0 ? (lucroUnitario / newItem.valorCustoUnitarioNacional) * 100 : 0;
             newItem.markupSobreCusto = newItem.custoUnitarioItem > 0 ? (lucroUnitario / newItem.custoUnitarioItem) * 100 : 0;
             
-            acc.fob_BRL += newItem.fobBRL_item; acc.frete_BRL += newItem.freteExibicaoPorPesoUnitarioBRL; acc.seguro_BRL += seguroBRL_item; acc.outrasDespME_BRL += outrasDespesasBRL_item; acc.CIF_Total_BRL_acumulado += newItem.CIF_Total_BRL; acc.ii_BRL += newItem.valorII; acc.ipi_pago_BRL += newItem.ipi_pago; acc.ipi_creditado_BRL += newItem.ipi_creditado; acc.ipi_efetivo_BRL += newItem.ipi_efetivo; acc.pis_pago_BRL += newItem.pis_pago; acc.pis_creditado_BRL += newItem.pis_creditado; acc.pis_efetivo_BRL += newItem.pis_efetivo; acc.cofins_pago_BRL += newItem.cofins_pago; acc.cofins_creditado_BRL += newItem.cofins_creditado; acc.cofins_efetivo_BRL += newItem.cofins_efetivo; acc.baseCalcICMS_BRL_total += newItem.baseCalcICMS_item; acc.icms_pago_BRL += newItem.icms_pago; acc.icms_creditado_BRL += newItem.icms_creditado; acc.icms_efetivo_BRL += newItem.icms_efetivo; acc.afrmm_BRL += newItem.valorAFRMM; acc.totalCreditosFiscais_BRL += newItem.ipi_creditado + newItem.pis_creditado + newItem.cofins_creditado + newItem.icms_creditado; acc.totalQtdItens += newItem.quantidade; acc.valorTotalNF_BRL_acumulado += newItem.valorTotalNF_BRL; acc.siscomex_BRL += newItem.taxaSiscomexRateada_BRL_item;
+            Object.keys(acc).forEach(key => {
+                if(key.endsWith('_BRL') || key.endsWith('_acumulado')) {
+                     if(newItem[key.replace('_acumulado', '')]) acc[key] += newItem[key.replace('_acumulado', '')];
+                     else if (newItem[key.replace('_BRL', '')]) acc[key] += newItem[key.replace('_BRL', '')]
+                }
+            });
+             acc.fob_BRL += newItem.fobBRL_item; acc.frete_BRL += newItem.freteExibicaoPorPesoUnitarioBRL; acc.seguro_BRL += seguroBRL_item; acc.outrasDespME_BRL += outrasDespesasBRL_item; acc.CIF_Total_BRL_acumulado += newItem.CIF_Total_BRL; acc.ii_BRL += newItem.valorII; acc.ipi_pago_BRL += newItem.ipi_pago; acc.ipi_creditado_BRL += newItem.ipi_creditado; acc.ipi_efetivo_BRL += newItem.ipi_efetivo; acc.pis_pago_BRL += newItem.pis_pago; acc.pis_creditado_BRL += newItem.pis_creditado; acc.pis_efetivo_BRL += newItem.pis_efetivo; acc.cofins_pago_BRL += newItem.cofins_pago; acc.cofins_creditado_BRL += newItem.cofins_creditado; acc.cofins_efetivo_BRL += newItem.cofins_efetivo; acc.baseCalcICMS_BRL_total += newItem.baseCalcICMS_item; acc.icms_pago_BRL += newItem.icms_pago; acc.icms_creditado_BRL += newItem.icms_creditado; acc.icms_efetivo_BRL += newItem.icms_efetivo; acc.afrmm_BRL += newItem.valorAFRMM; acc.totalCreditosFiscais_BRL += newItem.ipi_creditado + newItem.pis_creditado + newItem.cofins_creditado + newItem.icms_creditado; acc.totalQtdItens += newItem.quantidade; acc.valorTotalNF_BRL_acumulado += newItem.valorTotalNF_BRL; acc.siscomex_BRL += newItem.taxaSiscomexRateada_BRL_item;
 
             return newItem;
         });
@@ -2265,17 +2164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
         acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
         
-        return {
-            items: calculatedItems,
-            acc,
-            moedaLabel: inputs.moedaLabel,
-            lucroAltoMin: inputs.lucroAltoMin,
-            lucroMedioMin: inputs.lucroMedioMin,
-            lucroBaixoMin: inputs.lucroBaixoMin,
-            valorTotalCustoBrasil,
-            valorFOBTotalME,
-            taxaCambio
-        };
+        return { items: calculatedItems, acc, moedaLabel: inputs.moedaLabel, lucroAltoMin: inputs.lucroAltoMin, lucroMedioMin: inputs.lucroMedioMin, lucroBaixoMin: inputs.lucroBaixoMin, valorTotalCustoBrasil, valorFOBTotalME, taxaCambio };
     }
     
     function calcularCustosMultiItem() {
@@ -2286,21 +2175,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const itemsData = [];
-            const itemRows = geId('itemInputTable').getElementsByTagName('tbody')[0].rows;
-            for (let i = 0; i < itemRows.length; i++) {
-                const qtd = TxtToNum(`qtdItem${i}`);
-                const precoCustoUnitME = TxtToNum(`precoCustoUnitMEItem${i}`);
-                if (precoCustoUnitME > 0 || qtd > 0) {
+            for (let i = 0; i < geId('itemInputTable').getElementsByTagName('tbody')[0].rows.length; i++) {
+                if (TxtToNum(`precoCustoUnitMEItem${i}`) > 0 || TxtToNum(`qtdItem${i}`) > 0) {
                      itemsData.push({
                         index: i,
                         descricao: geId(`descItem${i}`).value || `Item ${i+1}`,
                         codInterno: geId(`codInternoItem${i}`).value,
                         ncm: geId(`ncmItem${i}`).value,
-                        quantidade: qtd,
-                        precoCustoUnitME: precoCustoUnitME,
-                        precoCustoTotalME: qtd * precoCustoUnitME,
+                        quantidade: TxtToNum(`qtdItem${i}`),
+                        precoCustoUnitME: TxtToNum(`precoCustoUnitMEItem${i}`),
+                        precoCustoTotalME: TxtToNum(`qtdItem${i}`) * TxtToNum(`precoCustoUnitMEItem${i}`),
                         pesoUnitKG: TxtToNum(`pesoUnitKGItem${i}`),
-                        pesoTotalKG: qtd * TxtToNum(`pesoUnitKGItem${i}`),
+                        pesoTotalKG: TxtToNum(`qtdItem${i}`) * TxtToNum(`pesoUnitKGItem${i}`),
                         valorCustoUnitarioNacional: TxtToNum(`valVendaUnitBRItem${i}`),
                         aliqII: TxtToNum(`aliqIIItem${i}`) / 100,
                         aliqIPI: TxtToNum(`aliqIPIItem${i}`) / 100,
@@ -2327,9 +2213,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 percCreditoICMS_dec: geId('percCreditoICMS').disabled ? 0 : TxtToNum('percCreditoICMS') / 100,
                 metodoCalculoICMS: geId('metodoCalculoICMS').value,
                 moedaLabel: geId('moedaEstrangeira')?.value.toUpperCase() || "USD",
-                lucroAltoMin: TxtToNum('modalLucroAltoMin') || 40,
-                lucroMedioMin: TxtToNum('modalLucroMedioMin') || 30,
-                lucroBaixoMin: TxtToNum('modalLucroBaixoMin') || 20,
+                lucroAltoMin: TxtToNum('modalLucroAltoMin'),
+                lucroMedioMin: TxtToNum('modalLucroMedioMin'),
+                lucroBaixoMin: TxtToNum('modalLucroBaixoMin'),
             };
 
             lastCalculationInputs = currentInputs;
@@ -2347,12 +2233,11 @@ document.addEventListener('DOMContentLoaded', function() {
             showScreen('telaDashboardPanel');
 
         } catch (e) {
-            console.error("Erro detalhado em calcularCustosMultiItem:", e, e.stack);
+            console.error("Erro em calcularCustosMultiItem:", e);
             showToast("Erro crítico ao calcular. Verifique os valores.", 'error');
         }
     }
     
-    // --- FUNÇÕES DE RENDERIZAÇÃO ---
     function renderResultsTable(results) {
         const { items, moedaLabel, lucroAltoMin, lucroMedioMin, lucroBaixoMin, taxaCambio } = results;
         const resultTbody = geId('itemResultTable')?.getElementsByTagName('tbody')[0];
@@ -2362,18 +2247,8 @@ document.addEventListener('DOMContentLoaded', function() {
         items.forEach(item => {
             const row = resultTbody.insertRow();
             let lucroCellStyle = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin);
-            
-            let lucroDisplay = 'N/A';
-            if (item.lucroPercentualUnitario !== null) {
-                if (!isFinite(item.lucroPercentualUnitario)) { lucroDisplay = (item.lucroPercentualUnitario > 0 ? "+Inf" : "-Inf") + "%" }
-                else { lucroDisplay = item.lucroPercentualUnitario.toFixed(2).replace('.',',') + '%'; }
-            }
-
-            let markupDisplay = 'N/A';
-            if (item.markupSobreCusto !== null && isFinite(item.markupSobreCusto)) {
-                markupDisplay = item.markupSobreCusto.toFixed(2).replace('.', ',') + '%';
-            }
-            
+            let lucroDisplay = isFinite(item.lucroPercentualUnitario) ? item.lucroPercentualUnitario.toFixed(2).replace('.',',') + '%' : 'N/A';
+            let markupDisplay = isFinite(item.markupSobreCusto) ? item.markupSobreCusto.toFixed(2).replace('.', ',') + '%' : 'N/A';
             const lucroUnitarioRS = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
             const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
             const totalImpostosEfetivosItemComII = item.valorII + item.ipi_efetivo + item.pis_efetivo + item.cofins_efetivo + item.icms_efetivo;
@@ -2416,38 +2291,37 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderSummary(results) { 
         const { acc, valorTotalCustoBrasil } = results;
         const lucroTotalRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
-
         const summaryDiv = geId('resultsSummary');
         if (summaryDiv) {
             summaryDiv.innerHTML = `
-                <h4 data-translate-key="summaryValoresIniciais">Valores Iniciais e CIF</h4>
-                <div class="summary-item"><strong data-translate-key="summaryFOBTotal">Valor FOB Total (BRL):</strong> <span>${formatBRL(acc.fob_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryFreteIntlTotal">Frete Internacional Total (BRL):</strong> <span>${formatBRL(acc.frete_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summarySeguroIntlTotal">Seguro Internacional Total (BRL):</strong> <span>${formatBRL(acc.seguro_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryOutrasDespOrigem">Outras Desp. Origem Total (BRL):</strong> <span>${formatBRL(acc.outrasDespME_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryCIFTotal">CIF Total (BRL):</strong> <span>${formatBRL(acc.CIF_Total_BRL_acumulado)}</span></div>
+                <h4>Valores Iniciais e CIF</h4>
+                <div class="summary-item"><strong>Valor FOB Total (BRL):</strong> <span>${formatBRL(acc.fob_BRL)}</span></div>
+                <div class="summary-item"><strong>Frete Internacional Total (BRL):</strong> <span>${formatBRL(acc.frete_BRL)}</span></div>
+                <div class="summary-item"><strong>Seguro Internacional Total (BRL):</strong> <span>${formatBRL(acc.seguro_BRL)}</span></div>
+                <div class="summary-item"><strong>Outras Desp. Origem Total (BRL):</strong> <span>${formatBRL(acc.outrasDespME_BRL)}</span></div>
+                <div class="summary-item"><strong>CIF Total (BRL):</strong> <span>${formatBRL(acc.CIF_Total_BRL_acumulado)}</span></div>
                 <hr>
-                <h4 data-translate-key="summaryImpostosPagos">Impostos Pagos (Bruto)</h4>
-                <div class="summary-item"><strong data-translate-key="summaryTotalII">Total II (Pago):</strong> <span>${formatBRL(acc.ii_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalIPI">Total IPI (Pago):</strong> <span>${formatBRL(acc.ipi_pago_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalPIS">Total PIS (Pago):</strong> <span>${formatBRL(acc.pis_pago_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalCOFINS">Total COFINS (Pago):</strong> <span>${formatBRL(acc.cofins_pago_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalICMS">Total ICMS (Pago):</strong> <span>${formatBRL(acc.icms_pago_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalAFRMM">Total AFRMM (Pago):</strong> <span>${formatBRL(acc.afrmm_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalSiscomex">Total Taxa Siscomex:</strong> <span>${formatBRL(acc.siscomex_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalImpostosBruto">Total Impostos Pagos (Bruto):</strong> <span>${formatBRL(acc.totalImpostosPagosBruto)}</span></div>
+                <h4>Impostos Pagos (Bruto)</h4>
+                <div class="summary-item"><strong>Total II (Pago):</strong> <span>${formatBRL(acc.ii_BRL)}</span></div>
+                <div class="summary-item"><strong>Total IPI (Pago):</strong> <span>${formatBRL(acc.ipi_pago_BRL)}</span></div>
+                <div class="summary-item"><strong>Total PIS (Pago):</strong> <span>${formatBRL(acc.pis_pago_BRL)}</span></div>
+                <div class="summary-item"><strong>Total COFINS (Pago):</strong> <span>${formatBRL(acc.cofins_pago_BRL)}</span></div>
+                <div class="summary-item"><strong>Total ICMS (Pago):</strong> <span>${formatBRL(acc.icms_pago_BRL)}</span></div>
+                <div class="summary-item"><strong>Total AFRMM (Pago):</strong> <span>${formatBRL(acc.afrmm_BRL)}</span></div>
+                <div class="summary-item"><strong>Total Taxa Siscomex:</strong> <span>${formatBRL(acc.siscomex_BRL)}</span></div>
+                <div class="summary-item"><strong>Total Impostos Pagos (Bruto):</strong> <span>${formatBRL(acc.totalImpostosPagosBruto)}</span></div>
                  <hr>
-                <h4 data-translate-key="summaryCreditosCustosOp">Créditos e Custos Operacionais</h4>
-                <div class="summary-item"><strong data-translate-key="summaryTotalCreditos">Total Créditos Fiscais Estimados:</strong> <span style="color: var(--theme-accent-green);">${formatBRL(acc.totalCreditosFiscais_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalDespAdu">Total Desp. Aduaneiras:</strong> <span>${formatBRL(acc.despAduan_BRL)}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalFreteNac">Total Frete Nacional:</strong> <span>${formatBRL(acc.freteNac_BRL)}</span></div>
+                <h4>Créditos e Custos Operacionais</h4>
+                <div class="summary-item"><strong>Total Créditos Fiscais Estimados:</strong> <span style="color: var(--theme-accent-green);">${formatBRL(acc.totalCreditosFiscais_BRL)}</span></div>
+                <div class="summary-item"><strong>Total Desp. Aduaneiras:</strong> <span>${formatBRL(acc.despAduan_BRL)}</span></div>
+                <div class="summary-item"><strong>Total Frete Nacional:</strong> <span>${formatBRL(acc.freteNac_BRL)}</span></div>
                 <hr>
-                <h4 data-translate-key="summaryTotaisEmbarque">Totais do Embarque</h4>
-                <div class="summary-item"><strong data-translate-key="summaryTotalQtdItens">Total Quantidade de Itens:</strong> <span>${acc.totalQtdItens.toLocaleString('pt-BR')}</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryTotalPesoEmbarque">Total Peso do Embarque (KG):</strong> <span>${acc.totalPesoKG.toFixed(3).replace('.',',')} KG</span></div>
-                <div class="summary-item"><strong data-translate-key="summaryCustoMedioKG">Custo Médio por KG (R$):</strong> <span>${formatBRL(acc.custoMedioPorKG)}</span></div>
+                <h4>Totais do Embarque</h4>
+                <div class="summary-item"><strong>Total Quantidade de Itens:</strong> <span>${acc.totalQtdItens.toLocaleString('pt-BR')}</span></div>
+                <div class="summary-item"><strong>Total Peso do Embarque (KG):</strong> <span>${acc.totalPesoKG.toFixed(3).replace('.',',')} KG</span></div>
+                <div class="summary-item"><strong>Custo Médio por KG (R$):</strong> <span>${formatBRL(acc.custoMedioPorKG)}</span></div>
                 <hr>
-                <div class="summary-item total-geral"><strong data-translate-key="summaryCustoTotalGeral">CUSTO TOTAL GERAL (LÍQUIDO DE CRÉDITOS) (BRL):</strong> <span>${formatBRL(acc.totalGeral_BRL)}</span></div>
+                <div class="summary-item total-geral"><strong>CUSTO TOTAL GERAL (LÍQUIDO) (BRL):</strong> <span>${formatBRL(acc.totalGeral_BRL)}</span></div>
             `;
         }
     }
@@ -2456,39 +2330,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const lucroTotalPedidoRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
         const lucroTotalPedidoPerc = (valorTotalCustoBrasil > 0) ? (lucroTotalPedidoRS / valorTotalCustoBrasil) * 100 : 0;
         const percFreteSobreFOB = acc.fob_BRL > 0 ? (acc.frete_BRL / acc.fob_BRL) * 100 : 0;
-        
-        const totalCustoProduto = acc.fob_BRL;
-        const totalImpostosEfetivos = acc.totalImpostosEfetivosGlobal;
-        const totalOutrosCustos = acc.totalGeral_BRL - totalCustoProduto - totalImpostosEfetivos;
-        
-        const percCustoProduto = (acc.totalGeral_BRL > 0) ? (totalCustoProduto / acc.totalGeral_BRL) * 100 : 0;
-        const percImpostos = (acc.totalGeral_BRL > 0) ? (totalImpostosEfetivos / acc.totalGeral_BRL) * 100 : 0;
-        const percOutros = (acc.totalGeral_BRL > 0) ? (totalOutrosCustos / acc.totalGeral_BRL) * 100 : 0;
+        const percCustoProduto = (acc.totalGeral_BRL > 0) ? (acc.fob_BRL / acc.totalGeral_BRL) * 100 : 0;
+        const percImpostos = (acc.totalGeral_BRL > 0) ? (acc.totalImpostosEfetivosGlobal / acc.totalGeral_BRL) * 100 : 0;
+        const percOutros = 100 - percCustoProduto - percImpostos;
 
         function setInnerTextDashboard(id, value, isCurrency = false, currencyCodeForME = 'USD', highlightClass = '') {
             const elem = geId(id);
             if (elem) {
-                if (id === 'dbValorPedidoME') {
-                    elem.textContent = formatCurrency(value, currencyCodeForME);
-                } else {
-                    elem.textContent = isCurrency ? formatBRL(value) : value;
-                }
-                elem.classList.remove('profit-positive', 'profit-negative', 'blue-highlight', 'orange-highlight');
+                elem.textContent = isCurrency ? formatCurrency(value, currencyCodeForME) : value;
+                elem.className = 'kpi-value'; // Reset classes
                 if (highlightClass) elem.classList.add(highlightClass);
             }
         }
         
         const prominentProfitCard = geId('prominentProfitCard');
         const dbProminentLucroTotalPedidoPerc = geId('dbProminentLucroTotalPedidoPerc');
-        if (prominentProfitCard && dbProminentLucroTotalPedidoPerc) {
-            if (isFinite(lucroTotalPedidoPerc)) {
-                dbProminentLucroTotalPedidoPerc.textContent = lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%';
-                prominentProfitCard.style.display = 'block';
-                dbProminentLucroTotalPedidoPerc.classList.remove('profit-positive', 'profit-negative');
-                dbProminentLucroTotalPedidoPerc.classList.add(lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
-            } else {
-                prominentProfitCard.style.display = 'none';
-            }
+        if (isFinite(lucroTotalPedidoPerc)) {
+            dbProminentLucroTotalPedidoPerc.textContent = lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%';
+            prominentProfitCard.style.display = 'block';
+            dbProminentLucroTotalPedidoPerc.className = lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative';
+        } else {
+            prominentProfitCard.style.display = 'none';
         }
         
         setInnerTextDashboard('dbValorPedidoME', valorFOBTotalME, true, moedaLabel, 'blue-highlight');
@@ -2496,7 +2358,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setInnerTextDashboard('dbReceitaTotalBrasil', valorTotalCustoBrasil, true);
         setInnerTextDashboard('dbLucroTotalPedidoRS', lucroTotalPedidoRS, true, '', lucroTotalPedidoRS >= 0 ? 'profit-positive' : 'profit-negative');
         setInnerTextDashboard('dbLucroTotalPedidoPerc', isFinite(lucroTotalPedidoPerc) ? lucroTotalPedidoPerc.toFixed(2).replace('.',',') + '%' : 'N/A', false, '', lucroTotalPedidoPerc >= 0 ? 'profit-positive' : 'profit-negative');
-        
         setInnerTextDashboard('dbTotalFOB_BRL', acc.fob_BRL, true);
         setInnerTextDashboard('dbFreteTotalBRL', acc.frete_BRL, true);
         setInnerTextDashboard('dbPercFreteSobreFOB', percFreteSobreFOB.toFixed(2).replace('.',',') + '%');
@@ -2510,7 +2371,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const renderList = (listId, sortedItems, maxItems = 10) => {
             const listElement = geId(listId);
             if (!listElement) return;
-            listElement.innerHTML = '';
+            listElement.innerHTML = sortedItems.length > 0 ? '' : '<li>Nenhum item com economia calculável para exibir.</li>';
             if (sortedItems.length > 0) {
                 const maxAbsValue = Math.max(...sortedItems.map(item => Math.abs(item.lucroPercentualUnitario)));
                 sortedItems.slice(0, maxItems).forEach(item => {
@@ -2518,15 +2379,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     const barWidth = maxAbsValue > 0 ? (Math.abs(item.lucroPercentualUnitario) / maxAbsValue) * 100 : 0;
                     const displayLucro = item.lucroPercentualUnitario.toFixed(2).replace('.',',') + '%';
                     const profitBarClass = getLucroCellStyle(item.lucroPercentualUnitario, lucroAltoMin, lucroMedioMin, lucroBaixoMin).replace('class="','').replace('"','');
-                    li.innerHTML = `<span class="item-name" title="${item.descricao || item.codInterno || 'Item'}">${item.descricao || item.codInterno || `Item ${item.index + 1}`}</span><div class="item-bar-container"><div class="item-bar ${profitBarClass}" style="width: ${barWidth}%;"></div></div><span class="item-value">${displayLucro}</span>`;
+                    li.innerHTML = `<span class="item-name" title="${item.descricao || item.codInterno}">${item.descricao || item.codInterno || `Item ${item.index + 1}`}</span><div class="item-bar-container"><div class="item-bar ${profitBarClass}" style="width: ${barWidth}%;"></div></div><span class="item-value">${displayLucro}</span>`;
                     listElement.appendChild(li);
                 });
-            } else {
-                listElement.innerHTML = '<li>Nenhum item com economia calculável para exibir.</li>';
             }
         };
 
-        const itemsComLucroValido = items.filter(item => item.lucroPercentualUnitario !== null && isFinite(item.lucroPercentualUnitario) && item.quantidade > 0);
+        const itemsComLucroValido = items.filter(item => isFinite(item.lucroPercentualUnitario) && item.quantidade > 0);
         renderList('topLucrativosList', [...itemsComLucroValido].sort((a, b) => b.lucroPercentualUnitario - a.lucroPercentualUnitario));
         renderList('topMenosLucrativosList', [...itemsComLucroValido].sort((a, b) => a.lucroPercentualUnitario - b.lucroPercentualUnitario));
     }
@@ -2537,93 +2396,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const isDarkMode = document.body.classList.contains('theme-dark');
         const textColor = isDarkMode ? '#e8e8f0' : '#495057';
     
-        const backgroundColors = [
-            'rgba(32, 201, 151, 0.7)',  
-            'rgba(0, 123, 255, 0.7)',   
-            'rgba(253, 126, 20, 0.7)',  
-            'rgba(220, 53, 69, 0.7)',   
-            'rgba(255, 193, 7, 0.7)',   
-            'rgba(23, 162, 184, 0.7)',  
-            'rgba(108, 117, 125, 0.7)' 
-        ];
+        const backgroundColors = [ 'rgba(32, 201, 151, 0.7)', 'rgba(0, 123, 255, 0.7)', 'rgba(253, 126, 20, 0.7)', 'rgba(220, 53, 69, 0.7)', 'rgba(255, 193, 7, 0.7)', 'rgba(23, 162, 184, 0.7)', 'rgba(108, 117, 125, 0.7)' ];
         const borderColors = backgroundColors.map(color => color.replace('0.7', '1'));
     
-        if (custoTotalChartInstance) {
-            custoTotalChartInstance.destroy();
-        }
+        if (custoTotalChartInstance) custoTotalChartInstance.destroy();
     
         custoTotalChartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Composição do Custo Total',
-                    data: data,
-                    backgroundColor: backgroundColors,
-                    borderColor: borderColors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: textColor,
-                            font: {
-                                family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed !== null) {
-                                    label += formatBRL(context.parsed);
-                                }
-                                return label;
-                            }
-                        }
-                    }
-                }
-            }
+            type: 'doughnut', data: { labels: labels, datasets: [{ label: 'Composição do Custo', data: data, backgroundColor: backgroundColors, borderColor: borderColors, borderWidth: 1 }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: '-apple-system, sans-serif' } } }, tooltip: { callbacks: { label: (c) => `${c.label || ''}: ${formatBRL(c.parsed)}` } } } }
         });
     }
 
     function runSensitivityAnalysis() {
         if (!lastCalculationInputs) {
-            showToast("Por favor, realize um cálculo principal primeiro.", "warning");
+            showToast("Realize um cálculo principal primeiro.", "warning");
             return;
         }
-
         const simTaxaCambio = TxtToNum('simTaxaCambio');
         const simTotalFreteME = TxtToNum('simTotalFreteME');
         const simLucroElem = geId('simNovoLucro');
-
         const simulationInputs = JSON.parse(JSON.stringify(lastCalculationInputs)); 
-_
-        if (simTaxaCambio > 0) {
-            simulationInputs.taxaCambio = simTaxaCambio;
-        }
-        if (simTotalFreteME >= 0) { // Allow 0 for simulation
-            simulationInputs.totalFreteME_global = simTotalFreteME;
-        }
 
-        const simulationResults = performCalculationLogic(simulationInputs);
+        if (simTaxaCambio > 0) simulationInputs.taxaCambio = simTaxaCambio;
+        if (simTotalFreteME >= 0) simulationInputs.totalFreteME_global = simTotalFreteME;
 
-        const { acc, valorTotalCustoBrasil } = simulationResults;
+        const { acc, valorTotalCustoBrasil } = performCalculationLogic(simulationInputs);
         const novoLucroTotal = valorTotalCustoBrasil - acc.totalGeral_BRL;
 
         simLucroElem.textContent = formatBRL(novoLucroTotal);
-        simLucroElem.classList.remove('profit-positive', 'profit-negative');
-        simLucroElem.classList.add(novoLucroTotal >= 0 ? 'profit-positive' : 'profit-negative');
-
+        simLucroElem.className = novoLucroTotal >= 0 ? 'profit-positive' : 'profit-negative';
         showToast("Simulação concluída!", "success");
     }
 
@@ -2636,290 +2437,121 @@ _
             const img = new Image();
             img.crossOrigin = "Anonymous";
             return new Promise((resolve) => {
-                img.onload = () => {
-                    canvas.height = img.height;
-                    canvas.width = img.width;
-                    ctx.drawImage(img, 0, 0);
-                    resolve(canvas.toDataURL('image/png'));
-                };
+                img.onload = () => { canvas.height = img.height; canvas.width = img.width; ctx.drawImage(img, 0, 0); resolve(canvas.toDataURL('image/png')); };
                 img.onerror = () => resolve(null);
                 img.src = logo.src;
             });
-        } catch (e) {
-            console.error("Erro ao converter logo para Base64:", e);
-            return null;
-        }
+        } catch (e) { console.error("Erro ao converter logo:", e); return null; }
     }
 
     async function gerarPDF() {
-        if (!latestCalculationResults) {
-            showToast('Calcule primeiro para gerar o PDF.', 'warning');
-            return;
-        }
+        if (!latestCalculationResults) { showToast('Calcule primeiro para gerar o PDF.', 'warning'); return; }
         showToast('Iniciando geração do PDF...', 'success');
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
         const logoData = await getLogoBase64();
-
         const { items, acc, valorTotalCustoBrasil } = latestCalculationResults;
-        const nomeUsuario = geId('nomeUsuario').value || 'N/A';
-        const nomeFornecedor = geId('nomeFornecedor').value || 'N/A';
-        const dataCalculo = geId('dataCalculo').value ? new Date(geId('dataCalculo').value).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
         const refInterna = geId('refInterna').value || 'N/A';
-        const diProcesso = geId('diProcesso').value || 'N/A';
-        const appVersion = geId('appVersion')?.textContent || '';
+        const primaryColor = '#007bff', textColor = '#212529', secondaryTextColor = '#495057', greenColor = '#20c997', redColor = '#dc3545';
+        const pageHeight = doc.internal.pageSize.getHeight(), pageWidth = doc.internal.pageSize.getWidth();
 
-        const primaryColor = '#007bff';
-        const textColor = '#212529';
-        const secondaryTextColor = '#495057';
-        const greenColor = '#20c997';
-        const redColor = '#dc3545';
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const pageWidth = doc.internal.pageSize.getWidth();
-        let finalY = 0;
-
-        const pageHeader = (data) => {
-            doc.setFontSize(18);
-            doc.setTextColor(primaryColor);
-            doc.setFont(undefined, 'bold');
-            doc.text('Relatório de Custo de Importação', 14, 20);
-            doc.setFont(undefined, 'normal');
-            if (logoData) {
-                doc.addImage(logoData, 'PNG', pageWidth - 44, 15, 30, 10);
-            }
+        const pageHeader = () => {
+            doc.setFontSize(18).setTextColor(primaryColor).setFont(undefined, 'bold').text('Relatório de Custo de Importação', 14, 20).setFont(undefined, 'normal');
+            if (logoData) doc.addImage(logoData, 'PNG', pageWidth - 44, 15, 30, 10);
         };
-
         const pageFooter = (data) => {
             const pageCount = doc.internal.getNumberOfPages();
-            doc.setFontSize(8);
-            doc.setTextColor(secondaryTextColor);
-            const now = new Date();
-            const timestamp = `Gerado em: ${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR')}`;
-            doc.text(timestamp, 14, pageHeight - 10);
-            const pageNumText = `Página ${data.pageNumber} de ${pageCount}`;
-            doc.text(pageNumText, pageWidth - 14, pageHeight - 10, { align: 'right' });
+            doc.setFontSize(8).setTextColor(secondaryTextColor);
+            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, pageHeight - 10);
+            doc.text(`Página ${data.pageNumber} de ${pageCount}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
         };
         
-        pageHeader({pageNumber: 1});
-
-        doc.setFontSize(9);
-        doc.setTextColor(secondaryTextColor);
-        doc.text(`Fornecedor: ${nomeFornecedor}`, 14, 30);
-        doc.text(`Referência: ${refInterna}`, 14, 34);
-        doc.text(`DI/Processo: ${diProcesso}`, 14, 38);
+        pageHeader();
+        doc.setFontSize(9).setTextColor(secondaryTextColor)
+            .text(`Fornecedor: ${geId('nomeFornecedor').value || 'N/A'}`, 14, 30)
+            .text(`Referência: ${refInterna}`, 14, 34)
+            .text(`DI/Processo: ${geId('diProcesso').value || 'N/A'}`, 14, 38);
         
-        doc.setFontSize(12);
-        doc.setTextColor(primaryColor);
-        doc.setFont(undefined, 'bold');
-        doc.text('Resumo Financeiro (BRL)', 14, 48);
-        doc.setFont(undefined, 'normal');
-        
+        doc.setFontSize(12).setTextColor(primaryColor).setFont(undefined, 'bold').text('Resumo Financeiro (BRL)', 14, 48).setFont(undefined, 'normal');
         const lucroTotalRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
         const lucroCor = lucroTotalRS >= 0 ? greenColor : redColor;
 
-        doc.autoTable({
-            startY: 52,
-            theme: 'plain',
-            body: [
-                ['Custo Total Geral (Líquido):', formatBRL(acc.totalGeral_BRL)],
-                ['Custo Total Nacional (Ref.):', formatBRL(valorTotalCustoBrasil)],
-                [{ content: 'Economia Total Estimada:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]
-            ],
-            styles: { fontSize: 10, cellPadding: 2 },
-            columnStyles: {
-                0: { cellWidth: 50, fontStyle: 'bold', textColor: textColor },
-                1: { cellWidth: 'auto', halign: 'right' }
-            }
-        });
-        finalY = doc.lastAutoTable.finalY + 5;
-
-        doc.setFontSize(12);
-        doc.setTextColor(primaryColor);
-        doc.setFont(undefined, 'bold');
-        doc.text('Resumo de Impostos e Taxas (BRL)', 14, finalY);
-        doc.setFont(undefined, 'normal');
-
-        doc.autoTable({
-            startY: finalY + 4,
-            theme: 'grid',
-            head: [['Descrição', 'Valor Pago', 'Crédito Estimado', 'Custo Efetivo']],
-            body: [
-                ['Imposto de Importação (II)', formatBRL(acc.ii_BRL), formatBRL(0), formatBRL(acc.ii_BRL)],
-                ['IPI', formatBRL(acc.ipi_pago_BRL), formatBRL(acc.ipi_creditado_BRL), formatBRL(acc.ipi_efetivo_BRL)],
-                ['PIS', formatBRL(acc.pis_pago_BRL), formatBRL(acc.pis_creditado_BRL), formatBRL(acc.pis_efetivo_BRL)],
-                ['COFINS', formatBRL(acc.cofins_pago_BRL), formatBRL(acc.cofins_creditado_BRL), formatBRL(acc.cofins_efetivo_BRL)],
-                ['ICMS', formatBRL(acc.icms_pago_BRL), formatBRL(acc.icms_creditado_BRL), formatBRL(acc.icms_efetivo_BRL)],
-            ],
-            foot: [['Total Impostos', formatBRL(acc.totalImpostosPagosBruto - acc.afrmm_BRL - acc.siscomex_BRL), formatBRL(acc.totalCreditosFiscais_BRL), formatBRL(acc.totalImpostosEfetivosGlobal - acc.afrmm_BRL - acc.siscomex_BRL)]],
-            headStyles: { fillColor: [40, 58, 90] },
-            footStyles: { fillColor: [230, 230, 230], textColor: '#000000', fontStyle: 'bold' },
-            styles: { fontSize: 9, cellPadding: 2 },
-            alternateRowStyles: { fillColor: '#f8f9fa' },
-            columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' }}
-        });
-        finalY = doc.lastAutoTable.finalY;
-
-        doc.addPage();
-        pageHeader({pageNumber: 2});
-
-        doc.setFontSize(12);
-        doc.setTextColor(primaryColor);
-        doc.setFont(undefined, 'bold');
-        doc.text('Resultados Detalhados por Item', 14, 30);
-        doc.setFont(undefined, 'normal');
+        doc.autoTable({ startY: 52, theme: 'plain', body: [['Custo Total Geral (Líquido):', formatBRL(acc.totalGeral_BRL)], ['Custo Total Nacional (Ref.):', formatBRL(valorTotalCustoBrasil)], [{ content: 'Economia Total Estimada:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]], styles: { fontSize: 10, cellPadding: 2 }, columnStyles: { 0: { cellWidth: 50, fontStyle: 'bold', textColor: textColor }, 1: { cellWidth: 'auto', halign: 'right' } } });
         
-        const tableBody = items.map((item, index) => {
-            const lucroUnitarioRS = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
-            return [
-                index + 1,
-                item.descricao,
-                item.quantidade,
-                formatBRL(item.custoUnitarioItem),
-                formatBRL(item.valorCustoUnitarioNacional),
-                formatBRL(lucroUnitarioRS),
-                `${(item.lucroPercentualUnitario || 0).toFixed(2)}%`
-            ]
-        });
-
+        doc.addPage();
+        pageHeader();
+        doc.setFontSize(12).setTextColor(primaryColor).setFont(undefined, 'bold').text('Resultados Detalhados por Item', 14, 30).setFont(undefined, 'normal');
+        
         doc.autoTable({
             startY: 34,
-            head: [['#', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Custo Unit. Nac.', 'Economia Unit.', 'Margem %']],
-            body: tableBody,
+            head: [['#', 'Descrição', 'Qtd', 'Custo Unit. Liq.', 'Custo Unit. Nac.', 'Economia Unit.', 'Economia %']],
+            body: items.map((item, index) => [ index + 1, item.descricao, item.quantidade, formatBRL(item.custoUnitarioItem), formatBRL(item.valorCustoUnitarioNacional), formatBRL(item.valorCustoUnitarioNacional - item.custoUnitarioItem), `${(item.lucroPercentualUnitario || 0).toFixed(2)}%` ]),
             theme: 'grid',
             headStyles: { fillColor: primaryColor, textColor: '#ffffff', fontSize: 9 },
             foot: [['Total', '', acc.totalQtdItens.toLocaleString('pt-BR'), '', '', formatBRL(lucroTotalRS), '']],
             footStyles: { fillColor: '#e9ecef', textColor: textColor, fontStyle: 'bold' },
             styles: { fontSize: 8, cellPadding: 1.5, overflow: 'linebreak' },
-            columnStyles: {
-                0: { halign: 'center', cellWidth: 8 },
-                2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right' },
-                5: { halign: 'right' }, 6: { halign: 'right' }
-            },
-            didDrawPage: (data) => {
-                if(data.pageNumber > 1) pageHeader(data);
-                pageFooter(data);
-            },
-            didParseCell: function(data) {
-                if (data.column.index === 6 && data.section === 'body') {
-                    const lucroPerc = parseFloat(data.cell.raw.toString().replace('%',''));
-                    if (lucroPerc < (TxtToNum('modalLucroBaixoMin') || 20)) {
-                        data.cell.styles.textColor = redColor;
-                    }
-                }
-            }
+            columnStyles: { 0: { halign: 'center', cellWidth: 8 }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right' }, 5: { halign: 'right' }, 6: { halign: 'right' } },
+            didDrawPage: (data) => { if (data.pageNumber > 1) pageHeader(); pageFooter(data); },
+            didParseCell: (data) => { if (data.column.index === 6 && data.section === 'body' && parseFloat(data.cell.raw) < TxtToNum('modalLucroBaixoMin')) data.cell.styles.textColor = redColor; }
         });
-
-        pageFooter({pageNumber: 1, pageCount: doc.internal.getNumberOfPages()});
-        doc.setPage(1);
-        pageFooter({pageNumber: 1, pageCount: doc.internal.getNumberOfPages()});
-
+        
+        for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) { doc.setPage(i); pageFooter({pageNumber: i}); }
         doc.save(`Relatorio_Importacao_${refInterna.replace(/[\s/]/g, '_')}.pdf`);
     }
 
     function exportTableToCSV(filename) {
-        if (!latestCalculationResults) {
-            showToast('Calcule primeiro para exportar.', 'warning');
-            return;
-        }
-
+        if (!latestCalculationResults) { showToast('Calcule primeiro para exportar.', 'warning'); return; }
         const { items } = latestCalculationResults;
         const delimiter = ';'; 
-
-        const headers = [
-            '#', 'Cód. Interno', 'Descrição', 'NCM', 'Qtd',
-            'Custo Unit. ME', 'Custo Total ME',
-            'Custo Unit. Líquido (BRL)', 'Custo Total Linha (BRL)',
-            'Custo Unit. Nacional (BRL)',
-            'Economia Unit. (BRL)', 'Economia Total (BRL)', 'Economia (s/ Custo Nac.) %', 'Markup s/ Custo (%)',
-            'II (BRL)', 'IPI Efetivo (BRL)', 'PIS Efetivo (BRL)', 'COFINS Efetivo (BRL)', 'ICMS Efetivo (BRL)',
-            'AFRMM (BRL)', 'Outras Despesas (BRL)'
-        ];
-
+        const headers = [ '#', 'Cód. Interno', 'Descrição', 'NCM', 'Qtd', 'Custo Unit. ME', 'Custo Total ME', 'Custo Unit. Líquido (BRL)', 'Custo Total Linha (BRL)', 'Custo Unit. Nacional (BRL)', 'Economia Unit. (BRL)', 'Economia Total (BRL)', 'Economia (%)', 'Markup (%)', 'II (BRL)', 'IPI Efetivo (BRL)', 'PIS Efetivo (BRL)', 'COFINS Efetivo (BRL)', 'ICMS Efetivo (BRL)', 'AFRMM (BRL)', 'Outras Despesas (BRL)' ];
         const formatCSVCell = (value) => {
             let output = (value === null || value === undefined) ? '' : String(value);
-            if (typeof value === 'number') {
-                output = value.toFixed(2).replace('.', ',');
-            }
-            if (output.includes('"') || output.includes(delimiter) || output.includes('\n')) {
-                output = `"${output.replace(/"/g, '""')}"`;
-            }
+            if (typeof value === 'number') output = value.toFixed(2).replace('.', ',');
+            if (output.includes('"') || output.includes(delimiter) || output.includes('\n')) output = `"${output.replace(/"/g, '""')}"`;
             return output;
         };
-
         const rows = items.map((item, index) => {
-            const lucroUnitarioRS = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
-            const lucroTotalLinhaRS = lucroUnitarioRS * item.quantidade;
-            const outrasDespesasRateadas = (item.despesasAduaneirasBRL_item || 0) + (item.freteNacionalBRL_item || 0);
-
-            return [
-                index + 1, item.codInterno, item.descricao, item.ncm, item.quantidade,
-                item.precoCustoUnitME, item.precoCustoTotalME,
-                item.custoUnitarioItem, item.custoTotalLinha,
-                item.valorCustoUnitarioNacional,
-                lucroUnitarioRS, lucroTotalLinhaRS, item.lucroPercentualUnitario, item.markupSobreCusto,
-                item.valorII, item.ipi_efetivo, item.pis_efetivo, item.cofins_efetivo, item.icms_efetivo,
-                item.valorAFRMM, outrasDespesasRateadas
-            ].map(formatCSVCell).join(delimiter);
+            const economiaUnit = item.valorCustoUnitarioNacional - item.custoUnitarioItem;
+            return [ index + 1, item.codInterno, item.descricao, item.ncm, item.quantidade, item.precoCustoUnitME, item.precoCustoTotalME, item.custoUnitarioItem, item.custoTotalLinha, item.valorCustoUnitarioNacional, economiaUnit, economiaUnit * item.quantidade, item.lucroPercentualUnitario, item.markupSobreCusto, item.valorII, item.ipi_efetivo, item.pis_efetivo, item.cofins_efetivo, item.icms_efetivo, item.valorAFRMM, (item.despesasAduaneirasBRL_item || 0) + (item.freteNacionalBRL_item || 0) ].map(formatCSVCell).join(delimiter);
         });
-
         const csvContent = [headers.join(delimiter), ...rows].join('\r\n');
-        
         const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
-
-        if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        showToast('CSV exportado com sucesso!', 'success');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('CSV exportado!', 'success');
     }
 
     function shareDashboardViaWhatsApp() {
-        if (!latestCalculationResults) {
-            showToast('Calcule primeiro para compartilhar.', 'warning');
-            return;
-        }
-    
-        const modal = geId('shareImageModal');
-        const screenshotImg = geId('dashboardScreenshot');
-        const areaToCapture = geId('dashboardScreenshotArea');
-        
+        if (!latestCalculationResults) { showToast('Calcule primeiro para compartilhar.', 'warning'); return; }
         showToast('Gerando imagem do dashboard...', 'success');
-    
-        html2canvas(areaToCapture, {
-            backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff',
-            scale: 2 
-        }).then(canvas => {
-            screenshotImg.src = canvas.toDataURL('image/png');
-            openModal('shareImageModal');
-        }).catch(err => {
-            console.error('Erro ao gerar a imagem:', err);
-            showToast('Falha ao gerar a imagem do dashboard.', 'error');
-        });
+        html2canvas(geId('dashboardScreenshotArea'), { backgroundColor: document.body.classList.contains('theme-dark') ? '#1c1c1c' : '#ffffff', scale: 2 })
+            .then(canvas => {
+                geId('dashboardScreenshot').src = canvas.toDataURL('image/png');
+                openModal('shareImageModal');
+            }).catch(err => {
+                console.error('Erro ao gerar imagem:', err);
+                showToast('Falha ao gerar imagem.', 'error');
+            });
     }
 
     function setupDragAndDrop() {
         const tbody = geId('itemInputTable').querySelector('tbody');
         if (!tbody) return;
-
         tbody.addEventListener('dragstart', (e) => {
             draggedRow = e.target;
             if (draggedRow.tagName !== 'TR') return;
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/html', draggedRow.innerHTML);
-            setTimeout(() => {
-                draggedRow.classList.add('dragging');
-            }, 0);
+            setTimeout(() => draggedRow.classList.add('dragging'), 0);
         });
-
-        tbody.addEventListener('dragend', (e) => {
+        tbody.addEventListener('dragend', () => {
             if (draggedRow) {
                 draggedRow.classList.remove('dragging');
                 draggedRow = null;
@@ -2927,23 +2559,21 @@ _
                 saveState();
             }
         });
-        
         tbody.addEventListener('dragover', (e) => {
             e.preventDefault();
             const targetRow = e.target.closest('tr');
             if (targetRow && targetRow !== draggedRow) {
                 const rect = targetRow.getBoundingClientRect();
-                const nextSibling = (e.clientY - rect.top) > (rect.height / 2) ? targetRow.nextSibling : targetRow;
-                tbody.insertBefore(draggedRow, nextSibling);
+                const next = (e.clientY - rect.top) > (rect.height / 2);
+                tbody.insertBefore(draggedRow, next ? targetRow.nextSibling : targetRow);
             }
         });
     }
 
     function limparTodosOsCampos(clearStorage = true) {
-        if(clearStorage){
-             localStorage.removeItem('importCalculator_lastState');
-            const statusElem = geId('saveStatus');
-            if(statusElem) statusElem.style.opacity = '0';
+        if(clearStorage) {
+            localStorage.removeItem('importCalculator_lastState');
+            geId('saveStatus').style.opacity = '0';
         }
         clearValidations();
         document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => input.value = '');
@@ -2952,116 +2582,65 @@ _
         geId('incoterm').value = 'CPT';
         geId('modalidadeTransporte').value = 'Aereo';
         geId('regimeTributario').value = 'Lucro Real';
+        geId('estadoDestino').value = 'SC'; // Reset para SC
         handleRegimeChange();
-        const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
-        if (tbody) tbody.innerHTML = '';
+        geId('itemInputTable').getElementsByTagName('tbody')[0].innerHTML = '';
         createItemInputRow(0);
         showScreen('telaEntradaPanel');
     }
 
     function handleCsvImport() {
         const fileInput = geId('csvFileInput');
-        if (!fileInput.files.length) {
-            showToast('Por favor, selecione um ficheiro CSV primeiro.', 'warning');
-            return;
-        }
-        const file = fileInput.files[0];
+        if (!fileInput.files.length) { showToast('Selecione um ficheiro CSV.', 'warning'); return; }
         const reader = new FileReader();
-
-        reader.onload = function(event) {
-            const csv = event.target.result;
-            const lines = csv.split(/[\r\n]+/).filter(line => line.trim() !== '');
-
-            if (lines.length <= 1) {
-                showToast('Ficheiro CSV está vazio ou contém apenas o cabeçalho.', 'warning');
-                return;
-            }
-
+        reader.onload = (event) => {
+            const lines = event.target.result.split(/[\r\n]+/).filter(line => line.trim() !== '');
+            if (lines.length <= 1) { showToast('CSV vazio ou só com cabeçalho.', 'warning'); return; }
             const tbody = geId('itemInputTable').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = ''; // Limpa a tabela antes de importar
-
-            const header = lines.shift(); // Remove o cabeçalho
-
+            tbody.innerHTML = '';
+            lines.shift(); // Remove header
             lines.forEach((line, index) => {
                 const values = line.split(';').map(v => v.trim().replace(/"/g, ''));
-                
-                const itemData = {
-                    desc: values[0] || '',
-                    codInterno: values[1] || '',
-                    ncm: values[2] || '',
-                    qtd: (values[3] || '').replace(',', '.'),
-                    precoCustoUnitME: (values[4] || '').replace(',', '.'),
-                    pesoUnitKG: (values[5] || '').replace(',', '.'),
-                    aliqII: (values[6] || '').replace(',', '.'),
-                    aliqIPI: (values[7] || '').replace(',', '.'),
-                    aliqPIS: (values[8] || '').replace(',', '.'),
-                    aliqCOFINS: (values[9] || '').replace(',', '.'),
-                    aliqICMS: (values[10] || '').replace(',', '.'),
-                    valVendaUnitBR: (values[11] || '').replace(',', '.')
-                };
-                createItemInputRow(index, itemData);
+                createItemInputRow(index, { desc: values[0] || '', codInterno: values[1] || '', ncm: values[2] || '', qtd: (values[3] || '').replace(',', '.'), precoCustoUnitME: (values[4] || '').replace(',', '.'), pesoUnitKG: (values[5] || '').replace(',', '.'), aliqII: (values[6] || '').replace(',', '.'), aliqIPI: (values[7] || '').replace(',', '.'), aliqPIS: (values[8] || '').replace(',', '.'), aliqCOFINS: (values[9] || '').replace(',', '.'), aliqICMS: (values[10] || '').replace(',', '.'), valVendaUnitBR: (values[11] || '').replace(',', '.') });
             });
-            showToast(`${lines.length} itens importados com sucesso!`, 'success');
+            showToast(`${lines.length} itens importados!`, 'success');
             saveState();
         };
-
-        reader.onerror = function() {
-            showToast('Erro ao ler o ficheiro.', 'error');
-        };
-
-        reader.readAsText(file, 'UTF-8');
+        reader.onerror = () => showToast('Erro ao ler o ficheiro.', 'error');
+        reader.readAsText(fileInput.files[0], 'UTF-8');
     }
 
-    // --- SETUP DE EVENTOS ---
     function setupEventListeners() {
-        const tablist = document.querySelector('[role="tablist"]');
-        tablist.addEventListener('click', (e) => {
+        document.querySelector('[role="tablist"]').addEventListener('click', (e) => {
             const tabButton = e.target.closest('[role="tab"]');
-            if (tabButton) {
-                showScreen(tabButton.getAttribute('aria-controls'));
-            }
+            if (tabButton) showScreen(tabButton.getAttribute('aria-controls'));
         });
-        tablist.addEventListener('keydown', handleTablistKeydown);
-        
+        document.querySelector('[role="tablist"]').addEventListener('keydown', handleTablistKeydown);
         geId('calculateCostsBtn').addEventListener('click', calcularCustosMultiItem);
         geId('clearFieldsBtn').addEventListener('click', () => limparTodosOsCampos(true));
-        
         geId('btnUSD').addEventListener('click', (e) => fetchCotacaoMoeda('USD', e));
         geId('btnEUR').addEventListener('click', (e) => fetchCotacaoMoeda('EUR', e));
         geId('btnCNY').addEventListener('click', (e) => fetchCotacaoMoeda('CNY', e));
-        
         geId('settingsBtn').addEventListener('click', () => openModal('settingsModal'));
         geId('closeSettingsModalBtn').addEventListener('click', () => closeModal('settingsModal'));
         geId('saveSettingsBtn').addEventListener('click', () => closeModal('settingsModal'));
-
         geId('saveCalculationBtn').addEventListener('click', saveCurrentCalculation);
         geId('loadCalculationBtn').addEventListener('click', loadSelectedCalculation);
         geId('deleteCalculationBtn').addEventListener('click', deleteSelectedCalculation);
-        
         geId('generatePdfBtn').addEventListener('click', gerarPDF);
         geId('exportCsvBtn').addEventListener('click', () => exportTableToCSV('resultados_importacao.csv'));
         geId('shareWppBtn').addEventListener('click', shareDashboardViaWhatsApp);
-        
         geId('runSimulationBtn').addEventListener('click', runSensitivityAnalysis);
         geId('importCsvBtn').addEventListener('click', handleCsvImport);
-
         geId('adicionarItemBtn').addEventListener('click', adicionarLinhaItem);
         geId('moedaEstrangeira').addEventListener('input', updateCotacaoButtonLabel);
         geId('regimeTributario').addEventListener('change', handleRegimeChange);
-        
         geId('appContainer').addEventListener('input', saveState);
-
         geId('themeToggleBtn')?.addEventListener('click', () => {
-            let newTheme = document.body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark';
-            applyTheme(newTheme, true);
+            applyTheme(document.body.classList.contains('theme-dark') ? 'theme-light' : 'theme-dark', true);
         });
-
         geId('closeShareModalBtn')?.addEventListener('click', () => closeModal('shareImageModal'));
-        geId('shareImageModal')?.addEventListener('click', (event) => {
-             if (event.target === geId('shareImageModal')) {
-                closeModal('shareImageModal');
-             }
-        });
+        geId('shareImageModal')?.addEventListener('click', (e) => { if (e.target === geId('shareImageModal')) closeModal('shareImageModal'); });
     }
     
     // --- INICIALIZAÇÃO ---
@@ -3075,23 +2654,19 @@ _
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         applyTheme(savedTheme);
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    } else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
         applyTheme('theme-dark');
     }
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', e => {
         if (!localStorage.getItem('theme_manually_set')) {
-            applyTheme(event.matches ? "theme-dark" : "theme-light");
+            applyTheme(e.matches ? "theme-dark" : "theme-light");
         }
     });
 
     const appVersionElem = geId('appVersion');
     if (appVersionElem) {
-        const titleText = document.title;
-        const versionMatch = titleText.match(/v\d+\.\d+(\.\d+)?/);
-        if (versionMatch) {
-            appVersionElem.textContent = versionMatch[0];
-        }
+        const versionMatch = document.title.match(/v\d+\.\d+(\.\d+)?/);
+        if (versionMatch) appVersionElem.textContent = versionMatch[0];
     }
     const footerInfoElem = geId('footerInfo');
     if(footerInfoElem) {
