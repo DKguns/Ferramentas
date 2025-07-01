@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V43.3</title>
+    <title>Ferramenta de Calculo de Importação V43.3 (Diagnóstico)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -1457,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             toast.classList.remove('show');
             toast.addEventListener('transitionend', () => toast.remove());
-        }, 4000);
+        }, 5000); // Aumentei o tempo do toast para facilitar a leitura do diagnóstico
     }
 
     function TxtToNum(elementIdOrValue, isElement = true) {
@@ -1798,9 +1798,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ==================================================================
-    // FUNÇÃO MODIFICADA PARA REMOVER O CACHE
-    // ==================================================================
     async function handleNcmSearch(rowIndex) {
         const ncmInput = geId(`ncmItem${rowIndex}`);
         const ncmValue = ncmInput.value.replace(/\D/g, '');
@@ -1818,7 +1815,6 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.style.display = 'inline-block';
 
         try {
-            // Lógica de cache foi removida. A busca agora é sempre feita na API.
             console.log(`Buscando NCM ${ncmValue} (UF: ${uf || 'N/A'}) na API...`);
             const apiData = await fetchNcmFromApi(ncmValue, uf);
             updateRowWithNcmData(rowIndex, apiData);
@@ -1845,13 +1841,23 @@ document.addEventListener('DOMContentLoaded', function() {
         return await response.json();
     }
 
+    // ==================================================================
+    // FUNÇÃO DE DIAGNÓSTICO
+    // ==================================================================
     function updateRowWithNcmData(rowIndex, data) {
+        // --- INÍCIO DA SEÇÃO DE DIAGNÓSTICO ---
+        // Exibe os valores brutos recebidos da API para depuração.
+        const raw_ii = data.aliquota_ii;
+        const raw_ipi = data.aliquota_ipi;
+        showToast(`API II (bruto): ${raw_ii} (tipo: ${typeof raw_ii})`, 'warning');
+        showToast(`API IPI (bruto): ${raw_ipi} (tipo: ${typeof raw_ipi})`, 'warning');
+        // --- FIM DA SEÇÃO DE DIAGNÓSTICO ---
+
         const descInput = geId(`descItem${rowIndex}`);
         if (!descInput.value && data.descricao) {
             descInput.value = data.descricao;
         }
 
-        // Função auxiliar para processar e validar alíquotas
         const processAliq = (apiValue) => {
             if (apiValue === null || apiValue === undefined) return '0';
             const stringValue = String(apiValue).replace(',', '.');
@@ -1859,8 +1865,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return !isNaN(numberValue) ? numberValue.toString() : '0';
         };
 
-        geId(`aliqIIItem${rowIndex}`).value = processAliq(data.aliquota_ii);
-        geId(`aliqIPIItem${rowIndex}`).value = processAliq(data.aliquota_ipi);
+        const processedII = processAliq(data.aliquota_ii);
+        const processedIPI = processAliq(data.aliquota_ipi);
+
+        geId(`aliqIIItem${rowIndex}`).value = processedII;
+        geId(`aliqIPIItem${rowIndex}`).value = processedIPI;
         
         geId(`aliqPISItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_pis ?? IMPOSTOS_PADRAO.aliqPIS);
         geId(`aliqCOFINSItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_cofins ?? IMPOSTOS_PADRAO.aliqCOFINS);
@@ -1870,6 +1879,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
+
+        // --- DIAGNÓSTICO FINAL ---
+        showToast(`Valor final II: ${processedII}`, 'success');
+        showToast(`Valor final IPI: ${processedIPI}`, 'success');
     }
 
     function getCurrentStateAsObject() {
