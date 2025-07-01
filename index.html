@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V43.2</title>
+    <title>Ferramenta de Calculo de Importação V43.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -1418,9 +1418,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     const NCM_API_ENDPOINT = 'https://brasilapi.com.br/api/ncm/v1/';
-    const NCM_CACHE_KEY = 'importCalculator_ncmCache';
-    const NCM_CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
-    
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
 
@@ -1801,6 +1798,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ==================================================================
+    // FUNÇÃO MODIFICADA PARA REMOVER O CACHE
+    // ==================================================================
     async function handleNcmSearch(rowIndex) {
         const ncmInput = geId(`ncmItem${rowIndex}`);
         const ncmValue = ncmInput.value.replace(/\D/g, '');
@@ -1818,18 +1818,10 @@ document.addEventListener('DOMContentLoaded', function() {
         spinner.style.display = 'inline-block';
 
         try {
-            const cachedData = getFromNcmCache(ncmValue, uf);
-            if (cachedData) {
-                console.log(`NCM ${ncmValue} (UF: ${uf || 'N/A'}) encontrado no cache.`);
-                updateRowWithNcmData(rowIndex, cachedData);
-                showToast(`NCM ${ncmValue} carregado do cache.`, "success");
-                return;
-            }
-
+            // Lógica de cache foi removida. A busca agora é sempre feita na API.
             console.log(`Buscando NCM ${ncmValue} (UF: ${uf || 'N/A'}) na API...`);
             const apiData = await fetchNcmFromApi(ncmValue, uf);
             updateRowWithNcmData(rowIndex, apiData);
-            saveToNcmCache(ncmValue, uf, apiData);
             showToast(`NCM ${ncmValue} encontrado e preenchido.`, "success");
 
         } catch (error) {
@@ -1853,12 +1845,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return await response.json();
     }
 
-    // ==================================================================
-    // FUNÇÃO CORRIGIDA
-    // A função abaixo foi atualizada para validar os dados da API
-    // antes de preencher os campos, garantindo que valores inválidos
-    // não quebrem a aplicação.
-    // ==================================================================
     function updateRowWithNcmData(rowIndex, data) {
         const descInput = geId(`descItem${rowIndex}`);
         if (!descInput.value && data.descricao) {
@@ -1876,7 +1862,6 @@ document.addEventListener('DOMContentLoaded', function() {
         geId(`aliqIIItem${rowIndex}`).value = processAliq(data.aliquota_ii);
         geId(`aliqIPIItem${rowIndex}`).value = processAliq(data.aliquota_ipi);
         
-        // Mantém a lógica original e robusta para PIS e COFINS, aplicando a mesma validação
         geId(`aliqPISItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_pis ?? IMPOSTOS_PADRAO.aliqPIS);
         geId(`aliqCOFINSItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_cofins ?? IMPOSTOS_PADRAO.aliqCOFINS);
         
@@ -1885,36 +1870,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    function getFromNcmCache(ncm, uf) {
-        const cacheKey = `${NCM_CACHE_KEY}_${uf || 'geral'}`;
-        const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
-        const item = cache[ncm];
-        if (!item) return null;
-
-        const isExpired = (Date.now() - item.timestamp) > NCM_CACHE_DURATION_MS;
-        if (isExpired) {
-            delete cache[ncm];
-            localStorage.setItem(cacheKey, JSON.stringify(cache));
-            console.log(`Cache para NCM ${ncm} (UF: ${uf}) expirou.`);
-            return null;
-        }
-        return item.data;
-    }
-
-    function saveToNcmCache(ncm, uf, data) {
-        try {
-            const cacheKey = `${NCM_CACHE_KEY}_${uf || 'geral'}`;
-            const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
-            cache[ncm] = {
-                data: data,
-                timestamp: Date.now()
-            };
-            localStorage.setItem(cacheKey, JSON.stringify(cache));
-        } catch(e) {
-            console.error("Erro ao salvar NCM no cache:", e);
-        }
     }
 
     function getCurrentStateAsObject() {
