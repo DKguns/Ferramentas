@@ -132,7 +132,7 @@
             border: 1px solid var(--theme-border-secondary);
             transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        #themeToggleBtn, #settingsBtn {
+        #themeToggleBtn, #settingsBtn, #ncmManagementBtn {
             padding: 8px 12px; font-size: 1.5em;
             border: 1px solid var(--theme-border-primary);
             background-color: var(--theme-surface-primary);
@@ -142,7 +142,7 @@
             z-index: 1000; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
             margin-left: 10px;
         }
-        #themeToggleBtn:hover, #settingsBtn:hover { box-shadow: var(--theme-glow-blue); transform: scale(1.1); }
+        #themeToggleBtn:hover, #settingsBtn:hover, #ncmManagementBtn:hover { box-shadow: var(--theme-glow-blue); transform: scale(1.1); }
         .header-buttons { display: flex; }
 
         h1 {
@@ -208,8 +208,7 @@
         .dashboard-section,
         .top-items-section,
         .cost-components-section,
-        .saved-calculations-section,
-        .ncm-registry-section {
+        .saved-calculations-section {
             margin-bottom: 25px; padding: var(--theme-element-padding);
             border-radius: var(--theme-card-border-radius); background-color: var(--theme-bg-secondary);
             border: 1px solid var(--theme-border-primary); box-shadow: 0 4px 15px var(--theme-shadow-color);
@@ -315,6 +314,7 @@
         .toast.toast-error { border-left-color: var(--theme-accent-red); }
         .toast.toast-success { border-left-color: var(--theme-accent-green); }
         .toast.toast-warning { border-left-color: var(--theme-accent-yellow); }
+        .toast.toast-info { border-left-color: var(--theme-accent-blue); }
 
 
         #telaDashboardPanel { background-color: var(--theme-bg-secondary); color: var(--theme-text-primary); }
@@ -512,12 +512,12 @@
 
         .table-wrapper { border: 1px solid var(--theme-border-secondary); border-radius: 8px; overflow: auto; }
         
-        #itemInputTable, #itemResultTable, #ncmRegistryTable {
+        #itemInputTable, #itemResultTable, #customNcmTable {
             width: 100%; border-collapse: separate; border-spacing: 0;
             font-size: 13px; color: var(--theme-text-primary);
         }
         /* CORREÇÃO DE ACESSIBILIDADE: Adicionando caption para descrever a tabela para leitores de tela */
-        #itemInputTable caption, #itemResultTable caption, #ncmRegistryTable caption {
+        #itemInputTable caption, #itemResultTable caption {
             position: absolute;
             width: 1px;
             height: 1px;
@@ -529,20 +529,20 @@
             border-width: 0;
         }
 
-        #itemInputTable th, #itemResultTable th, #ncmRegistryTable th {
+        #itemInputTable th, #itemResultTable th, #customNcmTable th {
             background-color: var(--table-header-bg); color: var(--table-header-text);
             font-weight: 600; white-space: nowrap; padding: 12px 10px; text-align: left;
             border-bottom: 2px solid var(--theme-accent-blue);
             border-right: 1px solid var(--theme-border-primary);
             position: sticky; top: 0; z-index: 10;
         }
-        #itemInputTable th:last-child, #itemResultTable th:last-child, #ncmRegistryTable th:last-child { border-right: none; }
-        #itemInputTable td, #itemResultTable td, #ncmRegistryTable td {
+        #itemInputTable th:last-child, #itemResultTable th:last-child, #customNcmTable th:last-child { border-right: none; }
+        #itemInputTable td, #itemResultTable td, #customNcmTable td {
             border: none; border-bottom: 1px solid var(--theme-border-secondary);
             padding: 8px 10px; vertical-align: middle;
         }
-        #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td, #ncmRegistryTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
-        #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td, #ncmRegistryTable tbody tr:last-child td { border-bottom: none; }
+        #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td, #customNcmTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
+        #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td, #customNcmTable tbody tr:last-child td { border-bottom: none; }
         
         #itemInputTable tr.dragging {
             opacity: 0.5;
@@ -556,13 +556,15 @@
             color: var(--theme-text-secondary);
         }
 
-        #itemInputTable td input[type="text"], #itemInputTable td input[type="number"] {
+        #itemInputTable td input[type="text"], #itemInputTable td input[type="number"],
+        #customNcmTable td input[type="text"], #customNcmTable td input[type="number"] {
             width: 100%; padding: 8px 10px; font-size: 13px;
             color: var(--input-text); background-color: var(--input-bg);
             border: 1px solid var(--input-border); border-radius: 6px; box-sizing: border-box;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
         }
-        #itemInputTable td input[type="text"]:focus, #itemInputTable td input[type="number"]:focus {
+        #itemInputTable td input[type="text"]:focus, #itemInputTable td input[type="number"]:focus,
+        #customNcmTable td input[type="text"]:focus, #customNcmTable td input[type="number"]:focus {
             border-color: var(--input-focus-border);
             box-shadow: 0 0 8px var(--theme-glow-blue);
             background-color: var(--input-focus-bg); outline: none;
@@ -574,7 +576,7 @@
         #itemInputTable th:nth-child(4), #itemInputTable td:nth-child(4) { min-width: 100px; }
         #itemInputTable td:nth-child(4) input[type="text"] { width: 100%; }
 
-        #itemInputTable th:nth-child(5), #itemInputTable td:nth-child(5) { min-width: 110px; } /* Ajustado para caber botão */
+        #itemInputTable th:nth-child(5), #itemInputTable td:nth-child(5) { min-width: 150px; } /* Ajustado para caber botão */
         #itemInputTable td:nth-child(5) input[type="text"] { width: 100%; }
 
         #itemInputTable td:nth-child(6) input[type="number"],
@@ -675,14 +677,18 @@
 
         .section-separator { border: none; height: auto; background-color: var(--theme-separator-bg-color); width: calc(100% + (2 * var(--theme-element-padding))); margin-left: calc(-1 * var(--theme-element-padding)); margin-right: calc(-1 * var(--theme-element-padding)); margin-top: 30px; margin-bottom: 25px; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; font-size: 0.9em; font-weight: 500; color: var(--theme-separator-text-color); text-transform: none; letter-spacing: 0.2px; padding: 8px var(--theme-element-padding); box-sizing: border-box; }
         
-        /* Estilos para o Modal de Configurações */
+        /* Estilos para o Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; /* Começa oculto */ justify-content: center; align-items: center; z-index: 1050; backdrop-filter: blur(5px); }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background-color: var(--theme-bg-secondary); padding: 30px; border-radius: var(--theme-card-border-radius); box-shadow: 0 10px 30px var(--theme-shadow-color); width: 90%; max-width: 600px; border: 1px solid var(--theme-border-primary); position: relative; animation: slideInModal 0.3s ease-out; }
+        .modal-overlay.active { display: flex; animation: fadeInModalOverlay 0.3s ease; }
+        @keyframes fadeInModalOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content { background-color: var(--theme-bg-secondary); padding: 30px; border-radius: var(--theme-card-border-radius); box-shadow: 0 10px 30px var(--theme-shadow-color); width: 90%; max-width: 900px; border: 1px solid var(--theme-border-primary); position: relative; animation: slideInModal 0.3s ease-out; max-height: 90vh; display: flex; flex-direction: column; }
+        
         @keyframes slideInModal { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal-content h2 { margin-top: 0; color: var(--theme-accent-blue); border-bottom: 1px solid var(--theme-border-secondary); padding-bottom: 10px; margin-bottom: 20px; }
         .modal-close-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 1.8em; color: var(--theme-text-secondary); cursor: pointer; padding: 5px; line-height: 1; }
         .modal-close-btn:hover { color: var(--theme-accent-red); }
+        .modal-body { overflow-y: auto; }
         .modal-section { margin-bottom: 25px; }
         .modal-section h3 { font-size: 1.1em; color: var(--theme-text-primary); margin-bottom: 12px; border-bottom: 1px dashed var(--theme-border-secondary); padding-bottom: 8px; }
         .modal-actions { text-align: right; margin-top: 30px; }
@@ -849,6 +855,11 @@
             <span id="appVersion" style="font-size: 0.5em; color: var(--theme-text-secondary);"></span>
         </h1>
         <div class="header-buttons">
+            <!-- NOVO BOTÃO DE GESTÃO DE NCM -->
+            <button id="ncmManagementBtn" aria-label="Gerenciar NCMs Cadastrados" aria-haspopup="dialog" aria-controls="ncmManagementModal">
+                <i class="fas fa-book" aria-hidden="true"></i>
+                <span class="sr-only">Gerenciar NCMs</span>
+            </button>
             <button id="settingsBtn" aria-label="Abrir Configurações" aria-haspopup="dialog" aria-controls="settingsModal">
                 <i class="fas fa-cog" aria-hidden="true"></i>
                 <span class="sr-only">Abrir Configurações</span>
@@ -1415,10 +1426,77 @@
         </div>
     </div>
 
+    <!-- NOVO MODAL DE GESTÃO DE NCM -->
+    <div id="ncmManagementModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="ncmModalTitle">
+        <div class="modal-content">
+            <button id="closeNcmModalBtn" class="modal-close-btn" aria-label="Fechar Gestão de NCM">&times;</button>
+            <div class="modal-body">
+                <h2 id="ncmModalTitle">Gestão de NCMs Cadastrados</h2>
+                
+                <section aria-labelledby="ncmFormTitle">
+                    <h3 id="ncmFormTitle">Adicionar / Editar NCM</h3>
+                    <form id="ncmForm" novalidate>
+                        <input type="hidden" id="ncmEditCode">
+                        <div class="grid-container" style="grid-template-columns: 1fr 2fr; align-items: flex-end;">
+                            <div class="grid-item">
+                                <label for="ncmCodeInput">NCM (só números):</label>
+                                <input type="text" id="ncmCodeInput" required pattern="\d+">
+                            </div>
+                            <div class="grid-item">
+                                <label for="ncmDescInput">Descrição (Opcional):</label>
+                                <input type="text" id="ncmDescInput">
+                            </div>
+                        </div>
+                        <legend class="section-separator" style="margin-top: 15px; margin-bottom: 15px;">Alíquotas (%)</legend>
+                        <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
+                            <div class="grid-item"><label for="ncmIIInput">II (%):</label><input type="number" id="ncmIIInput" step="any" placeholder="0.00"></div>
+                            <div class="grid-item"><label for="ncmIPIInput">IPI (%):</label><input type="number" id="ncmIPIInput" step="any" placeholder="0.00"></div>
+                            <div class="grid-item"><label for="ncmPISInput">PIS (%):</label><input type="number" id="ncmPISInput" step="any" placeholder="0.00"></div>
+                            <div class="grid-item"><label for="ncmCOFINSInput">COFINS (%):</label><input type="number" id="ncmCOFINSInput" step="any" placeholder="0.00"></div>
+                            <div class="grid-item"><label for="ncmICMSInput">ICMS (%):</label><input type="number" id="ncmICMSInput" step="any" placeholder="0.00"></div>
+                        </div>
+                        <div class="modal-actions" style="margin-top: 20px;">
+                            <button type="button" id="ncmFormClearBtn" class="clear-button" style="float: left;">Limpar Formulário</button>
+                            <button type="submit" id="ncmFormSaveBtn" class="main-calculate-button">Salvar NCM</button>
+                        </div>
+                    </form>
+                </section>
+                
+                <section aria-labelledby="ncmTableTitle" style="margin-top: 30px;">
+                    <h3 id="ncmTableTitle">Seus NCMs Salvos</h3>
+                    <div class="table-wrapper">
+                        <table id="customNcmTable">
+                            <thead>
+                                <tr>
+                                    <th>NCM</th>
+                                    <th>Descrição</th>
+                                    <th>II</th>
+                                    <th>IPI</th>
+                                    <th>PIS</th>
+                                    <th>COFINS</th>
+                                    <th>ICMS</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Linhas serão inseridas via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
+    /* NOVO - CONSTANTES PARA GESTÃO DE NCM */
     const NCM_API_ENDPOINT = 'https://brasilapi.com.br/api/ncm/v1/';
+    const CUSTOM_NCM_KEY = 'importCalculator_customNcms';
+    /* FIM NOVO - CONSTANTES */
+
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
 
@@ -1431,7 +1509,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function geId(id) { return document.getElementById(id); }
 
-    function showToast(message, type = 'success') {
+    function showToast(message, type = 'success', duration = 4000) {
         const container = geId('toast-container');
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -1440,7 +1518,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const icons = {
             error: 'fas fa-times-circle',
             success: 'fas fa-check-circle',
-            warning: 'fas fa-exclamation-triangle'
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle'
         };
         icon.className = icons[type] || icons.warning;
         
@@ -1458,7 +1537,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             toast.classList.remove('show');
             toast.addEventListener('transitionend', () => toast.remove());
-        }, 5000);
+        }, duration);
     }
 
     function TxtToNum(elementIdOrValue, isElement = true) {
@@ -1581,6 +1660,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = geId(modalId);
         if (!modal) return;
         modal.classList.add('active');
+        
+        /* NOVO - LÓGICA DO MODAL DE NCM */
+        if (modalId === 'ncmManagementModal') {
+            renderNcmTable();
+        }
+        /* FIM NOVO */
+
         modal.addEventListener('keydown', handleModalKeydown);
         const firstFocusableElement = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
         if (firstFocusableElement) {
@@ -1741,7 +1827,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     elem.setAttribute('aria-describedby', descBase + i);
                 }
             });
-            setupRowEventListeners(row, i);
+            // Remover listeners antigos para evitar duplicação
+            const newRow = row.cloneNode(true);
+            row.parentNode.replaceChild(newRow, row);
+            // Adicionar novos listeners
+            setupRowEventListeners(newRow, i);
         }
     }
     
@@ -1799,13 +1889,126 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /* NOVO - LÓGICA DE GESTÃO E BUSCA DE NCM */
+    function getCustomNcms() {
+        try {
+            return JSON.parse(localStorage.getItem(CUSTOM_NCM_KEY)) || {};
+        } catch (e) {
+            console.error("Erro ao ler NCMs customizados:", e);
+            return {};
+        }
+    }
+
+    function saveCustomNcms(ncms) {
+        try {
+            localStorage.setItem(CUSTOM_NCM_KEY, JSON.stringify(ncms));
+        } catch(e) {
+            console.error("Erro ao salvar NCMs customizados:", e);
+            showToast("Não foi possível salvar os NCMs.", "error");
+        }
+    }
+
+    function renderNcmTable() {
+        const ncms = getCustomNcms();
+        const tbody = geId('customNcmTable')?.querySelector('tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        const sortedNcmCodes = Object.keys(ncms).sort();
+
+        if (sortedNcmCodes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px;">Nenhum NCM cadastrado.</td></tr>';
+            return;
+        }
+
+        sortedNcmCodes.forEach(ncmCode => {
+            const ncmData = ncms[ncmCode];
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${ncmCode}</td>
+                <td style="white-space: normal;">${ncmData.desc || ''}</td>
+                <td>${ncmData.aliqII || '0'}%</td>
+                <td>${ncmData.aliqIPI || '0'}%</td>
+                <td>${ncmData.aliqPIS || '0'}%</td>
+                <td>${ncmData.aliqCOFINS || '0'}%</td>
+                <td>${ncmData.aliqICMS || '0'}%</td>
+                <td>
+                    <button type="button" class="ncm-edit-btn" data-ncm="${ncmCode}" aria-label="Editar NCM" style="background:var(--theme-accent-orange); color:white; border:none; padding:5px 8px; border-radius:4px; cursor:pointer;"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="ncm-delete-btn" data-ncm="${ncmCode}" aria-label="Excluir NCM" style="background:var(--theme-accent-red); color:white; border:none; padding:5px 8px; border-radius:4px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+        });
+    }
+
+    function clearNcmForm() {
+        geId('ncmForm').reset();
+        geId('ncmCodeInput').disabled = false;
+        geId('ncmEditCode').value = '';
+        geId('ncmCodeInput').focus();
+    }
+
+    function handleNcmFormSubmit(event) {
+        event.preventDefault();
+        const ncmCodeInput = geId('ncmCodeInput');
+        const ncmCode = ncmCodeInput.value.replace(/\D/g, '');
+        const isEditing = geId('ncmEditCode').value !== '';
+
+        if (!ncmCode) {
+            showToast("O campo NCM é obrigatório.", "error");
+            ncmCodeInput.focus();
+            return;
+        }
+
+        const ncms = getCustomNcms();
+        ncms[ncmCode] = {
+            desc: geId('ncmDescInput').value,
+            aliqII: geId('ncmIIInput').value,
+            aliqIPI: geId('ncmIPIInput').value,
+            aliqPIS: geId('ncmPISInput').value,
+            aliqCOFINS: geId('ncmCOFINSInput').value,
+            aliqICMS: geId('ncmICMSInput').value,
+        };
+        
+        saveCustomNcms(ncms);
+        showToast(`NCM ${ncmCode} ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`, 'success');
+        renderNcmTable();
+        clearNcmForm();
+    }
+
+    function handleNcmTableClick(event) {
+        const target = event.target.closest('button');
+        if (!target) return;
+
+        const ncmCode = target.dataset.ncm;
+        const ncms = getCustomNcms();
+        
+        if (target.classList.contains('ncm-edit-btn')) {
+            const ncmData = ncms[ncmCode];
+            geId('ncmEditCode').value = ncmCode;
+            geId('ncmCodeInput').value = ncmCode;
+            geId('ncmCodeInput').disabled = true;
+            geId('ncmDescInput').value = ncmData.desc || '';
+            geId('ncmIIInput').value = ncmData.aliqII || '';
+            geId('ncmIPIInput').value = ncmData.aliqIPI || '';
+            geId('ncmPISInput').value = ncmData.aliqPIS || '';
+            geId('ncmCOFINSInput').value = ncmData.aliqCOFINS || '';
+            geId('ncmICMSInput').value = ncmData.aliqICMS || '';
+            geId('ncmDescInput').focus();
+        } else if (target.classList.contains('ncm-delete-btn')) {
+            if (confirm(`Tem certeza que deseja excluir o NCM ${ncmCode} do seu cadastro local?`)) {
+                delete ncms[ncmCode];
+                saveCustomNcms(ncms);
+                showToast(`NCM ${ncmCode} excluído.`, 'success');
+                renderNcmTable();
+            }
+        }
+    }
+
     async function handleNcmSearch(rowIndex) {
         const ncmInput = geId(`ncmItem${rowIndex}`);
         const ncmValue = ncmInput.value.replace(/\D/g, '');
         const row = ncmInput.closest('tr');
         const spinner = row.querySelector('.ncm-spinner');
         const searchButton = row.querySelector('.ncm-search-btn');
-        const uf = geId('estadoDestino').value;
 
         if (ncmValue.length < 2) {
             showToast("Por favor, insira um código NCM válido.", "warning");
@@ -1815,11 +2018,29 @@ document.addEventListener('DOMContentLoaded', function() {
         searchButton.style.display = 'none';
         spinner.style.display = 'inline-block';
 
+        // 1. Tenta buscar no cadastro local
+        const customNcms = getCustomNcms();
+        if (customNcms[ncmValue]) {
+            populateRowTaxes(rowIndex, customNcms[ncmValue]);
+            showToast(`NCM ${ncmValue} preenchido com dados do seu cadastro.`, 'info');
+            spinner.style.display = 'none';
+            searchButton.style.display = 'inline-block';
+            return;
+        }
+
+        // 2. Se não encontrou, busca na API online
         try {
-            console.log(`Buscando NCM ${ncmValue} (UF: ${uf || 'N/A'}) na API...`);
+            showToast(`Buscando NCM ${ncmValue} online...`, 'info', 2000);
+            const uf = geId('estadoDestino').value;
             const apiData = await fetchNcmFromApi(ncmValue, uf);
-            updateRowWithNcmData(rowIndex, apiData);
-            showToast(`NCM ${ncmValue} encontrado e preenchido.`, "success");
+            const normalizedData = normalizeApiNcmData(apiData);
+            populateRowTaxes(rowIndex, normalizedData);
+
+            const descInput = geId(`descItem${rowIndex}`);
+            if (!descInput.value && apiData.descricao) {
+                descInput.value = apiData.descricao;
+            }
+            showToast(`NCM ${ncmValue} encontrado online e preenchido.`, "success");
 
         } catch (error) {
             showToast(error.message, 'error');
@@ -1842,65 +2063,37 @@ document.addEventListener('DOMContentLoaded', function() {
         return await response.json();
     }
 
-    // ==================================================================
-    // FUNÇÃO CORRIGIDA PARA TRATAR "EX-TARIFÁRIO" E VALORES NULOS
-    // ==================================================================
-    function updateRowWithNcmData(rowIndex, data) {
-        const descInput = geId(`descItem${rowIndex}`);
-        if (!descInput.value && data.descricao) {
-            descInput.value = data.descricao;
+    function normalizeApiNcmData(apiData) {
+        const processAliq = (val) => val !== null && val !== undefined ? String(val).replace(',', '.') : '';
+        
+        let ii = apiData.aliquota_ii;
+        let ipi = apiData.aliquota_ipi;
+
+        // Verifica se há exceção tarifária e a utiliza
+        if (apiData.excecoes && apiData.excecoes.length > 0) {
+            ii = apiData.excecoes[0].aliquota_ii ?? ii;
+            ipi = apiData.excecoes[0].aliquota_ipi ?? ipi;
         }
 
-        let aliqII = null, aliqIPI = null;
-        
-        // Tenta pegar da lista de exceções primeiro
-        if (data.excecoes && data.excecoes.length > 0) {
-            aliqII = data.excecoes[0].aliquota_ii;
-            aliqIPI = data.excecoes[0].aliquota_ipi;
-        }
-        
-        // Se não encontrou ou os valores são nulos, tenta pegar do objeto principal
-        if (aliqII === null || aliqII === undefined) {
-             aliqII = data.aliquota_ii;
-        }
-        if (aliqIPI === null || aliqIPI === undefined) {
-             aliqIPI = data.aliquota_ipi;
-        }
-
-        const processAliq = (apiValue) => {
-            if (apiValue === null || apiValue === undefined) return null; // Retorna nulo se a fonte for nula
-            const stringValue = String(apiValue).replace(',', '.');
-            const numberValue = parseFloat(stringValue);
-            return !isNaN(numberValue) ? numberValue.toString() : null; // Retorna nulo se não for um número
+        return {
+            aliqII: processAliq(ii),
+            aliqIPI: processAliq(ipi),
+            aliqPIS: processAliq(apiData.aliquota_pis_cofins?.aliquota_pis),
+            aliqCOFINS: processAliq(apiData.aliquota_pis_cofins?.aliquota_cofins),
+            aliqICMS: processAliq(apiData.aliquota_icms?.aliquota)
         };
-
-        const finalII = processAliq(aliqII);
-        const finalIPI = processAliq(aliqIPI);
-
-        if (finalII !== null) {
-            geId(`aliqIIItem${rowIndex}`).value = finalII;
-        } else {
-            geId(`aliqIIItem${rowIndex}`).value = IMPOSTOS_PADRAO.aliqII;
-            showToast("Alíquota II não encontrada para o NCM. Usando valor padrão.", "warning");
-        }
-
-        if (finalIPI !== null) {
-            geId(`aliqIPIItem${rowIndex}`).value = finalIPI;
-        } else {
-            geId(`aliqIPIItem${rowIndex}`).value = IMPOSTOS_PADRAO.aliqIPI;
-            showToast("Alíquota IPI não encontrada para o NCM. Usando valor padrão.", "warning");
-        }
-        
-        geId(`aliqPISItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_pis ?? IMPOSTOS_PADRAO.aliqPIS);
-        geId(`aliqCOFINSItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_cofins ?? IMPOSTOS_PADRAO.aliqCOFINS);
-        
-        if (data.aliquota_icms?.aliquota) {
-            geId(`aliqICMSItem${rowIndex}`).value = processAliq(data.aliquota_icms.aliquota);
-        }
-        
-        // Dispara um evento para garantir que outras lógicas (como salvar estado) sejam acionadas
-        geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
     }
+
+    function populateRowTaxes(rowIndex, taxData) {
+        geId(`aliqIIItem${rowIndex}`).value = taxData.aliqII || '';
+        geId(`aliqIPIItem${rowIndex}`).value = taxData.aliqIPI || '';
+        geId(`aliqPISItem${rowIndex}`).value = taxData.aliqPIS || '';
+        geId(`aliqCOFINSItem${rowIndex}`).value = taxData.aliqCOFINS || '';
+        geId(`aliqICMSItem${rowIndex}`).value = taxData.aliqICMS || '';
+        saveState();
+    }
+    /* FIM NOVO - LÓGICA DE GESTÃO E BUSCA DE NCM */
+
 
     function getCurrentStateAsObject() {
         const data = { global: {}, items: [], lang: geId('idiomaSelect').value, calculationName: geId('calculationName').value };
@@ -2030,11 +2223,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function deleteSelectedCalculation() {
         const name = geId('savedCalculations').value;
         if (!name) return;
-        const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
-        delete savedCalcs[name];
-        localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
-        populateSavedCalculationsDropdown();
-        showToast(`Cálculo "${name}" excluído.`, 'success');
+        if (confirm(`Tem certeza que deseja excluir o cálculo salvo "${name}"?`)) {
+            const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
+            delete savedCalcs[name];
+            localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
+            populateSavedCalculationsDropdown();
+            showToast(`Cálculo "${name}" excluído.`, 'success');
+        }
     }
 
     function validateForm() {
@@ -2066,15 +2261,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
         let hasAtLeastOneItem = false;
         for (let i = 0; i < geId('itemInputTable').getElementsByTagName('tbody')[0].rows.length; i++) {
-            if (geId(`qtdItem${i}`).value.trim() || geId(`precoCustoUnitMEItem${i}`).value.trim()) {
+            if (TxtToNum(`qtdItem${i}`) > 0 && TxtToNum(`precoCustoUnitMEItem${i}`) > 0) {
                  hasAtLeastOneItem = true;
-                 ['qtdItem', 'precoCustoUnitMEItem'].forEach(fieldBase => checkField(`${fieldBase}${i}`));
             }
+            checkField(`qtdItem${i}`);
+            checkField(`precoCustoUnitMEItem${i}`);
         }
         
         if (!hasAtLeastOneItem) {
             isValid = false;
-            showToast("Adicione pelo menos um item com quantidade e preço.", "warning");
+            showToast("Adicione pelo menos um item com quantidade e preço válidos.", "warning");
         }
     
         return isValid;
@@ -2139,19 +2335,14 @@ document.addEventListener('DOMContentLoaded', function() {
             newItem.icms_pago = newItem.baseCalcICMS_item * newItem.aliqICMS;
             newItem.icms_creditado = newItem.icms_pago * percCreditoICMS_dec;
             newItem.icms_efetivo = newItem.icms_pago - newItem.icms_creditado;
+            newItem.totalCreditosItem = newItem.ipi_creditado + newItem.pis_creditado + newItem.cofins_creditado + newItem.icms_creditado;
             newItem.custoTotalLinha = newItem.CIF_Total_BRL + newItem.valorII + newItem.ipi_efetivo + newItem.pis_efetivo + newItem.cofins_efetivo + newItem.valorAFRMM + newItem.taxaSiscomexRateada_BRL_item + newItem.despesasAduaneirasBRL_item + newItem.icms_efetivo + newItem.freteNacionalBRL_item;
             newItem.custoUnitarioItem = newItem.quantidade > 0 ? newItem.custoTotalLinha / newItem.quantidade : 0;
             
             const lucroUnitario = newItem.valorCustoUnitarioNacional - newItem.custoUnitarioItem;
-            newItem.lucroPercentualUnitario = newItem.valorCustoUnitarioNacional > 0 ? (lucroUnitario / newItem.valorCustoUnitarioNacional) * 100 : 0;
-            newItem.markupSobreCusto = newItem.custoUnitarioItem > 0 ? (lucroUnitario / newItem.custoUnitarioItem) * 100 : 0;
+            newItem.lucroPercentualUnitario = newItem.valorCustoUnitarioNacional > 0 ? (lucroUnitario / newItem.valorCustoUnitarioNacional) * 100 : (newItem.custoUnitarioItem > 0 ? -100 : 0);
+            newItem.markupSobreCusto = newItem.custoUnitarioItem > 0 ? (lucroUnitario / newItem.custoUnitarioItem) * 100 : Infinity;
             
-            Object.keys(acc).forEach(key => {
-                if(key.endsWith('_BRL') || key.endsWith('_acumulado')) {
-                     if(newItem[key.replace('_acumulado', '')]) acc[key] += newItem[key.replace('_acumulado', '')];
-                     else if (newItem[key.replace('_BRL', '')]) acc[key] += newItem[key.replace('_BRL', '')]
-                }
-            });
              acc.fob_BRL += newItem.fobBRL_item; acc.frete_BRL += newItem.freteExibicaoPorPesoUnitarioBRL; acc.seguro_BRL += seguroBRL_item; acc.outrasDespME_BRL += outrasDespesasBRL_item; acc.CIF_Total_BRL_acumulado += newItem.CIF_Total_BRL; acc.ii_BRL += newItem.valorII; acc.ipi_pago_BRL += newItem.ipi_pago; acc.ipi_creditado_BRL += newItem.ipi_creditado; acc.ipi_efetivo_BRL += newItem.ipi_efetivo; acc.pis_pago_BRL += newItem.pis_pago; acc.pis_creditado_BRL += newItem.pis_creditado; acc.pis_efetivo_BRL += newItem.pis_efetivo; acc.cofins_pago_BRL += newItem.cofins_pago; acc.cofins_creditado_BRL += newItem.cofins_creditado; acc.cofins_efetivo_BRL += newItem.cofins_efetivo; acc.baseCalcICMS_BRL_total += newItem.baseCalcICMS_item; acc.icms_pago_BRL += newItem.icms_pago; acc.icms_creditado_BRL += newItem.icms_creditado; acc.icms_efetivo_BRL += newItem.icms_efetivo; acc.afrmm_BRL += newItem.valorAFRMM; acc.totalCreditosFiscais_BRL += newItem.ipi_creditado + newItem.pis_creditado + newItem.cofins_creditado + newItem.icms_creditado; acc.totalQtdItens += newItem.quantidade; acc.valorTotalNF_BRL_acumulado += newItem.valorTotalNF_BRL; acc.siscomex_BRL += newItem.taxaSiscomexRateada_BRL_item;
 
             return newItem;
@@ -2159,9 +2350,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         acc.despAduan_BRL = despesasAduaneirasBRL_global; 
         acc.freteNac_BRL = freteNacionalBRL_global;
-        acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-        acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL + acc.siscomex_BRL;
-        acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.despAduan_BRL + acc.freteNac_BRL;
+        acc.totalImpostosPagosBruto = acc.ii_BRL + acc.ipi_pago_BRL + acc.pis_pago_BRL + acc.cofins_pago_BRL + acc.icms_pago_BRL + acc.afrmm_BRL;
+        acc.totalImpostosEfetivosGlobal = acc.ii_BRL + acc.ipi_efetivo_BRL + acc.pis_efetivo_BRL + acc.cofins_efetivo_BRL + acc.icms_efetivo_BRL + acc.afrmm_BRL;
+        acc.totalGeral_BRL = acc.CIF_Total_BRL_acumulado + acc.totalImpostosEfetivosGlobal + acc.siscomex_BRL + acc.despAduan_BRL + acc.freteNac_BRL;
         acc.custoMedioPorKG = acc.totalPesoKG > 0 ? acc.totalGeral_BRL / acc.totalPesoKG : 0;
         
         return { items: calculatedItems, acc, moedaLabel: inputs.moedaLabel, lucroAltoMin: inputs.lucroAltoMin, lucroMedioMin: inputs.lucroMedioMin, lucroBaixoMin: inputs.lucroBaixoMin, valorTotalCustoBrasil, valorFOBTotalME, taxaCambio };
@@ -2641,9 +2832,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         geId('closeShareModalBtn')?.addEventListener('click', () => closeModal('shareImageModal'));
         geId('shareImageModal')?.addEventListener('click', (e) => { if (e.target === geId('shareImageModal')) closeModal('shareImageModal'); });
+
+        /* NOVO - EVENT LISTENERS PARA GESTÃO DE NCM */
+        geId('ncmManagementBtn').addEventListener('click', () => openModal('ncmManagementModal'));
+        geId('closeNcmModalBtn').addEventListener('click', () => closeModal('ncmManagementModal'));
+        geId('ncmForm').addEventListener('submit', handleNcmFormSubmit);
+        geId('ncmFormClearBtn').addEventListener('click', clearNcmForm);
+        geId('customNcmTable').addEventListener('click', handleNcmTableClick);
+        /* FIM NOVO */
     }
     
-    // --- INICIALIZAÇÃO ---
+     // --- INICIALIZAÇÃO ---
     loadState();
     populateSavedCalculationsDropdown();
     setupEventListeners();
