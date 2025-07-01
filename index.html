@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V44</title>
+    <title>Ferramenta de Calculo de Importação V45</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -1457,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             toast.classList.remove('show');
             toast.addEventListener('transitionend', () => toast.remove());
-        }, 5000); // Aumentei o tempo do toast para facilitar a leitura do diagnóstico
+        }, 5000);
     }
 
     function TxtToNum(elementIdOrValue, isElement = true) {
@@ -1880,6 +1880,7 @@ document.addEventListener('DOMContentLoaded', function() {
             geId(`aliqICMSItem${rowIndex}`).value = processAliq(data.aliquota_icms.aliquota);
         }
         
+        // Dispara um evento para garantir que outras lógicas (como salvar estado) sejam acionadas
         geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
     }
 
