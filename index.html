@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V43.3 (Diagnóstico)</title>
+    <title>Ferramenta de Calculo de Importação V44</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -1842,20 +1842,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==================================================================
-    // FUNÇÃO DE DIAGNÓSTICO
+    // FUNÇÃO CORRIGIDA PARA TRATAR "EX-TARIFÁRIO"
     // ==================================================================
     function updateRowWithNcmData(rowIndex, data) {
-        // --- INÍCIO DA SEÇÃO DE DIAGNÓSTICO ---
-        // Exibe os valores brutos recebidos da API para depuração.
-        const raw_ii = data.aliquota_ii;
-        const raw_ipi = data.aliquota_ipi;
-        showToast(`API II (bruto): ${raw_ii} (tipo: ${typeof raw_ii})`, 'warning');
-        showToast(`API IPI (bruto): ${raw_ipi} (tipo: ${typeof raw_ipi})`, 'warning');
-        // --- FIM DA SEÇÃO DE DIAGNÓSTICO ---
-
         const descInput = geId(`descItem${rowIndex}`);
         if (!descInput.value && data.descricao) {
             descInput.value = data.descricao;
+        }
+
+        let aliqII, aliqIPI;
+
+        // Verifica se existe a lista de exceções e se ela não está vazia
+        if (data.excecoes && data.excecoes.length > 0) {
+            // Se sim, pega os valores da primeira exceção
+            aliqII = data.excecoes[0].aliquota_ii;
+            aliqIPI = data.excecoes[0].aliquota_ipi;
+        } else {
+            // Se não, pega os valores do objeto principal
+            aliqII = data.aliquota_ii;
+            aliqIPI = data.aliquota_ipi;
         }
 
         const processAliq = (apiValue) => {
@@ -1865,11 +1870,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return !isNaN(numberValue) ? numberValue.toString() : '0';
         };
 
-        const processedII = processAliq(data.aliquota_ii);
-        const processedIPI = processAliq(data.aliquota_ipi);
-
-        geId(`aliqIIItem${rowIndex}`).value = processedII;
-        geId(`aliqIPIItem${rowIndex}`).value = processedIPI;
+        geId(`aliqIIItem${rowIndex}`).value = processAliq(aliqII);
+        geId(`aliqIPIItem${rowIndex}`).value = processAliq(aliqIPI);
         
         geId(`aliqPISItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_pis ?? IMPOSTOS_PADRAO.aliqPIS);
         geId(`aliqCOFINSItem${rowIndex}`).value = processAliq(data.aliquota_pis_cofins?.aliquota_cofins ?? IMPOSTOS_PADRAO.aliqCOFINS);
@@ -1879,10 +1881,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
-
-        // --- DIAGNÓSTICO FINAL ---
-        showToast(`Valor final II: ${processedII}`, 'success');
-        showToast(`Valor final IPI: ${processedIPI}`, 'success');
     }
 
     function getCurrentStateAsObject() {
