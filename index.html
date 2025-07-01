@@ -829,6 +829,21 @@
             border-width: 2px;
         }
         /* == FIM DOS ESTILOS NOVOS == */
+
+        /* Estilos para o Modal de Busca NCM */
+        #ncmSearchModal .modal-content { max-width: 700px; }
+        #ncmModalResults {
+            margin-top: 20px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--theme-border-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 100px;
+            white-space: pre-wrap; /* Mantém a formatação do JSON */
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
@@ -1028,8 +1043,13 @@
             </section>
 
             <section class="item-inputs" aria-labelledby="headingItensEmbarque">
-                <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque">Itens do Embarque</h2>
-                <div class="grid-container" style="align-items: flex-end; gap: 10px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <h2 id="headingItensEmbarque" data-translate-key="headingItensEmbarque" style="margin-bottom: 0;">Itens do Embarque</h2>
+                    <button type="button" id="openNcmSearchModalBtn" class="main-calculate-button" style="font-size: 14px; padding: 8px 15px;">
+                        <i class="fas fa-search"></i> Buscar NCM (Teste)
+                    </button>
+                </div>
+                <div class="grid-container" style="align-items: flex-end; gap: 10px; margin-bottom: 15px; margin-top: 20px;">
                     <div class="grid-item">
                         <label for="csvFileInput">Importar Itens de um Ficheiro CSV:</label>
                         <input type="file" id="csvFileInput" accept=".csv" style="padding: 5px;">
@@ -1411,6 +1431,29 @@
                 <i class="fab fa-whatsapp"></i> Abrir WhatsApp
             </a>
             <button type="button" id="closeShareModalBtn" class="button close-modal-btn" data-translate-key="shareModalClose">Fechar</button>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL DE BUSCA NCM -->
+    <div id="ncmSearchModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="ncmSearchModalTitle">
+        <div class="modal-content">
+            <button id="closeNcmSearchModalBtn" class="modal-close-btn" aria-label="Fechar Busca de NCM">&times;</button>
+            <h2 id="ncmSearchModalTitle">Busca de NCM</h2>
+            <div class="grid-container" style="grid-template-columns: 1fr auto;">
+                <div class="grid-item">
+                    <label for="ncmModalInput">Digite o NCM:</label>
+                    <input type="text" id="ncmModalInput" placeholder="Apenas números">
+                </div>
+                <div class="grid-item" style="align-self: end;">
+                    <button type="button" id="ncmModalSearchBtn" class="main-calculate-button">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+            <h3>Resultados da API:</h3>
+            <div id="ncmModalResults">
+                Aguardando busca...
+            </div>
         </div>
     </div>
 
@@ -2592,6 +2635,28 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsText(fileInput.files[0], 'UTF-8');
     }
 
+    // --- NOVA FUNÇÃO PARA O MODAL DE BUSCA ---
+    async function handleNcmModalSearch() {
+        const input = geId('ncmModalInput');
+        const resultsDiv = geId('ncmModalResults');
+        const ncmValue = input.value.replace(/\D/g, '');
+        const uf = geId('estadoDestino').value;
+
+        if (ncmValue.length < 2) {
+            resultsDiv.textContent = 'Por favor, insira um NCM válido.';
+            return;
+        }
+
+        resultsDiv.textContent = 'Buscando...';
+        try {
+            const data = await fetchNcmFromApi(ncmValue, uf);
+            // Exibe o JSON formatado para fácil leitura
+            resultsDiv.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+            resultsDiv.textContent = `Erro: ${error.message}`;
+        }
+    }
+
     function setupEventListeners() {
         document.querySelector('[role="tablist"]').addEventListener('click', (e) => {
             const tabButton = e.target.closest('[role="tab"]');
@@ -2623,6 +2688,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         geId('closeShareModalBtn')?.addEventListener('click', () => closeModal('shareImageModal'));
         geId('shareImageModal')?.addEventListener('click', (e) => { if (e.target === geId('shareImageModal')) closeModal('shareImageModal'); });
+
+        // --- Event Listeners para o novo Modal de Busca ---
+        geId('openNcmSearchModalBtn').addEventListener('click', () => openModal('ncmSearchModal'));
+        geId('closeNcmSearchModalBtn').addEventListener('click', () => closeModal('ncmSearchModal'));
+        geId('ncmModalSearchBtn').addEventListener('click', handleNcmModalSearch);
+        geId('ncmSearchModal').addEventListener('click', (e) => { if (e.target === geId('ncmSearchModal')) closeModal('ncmSearchModal'); });
+
     }
     
     // --- INICIALIZAÇÃO ---
