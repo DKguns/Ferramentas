@@ -208,7 +208,8 @@
         .dashboard-section,
         .top-items-section,
         .cost-components-section,
-        .saved-calculations-section {
+        .saved-calculations-section,
+        .ncm-registry-section {
             margin-bottom: 25px; padding: var(--theme-element-padding);
             border-radius: var(--theme-card-border-radius); background-color: var(--theme-bg-secondary);
             border: 1px solid var(--theme-border-primary); box-shadow: 0 4px 15px var(--theme-shadow-color);
@@ -511,12 +512,12 @@
 
         .table-wrapper { border: 1px solid var(--theme-border-secondary); border-radius: 8px; overflow: auto; }
         
-        #itemInputTable, #itemResultTable {
+        #itemInputTable, #itemResultTable, #ncmRegistryTable {
             width: 100%; border-collapse: separate; border-spacing: 0;
             font-size: 13px; color: var(--theme-text-primary);
         }
         /* CORREÇÃO DE ACESSIBILIDADE: Adicionando caption para descrever a tabela para leitores de tela */
-        #itemInputTable caption, #itemResultTable caption {
+        #itemInputTable caption, #itemResultTable caption, #ncmRegistryTable caption {
             position: absolute;
             width: 1px;
             height: 1px;
@@ -528,20 +529,20 @@
             border-width: 0;
         }
 
-        #itemInputTable th, #itemResultTable th {
+        #itemInputTable th, #itemResultTable th, #ncmRegistryTable th {
             background-color: var(--table-header-bg); color: var(--table-header-text);
             font-weight: 600; white-space: nowrap; padding: 12px 10px; text-align: left;
             border-bottom: 2px solid var(--theme-accent-blue);
             border-right: 1px solid var(--theme-border-primary);
             position: sticky; top: 0; z-index: 10;
         }
-        #itemInputTable th:last-child, #itemResultTable th:last-child { border-right: none; }
-        #itemInputTable td, #itemResultTable td {
+        #itemInputTable th:last-child, #itemResultTable th:last-child, #ncmRegistryTable th:last-child { border-right: none; }
+        #itemInputTable td, #itemResultTable td, #ncmRegistryTable td {
             border: none; border-bottom: 1px solid var(--theme-border-secondary);
             padding: 8px 10px; vertical-align: middle;
         }
-        #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
-        #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td { border-bottom: none; }
+        #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td, #ncmRegistryTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
+        #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td, #ncmRegistryTable tbody tr:last-child td { border-bottom: none; }
         
         #itemInputTable tr.dragging {
             opacity: 0.5;
@@ -1897,6 +1898,7 @@ document.addEventListener('DOMContentLoaded', function() {
             geId(`aliqICMSItem${rowIndex}`).value = processAliq(data.aliquota_icms.aliquota);
         }
         
+        // Dispara um evento para garantir que outras lógicas (como salvar estado) sejam acionadas
         geId(`aliqIIItem${rowIndex}`).dispatchEvent(new Event('input', { bubbles: true }));
     }
 
