@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Ferramenta de Calculo de Importação V48</title>
+    <title>Ferramenta de Calculo de Importação V49</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -135,7 +135,7 @@
             border: 1px solid var(--theme-border-secondary);
             transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        #themeToggleBtn, #settingsBtn, #ncmManagementBtn {
+        #themeToggleBtn, #settingsBtn, #ncmManagementBtn, #supplierManagementBtn {
             padding: 8px 12px; font-size: 1.5em;
             border: 1px solid var(--theme-border-primary);
             background-color: var(--theme-surface-primary);
@@ -145,7 +145,7 @@
             z-index: 1000; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
             margin-left: 10px;
         }
-        #themeToggleBtn:hover, #settingsBtn:hover, #ncmManagementBtn:hover { box-shadow: var(--theme-glow-blue); transform: scale(1.1); }
+        #themeToggleBtn:hover, #settingsBtn:hover, #ncmManagementBtn:hover, #supplierManagementBtn:hover { box-shadow: var(--theme-glow-blue); transform: scale(1.1); }
         .header-buttons { display: flex; }
 
         h1 {
@@ -380,7 +380,7 @@
 
         .table-wrapper { border: 1px solid var(--theme-border-secondary); border-radius: 8px; overflow: auto; }
         
-        #itemInputTable, #itemResultTable, #customNcmTable {
+        #itemInputTable, #itemResultTable, #customNcmTable, #supplierTable {
             width: 100%; border-collapse: separate; border-spacing: 0;
             font-size: 13px; color: var(--theme-text-primary);
         }
@@ -390,20 +390,20 @@
             overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
         }
 
-        #itemInputTable th, #itemResultTable th, #customNcmTable th {
+        #itemInputTable th, #itemResultTable th, #customNcmTable th, #supplierTable th {
             background-color: var(--table-header-bg); color: var(--table-header-text);
             font-weight: 600; white-space: nowrap; padding: 12px 10px; text-align: left;
             border-bottom: 2px solid var(--theme-accent-blue);
             border-right: 1px solid var(--theme-border-primary);
             position: sticky; top: 0; z-index: 10;
         }
-        #itemInputTable th:last-child, #itemResultTable th:last-child, #customNcmTable th:last-child { border-right: none; }
-        #itemInputTable td, #itemResultTable td, #customNcmTable td {
+        #itemInputTable th:last-child, #itemResultTable th:last-child, #customNcmTable th:last-child, #supplierTable th:last-child { border-right: none; }
+        #itemInputTable td, #itemResultTable td, #customNcmTable td, #supplierTable td {
             border: none; border-bottom: 1px solid var(--theme-border-secondary);
             padding: 8px 10px; vertical-align: middle;
         }
-        #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td, #customNcmTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
-        #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td, #customNcmTable tbody tr:last-child td { border-bottom: none; }
+        #itemInputTable tbody tr:hover td, #itemResultTable tbody tr:hover td, #customNcmTable tbody tr:hover td, #supplierTable tbody tr:hover td { background-color: var(--table-row-hover-bg); }
+        #itemInputTable tbody tr:last-child td, #itemResultTable tbody tr:last-child td, #customNcmTable tbody tr:last-child td, #supplierTable tbody tr:last-child td { border-bottom: none; }
         
         #itemInputTable tr.dragging { opacity: 0.5; background: var(--theme-accent-blue); }
         .drag-handle { cursor: grab; width: 20px; text-align: center; color: var(--theme-text-secondary); }
@@ -527,6 +527,10 @@
             <span id="appVersion"></span>
         </h1>
         <div class="header-buttons">
+            <button id="supplierManagementBtn" aria-label="Gerenciar Fornecedores" aria-haspopup="dialog" aria-controls="supplierManagementModal">
+                <i class="fas fa-truck" aria-hidden="true"></i>
+                <span class="sr-only">Gerenciar Fornecedores</span>
+            </button>
             <button id="ncmManagementBtn" aria-label="Gerenciar NCMs Cadastrados" aria-haspopup="dialog" aria-controls="ncmManagementModal">
                 <i class="fas fa-book" aria-hidden="true"></i>
                 <span class="sr-only">Gerenciar NCMs</span>
@@ -563,7 +567,12 @@
                     <legend class="section-separator"><span data-translate-key="sepInfoOrganizacionais">Informações Organizacionais</span></legend>
                     <div class="grid-container">
                         <div class="grid-item"><label for="nomeUsuario" data-translate-key="labelNomeUsuario">Nome do Usuário:</label><input type="text" id="nomeUsuario" placeholder="Seu nome" aria-describedby="nomeUsuarioError"><span class="error-message" id="nomeUsuarioError">Campo obrigatório</span><small class="field-description" data-translate-key="descNomeUsuario">Nome do responsável pelo cálculo.</small></div>
-                        <div class="grid-item"><label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label><input type="text" id="nomeFornecedor" placeholder="Nome do Fornecedor Internacional" aria-describedby="nomeFornecedorError"><span class="error-message" id="nomeFornecedorError">Campo obrigatório</span><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small></div>
+                        <div class="grid-item">
+                            <label for="nomeFornecedor" data-translate-key="labelNomeFornecedor">Nome do Fornecedor:</label>
+                            <input type="text" id="nomeFornecedor" list="fornecedoresList" placeholder="Nome do Fornecedor Internacional" aria-describedby="nomeFornecedorError">
+                            <datalist id="fornecedoresList"></datalist>
+                            <span class="error-message" id="nomeFornecedorError">Campo obrigatório</span><small class="field-description" data-translate-key="descNomeFornecedor">Fornecedor dos produtos.</small>
+                        </div>
                         <div class="grid-item"><label for="refInterna" data-translate-key="labelRefInterna">Referência Interna / Ordem Compra:</label><input type="text" id="refInterna" placeholder="Seu código/nome de controle" aria-describedby="refInternaError"><span class="error-message" id="refInternaError">Campo obrigatório</span><small class="field-description" data-translate-key="descRefInterna">Código/nome para seu controle interno ou OC.</small></div>
                         <div class="grid-item"><label for="numeroPI" data-translate-key="labelNumeroPI">Número da PI (Proforma):</label><input type="text" id="numeroPI" placeholder="Nº da Proforma Invoice" aria-describedby="numeroPIError"><span class="error-message" id="numeroPIError">Campo obrigatório</span><small class="field-description" data-translate-key="descNumeroPI">Número da Fatura Proforma.</small></div>
                         <div class="grid-item"><label for="diProcesso" data-translate-key="labelDiProcesso">Número da DI/Processo:</label><input type="text" id="diProcesso" placeholder="Nº DI ou Processo" aria-describedby="diProcessoError"><span class="error-message" id="diProcessoError">Campo obrigatório</span><small class="field-description" data-translate-key="descDiProcesso">Identificador da DI ou do processo.</small></div>
@@ -1107,6 +1116,11 @@
                 
                 <section aria-labelledby="ncmTableTitle" style="margin-top: 30px;">
                     <h3 id="ncmTableTitle">Seus NCMs Salvos</h3>
+                     <div class="modal-actions" style="text-align: left; margin-top: 0; margin-bottom: 15px;">
+                        <input type="file" id="ncmCsvInput" accept=".csv" style="display: none;">
+                        <button type="button" id="importNcmCsvBtn" class="main-calculate-button" style="background-color: var(--theme-accent-green);"><i class="fas fa-file-import"></i> Importar CSV</button>
+                        <button type="button" id="exportNcmCsvBtn" class="main-calculate-button" style="background-color: var(--theme-accent-orange);"><i class="fas fa-file-export"></i> Exportar CSV</button>
+                    </div>
                     <div class="table-wrapper">
                         <table id="customNcmTable">
                             <thead>
@@ -1130,6 +1144,63 @@
             </div>
         </div>
     </div>
+    
+    <div id="supplierManagementModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="supplierModalTitle">
+        <div class="modal-content">
+            <button id="closeSupplierModalBtn" class="modal-close-btn" aria-label="Fechar Gestão de Fornecedores">&times;</button>
+            <div class="modal-body">
+                <h2 id="supplierModalTitle">Gestão de Fornecedores</h2>
+                
+                <section aria-labelledby="supplierFormTitle">
+                    <h3 id="supplierFormTitle">Adicionar / Editar Fornecedor</h3>
+                    <form id="supplierForm" novalidate>
+                        <input type="hidden" id="supplierEditId">
+                        <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                            <div class="grid-item">
+                                <label for="supplierNameInput">Nome do Fornecedor:</label>
+                                <input type="text" id="supplierNameInput" required>
+                            </div>
+                            <div class="grid-item">
+                                <label for="supplierCountryInput">País:</label>
+                                <input type="text" id="supplierCountryInput">
+                            </div>
+                             <div class="grid-item">
+                                <label for="supplierContactInput">Contato:</label>
+                                <input type="text" id="supplierContactInput">
+                            </div>
+                        </div>
+                        <div class="grid-item" style="grid-column: 1 / -1; margin-top: 15px;">
+                            <label for="supplierNotesInput">Observações:</label>
+                            <textarea id="supplierNotesInput"></textarea>
+                        </div>
+                        <div class="modal-actions" style="margin-top: 20px;">
+                            <button type="button" id="supplierFormClearBtn" class="clear-button" style="float: left;">Limpar</button>
+                            <button type="submit" id="supplierFormSaveBtn" class="main-calculate-button">Salvar Fornecedor</button>
+                        </div>
+                    </form>
+                </section>
+                
+                <section aria-labelledby="supplierTableTitle" style="margin-top: 30px;">
+                    <h3 id="supplierTableTitle">Seus Fornecedores Salvos</h3>
+                    <div class="table-wrapper">
+                        <table id="supplierTable">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>País</th>
+                                    <th>Contato</th>
+                                    <th>Observações</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
 
 
 <script>
@@ -1138,6 +1209,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const NCM_API_ENDPOINT = 'https://brasilapi.com.br/api/ncm/v1/';
     const IMPOSTOS_PADRAO = { aliqII: "12.60", aliqIPI: "9.75", aliqPIS: "2.10", aliqCOFINS: "10.65", aliqICMS: "17" };
     const CUSTOM_NCM_KEY = 'importCalculator_customNcms';
+    const SUPPLIERS_KEY = 'importCalculator_suppliers';
     const SAVED_CALCS_KEY = 'importCalculator_savedCalculations';
     const LAST_STATE_KEY = 'importCalculator_lastState';
 
@@ -1293,6 +1365,9 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.classList.add('active');
         if (modalId === 'ncmManagementModal') {
             renderNcmTable();
+        }
+        if (modalId === 'supplierManagementModal') {
+            renderSupplierTable();
         }
         modal.addEventListener('keydown', handleModalKeydown);
         const firstFocusableElement = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
@@ -1700,6 +1775,178 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+    
+    function exportNcmsToCsv() {
+        const ncms = getCustomNcms();
+        if (Object.keys(ncms).length === 0) {
+            showToast("Nenhum NCM para exportar.", "warning");
+            return;
+        }
+        const headers = ['ncm', 'descricao', 'ii', 'ipi', 'pis', 'cofins', 'icms'];
+        const rows = Object.entries(ncms).map(([code, data]) => 
+            [code, data.desc, data.aliqII, data.aliqIPI, data.aliqPIS, data.aliqCOFINS, data.aliqICMS].join(';')
+        );
+        const csvContent = [headers.join(';'), ...rows].join('\r\n');
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = 'cadastro_ncms.csv';
+        link.click();
+        showToast("NCMs exportados com sucesso!", "success");
+    }
+
+    function handleNcmImport() {
+        const fileInput = geId('ncmCsvInput');
+        if (!fileInput.files.length) { showToast('Selecione um arquivo CSV.', 'warning'); return; }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const lines = event.target.result.split(/[\r\n]+/).filter(line => line.trim() !== '');
+                const headers = lines.shift().split(';').map(h => h.trim().toLowerCase());
+                const requiredHeaders = ['ncm', 'ii', 'ipi', 'pis', 'cofins', 'icms'];
+                if (!requiredHeaders.every(h => headers.includes(h))) {
+                    throw new Error("Cabeçalho do CSV inválido. Verifique o arquivo.");
+                }
+                const ncms = getCustomNcms();
+                let importedCount = 0;
+                lines.forEach(line => {
+                    const values = line.split(';');
+                    const ncmData = {};
+                    headers.forEach((header, index) => {
+                        ncmData[header] = values[index] || '';
+                    });
+                    const ncmCode = ncmData.ncm.replace(/\D/g, '');
+                    if (ncmCode) {
+                        ncms[ncmCode] = {
+                            desc: ncmData.descricao || '',
+                            aliqII: ncmData.ii || '',
+                            aliqIPI: ncmData.ipi || '',
+                            aliqPIS: ncmData.pis || '',
+                            aliqCOFINS: ncmData.cofins || '',
+                            aliqICMS: ncmData.icms || ''
+                        };
+                        importedCount++;
+                    }
+                });
+                saveCustomNcms(ncms);
+                renderNcmTable();
+                showToast(`${importedCount} NCMs importados/atualizados com sucesso!`, "success");
+            } catch (error) {
+                showToast(`Erro ao importar: ${error.message}`, "error");
+            } finally {
+                fileInput.value = ''; // Limpa o input
+            }
+        };
+        reader.onerror = () => showToast('Erro ao ler o arquivo.', 'error');
+        reader.readAsText(fileInput.files[0], 'UTF-8');
+    }
+    
+    function getSuppliers() {
+        try {
+            return JSON.parse(localStorage.getItem(SUPPLIERS_KEY)) || {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveSuppliers(suppliers) {
+        localStorage.setItem(SUPPLIERS_KEY, JSON.stringify(suppliers));
+    }
+    
+    function populateSupplierDatalist() {
+        const suppliers = getSuppliers();
+        const datalist = geId('fornecedoresList');
+        if (!datalist) return;
+        datalist.innerHTML = '';
+        Object.values(suppliers).forEach(supplier => {
+            const option = document.createElement('option');
+            option.value = supplier.name;
+            datalist.appendChild(option);
+        });
+    }
+
+    function renderSupplierTable() {
+        const suppliers = getSuppliers();
+        const tbody = geId('supplierTable')?.querySelector('tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (Object.keys(suppliers).length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum fornecedor cadastrado.</td></tr>';
+            return;
+        }
+        Object.entries(suppliers).forEach(([id, data]) => {
+            const row = tbody.insertRow();
+            row.dataset.id = id;
+            row.innerHTML = `
+                <td>${data.name}</td>
+                <td>${data.country || ''}</td>
+                <td>${data.contact || ''}</td>
+                <td style="white-space: pre-wrap;">${data.notes || ''}</td>
+                <td style="white-space: nowrap;">
+                    <button type="button" class="supplier-edit-btn" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" aria-label="Editar Fornecedor"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="supplier-delete-btn" style="padding: 5px 10px; font-size: 12px;" aria-label="Excluir Fornecedor"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+        });
+    }
+
+    function clearSupplierForm() {
+        geId('supplierForm').reset();
+        geId('supplierEditId').value = '';
+    }
+
+    function handleSupplierFormSubmit(event) {
+        event.preventDefault();
+        const nameInput = geId('supplierNameInput');
+        const name = nameInput.value.trim();
+        if (!name) {
+            showToast("O nome do fornecedor é obrigatório.", "error");
+            nameInput.focus();
+            return;
+        }
+
+        const suppliers = getSuppliers();
+        let id = geId('supplierEditId').value || Date.now().toString();
+        
+        suppliers[id] = {
+            name: name,
+            country: geId('supplierCountryInput').value,
+            contact: geId('supplierContactInput').value,
+            notes: geId('supplierNotesInput').value
+        };
+        
+        saveSuppliers(suppliers);
+        showToast(`Fornecedor ${name} salvo com sucesso!`, 'success');
+        renderSupplierTable();
+        populateSupplierDatalist();
+        clearSupplierForm();
+    }
+
+    function handleSupplierTableClick(event) {
+        const target = event.target.closest('button');
+        if (!target) return;
+        const id = target.closest('tr').dataset.id;
+        const suppliers = getSuppliers();
+        
+        if (target.classList.contains('supplier-edit-btn')) {
+            const data = suppliers[id];
+            geId('supplierEditId').value = id;
+            geId('supplierNameInput').value = data.name;
+            geId('supplierCountryInput').value = data.country || '';
+            geId('supplierContactInput').value = data.contact || '';
+            geId('supplierNotesInput').value = data.notes || '';
+            geId('supplierNameInput').focus();
+        } else if (target.classList.contains('supplier-delete-btn')) {
+            if (confirm(`Tem certeza que deseja excluir o fornecedor ${suppliers[id].name}?`)) {
+                delete suppliers[id];
+                saveSuppliers(suppliers);
+                showToast('Fornecedor excluído.', 'success');
+                renderSupplierTable();
+                populateSupplierDatalist();
+            }
+        }
+    }
+
 
     function getCurrentStateAsObject() {
         const data = { global: {}, items: [], lang: geId('idiomaSelect').value, calculationName: geId('calculationName').value };
@@ -2441,17 +2688,28 @@ document.addEventListener('DOMContentLoaded', function() {
         geId('closeShareModalBtn')?.addEventListener('click', () => closeModal('shareImageModal'));
         geId('shareImageModal')?.addEventListener('click', (e) => { if (e.target === geId('shareImageModal')) closeModal('shareImageModal'); });
         
-        // Listeners para o novo modal de NCM
+        // Listeners para o modal de NCM
         geId('ncmManagementBtn').addEventListener('click', () => openModal('ncmManagementModal'));
         geId('closeNcmModalBtn').addEventListener('click', () => closeModal('ncmManagementModal'));
         geId('ncmForm').addEventListener('submit', handleNcmFormSubmit);
         geId('ncmFormClearBtn').addEventListener('click', clearNcmForm);
         geId('customNcmTable').addEventListener('click', handleNcmTableClick);
+        geId('exportNcmCsvBtn').addEventListener('click', exportNcmsToCsv);
+        geId('importNcmCsvBtn').addEventListener('click', () => geId('ncmCsvInput').click());
+        geId('ncmCsvInput').addEventListener('change', handleNcmImport);
+
+        // Listeners para o modal de Fornecedores
+        geId('supplierManagementBtn').addEventListener('click', () => openModal('supplierManagementModal'));
+        geId('closeSupplierModalBtn').addEventListener('click', () => closeModal('supplierManagementModal'));
+        geId('supplierForm').addEventListener('submit', handleSupplierFormSubmit);
+        geId('supplierFormClearBtn').addEventListener('click', clearSupplierForm);
+        geId('supplierTable').addEventListener('click', handleSupplierTableClick);
     }
     
     // --- INICIALIZAÇÃO ---
     loadState();
     populateSavedCalculationsDropdown();
+    populateSupplierDatalist();
     setupEventListeners();
     updateCotacaoButtonLabel();
     handleRegimeChange();
