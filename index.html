@@ -602,7 +602,6 @@
             border-radius: 8px; cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
         }
-        button.main-calculate-button { background-color: var(--theme-accent-blue); box-shadow: 0 2px 5px var(--theme-shadow-color); }
         button.main-calculate-button:hover {
             background-color: var(--theme-accent-blue-darker);
             transform: translateY(-2px); box-shadow: 0 4px 10px var(--theme-shadow-color), var(--theme-glow-blue);
@@ -922,7 +921,7 @@
                         </div>
                         <div class="grid-item">
                             <label for="incoterm" data-translate-key="labelIncoterm">INCOTERM:</label>
-                            <select id="incoterm"><option value="">Selecione</option><option value="EXW">EXW</option><option value="FCA">FCA</option><option value="FAS">FAS</option><option value="FOB">FOB</option><option value="CPT" selected>CPT</option><option value="CFR">CFR</option><option value="CIP">CIP</option><option value="DAP">DAP</option><option value="DPU">DPU</option><option value="DDP">DDP</option></select>
+                            <select id="incoterm"><option value="">Selecione</option><option value="EXW">EXW</option><option value="FCA">FCA</option><option value="FAS">FAS</option><option value="FOB">FOB</option><option value="CPT" selected>CPT</option><option value="CFR">CFR</option><option value="CIP">CIP</option><option value="CIF">CIF</option><option value="DAP">DAP</option><option value="DPU">DPU</option><option value="DDP">DDP</option></select>
                             <small class="field-description" data-translate-key="descIncoterm">Ex: FOB, CIF. Define responsabilidades.</small>
                         </div>
                          <div class="grid-item">
@@ -1106,41 +1105,239 @@
                                 <th scope="col">Qtd</th>
                                 <th scope="col">Peso Unit. KG</th>
                                 <th scope="col">Peso Total KG</th>
-                                <th scope="col">% Rateio Peso Unit.</th>
-                                <th scope="col">Frete por Peso Unit. (R$)</th>
+                                <th scope="col">
+                                    % Rateio Peso Unit.
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Percentual do peso total do embarque que este item representa. Usado para rateio de custos baseados em peso.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Frete por Peso Unit. (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do frete internacional rateado por unidade do item, em BRL.</span>
+                                    </span>
+                                </th>
                                 <th scope="col">Pr. Custo Unit. $</th>
                                 <th scope="col">Pr. Custo Total $</th>
-                                <th scope="col">FOB Unit. (R$)</th>
-                                <th scope="col">FOB Total (R$)</th>
-                                <th scope="col">FOB %</th>
-                                <th scope="col">Seguro Rateado (R$)</th>
-                                <th scope="col">Outras Desp. Rateadas (R$)</th>
-                                <th scope="col">CIF Total (R$)</th>
-                                <th scope="col">II R$</th>
-                                <th scope="col">Valor Total NF (R$)</th>
-                                <th scope="col">Valor Unitário NF (R$)</th>
-                                <th scope="col">IPI Pago R$</th>
-                                <th scope="col">IPI Crédito R$</th>
-                                <th scope="col">IPI Custo R$</th>
-                                <th scope="col">TX.SISC. (R$)</th>
-                                <th scope="col">PIS Pago R$</th>
-                                <th scope="col">PIS Crédito R$</th>
-                                <th scope="col">PIS Custo R$</th>
-                                <th scope="col">COFINS Pago R$</th>
-                                <th scope="col">COFINS Crédito R$</th>
-                                <th scope="col">COFINS Custo R$</th>
-                                <th scope="col">Base Calc. ICMS R$</th>
-                                <th scope="col">ICMS Pago R$</th>
-                                <th scope="col">ICMS Crédito R$</th>
-                                <th scope="col">ICMS Custo R$</th>
-                                <th scope="col">AFRMM R$</th>
-                                <th scope="col">Desp. Adu R$</th>
-                                <th scope="col">Frete Nac R$</th>
-                                <th scope="col">Custo Total Com Impostos</th>
-                                <th scope="col">CUSTO UNIT Com Impostos</th>
-                                <th scope="col">Soma Impostos Que Creditam (R$)</th>
-                                <th scope="col">Soma Impostos Com Creditos (R$)</th>
-                                <th scope="col">Total Imp. Efetivos</th>
+                                <th scope="col">
+                                    FOB Unit. (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor FOB unitário em BRL. Fórmula: [Preço Custo Unit. ME] * [Taxa de Câmbio].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    FOB Total (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor FOB total do item em BRL. Fórmula: [Preço Custo Total ME] * [Taxa de Câmbio].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    FOB %
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Percentual do valor FOB total do embarque que este item representa. Usado para rateio de custos baseados em valor.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Seguro Rateado (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do seguro internacional rateado para o item, em BRL. Rateado pelo FOB %.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Outras Desp. Rateadas (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Outras despesas de origem rateadas para o item, em BRL. Rateado pelo FOB %.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    CIF Total (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Custo, Seguro e Frete total do item em BRL. Fórmula: [FOB Total (R$)] + [Frete por Peso Unit. (R$)] + [Seguro Rateado (R$)] + [Outras Desp. Rateadas (R$)].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    II R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do Imposto de Importação (II) pago. Fórmula: [CIF Total (R$)] * [Alíquota II].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Valor Total NF (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor total na Nota Fiscal de entrada. Fórmula: [CIF Total (R$)] + [II R$].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Valor Unitário NF (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor unitário na Nota Fiscal de entrada. Fórmula: [Valor Total NF (R$)] / [Qtd].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    IPI Pago R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do IPI pago. Fórmula: ([CIF Total (R$)] + [II R$]) * [Alíquota IPI].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    IPI Crédito R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do IPI que pode ser creditado. Fórmula: [IPI Pago R$] * [% Crédito IPI].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    IPI Custo R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do IPI que efetivamente se torna custo. Fórmula: [IPI Pago R$] - [IPI Crédito R$].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    TX.SISC. (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Taxa Siscomex rateada para o item. Rateado pelo FOB %.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    PIS Pago R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do PIS pago. Fórmula: [CIF Total (R$)] * [Alíquota PIS].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    PIS Crédito R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do PIS que pode ser creditado. Fórmula: [PIS Pago R$] * [% Crédito PIS].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    PIS Custo R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do PIS que efetivamente se torna custo. Fórmula: [PIS Pago R$] - [PIS Crédito R$].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    COFINS Pago R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do COFINS pago. Fórmula: [CIF Total (R$)] * [Alíquota COFINS].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    COFINS Crédito R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do COFINS que pode ser creditado. Fórmula: [COFINS Pago R$] * [% Crédito COFINS].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    COFINS Custo R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do COFINS que efetivamente se torna custo. Fórmula: [COFINS Pago R$] - [COFINS Crédito R$].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Base Calc. ICMS R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Base de cálculo do ICMS. Inclui CIF, II, IPI, PIS, COFINS e despesas aduaneiras.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    ICMS Pago R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do ICMS pago. Fórmula: [Base Calc. ICMS R$] * [Alíquota ICMS].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    ICMS Crédito R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do ICMS que pode ser creditado. Fórmula: [ICMS Pago R$] * [% Crédito ICMS].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    ICMS Custo R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Valor do ICMS que efetivamente se torna custo. Fórmula: [ICMS Pago R$] - [ICMS Crédito R$].</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    AFRMM R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Adicional ao Frete para a Renovação da Marinha Mercante rateado para o item.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Desp. Adu R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Despesas Aduaneiras rateadas para o item. Rateado por peso.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Frete Nac R$
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Frete Nacional rateado para o item. Rateado por peso.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Custo Total Com Impostos
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Custo total do item incluindo todos os impostos brutos e despesas.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    CUSTO UNIT Com Impostos
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Custo unitário do item incluindo todos os impostos brutos e despesas.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Soma Impostos Que Creditam (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Soma total dos valores de IPI, PIS, COFINS e ICMS que podem gerar crédito.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Soma Impostos Com Creditos (R$)
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Soma dos impostos efetivos (II, IPI Efetivo, PIS Efetivo, COFINS Efetivo, ICMS Efetivo) e AFRMM.</span>
+                                    </span>
+                                </th>
+                                <th scope="col">
+                                    Total Imp. Efetivos
+                                    <span class="tooltip-container">
+                                        <i class="fas fa-question-circle tooltip-icon"></i>
+                                        <span class="tooltip-text">Soma dos impostos que efetivamente se tornam custo para o item (II, IPI Custo, PIS Custo, COFINS Custo, ICMS Custo).</span>
+                                    </span>
+                                </th>
                                 <th scope="col">CUSTO UNIT. R$ (Líquido)</th>
                                 <th scope="col">CUSTO TOTAL LINHA R$ (Líquido)</th>
                                 <th scope="col">CUSTO UNIT. NACIONAL (R$)</th>
