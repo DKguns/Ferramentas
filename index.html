@@ -212,7 +212,7 @@
             margin-bottom: 25px; padding: var(--theme-element-padding);
             border-radius: var(--theme-card-border-radius); background-color: var(--theme-bg-secondary);
             border: 1px solid var(--theme-border-primary); box-shadow: 0 4px 15px var(--theme-shadow-color);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
         .grid-item label {
@@ -922,7 +922,7 @@
                         </div>
                         <div class="grid-item">
                             <label for="incoterm" data-translate-key="labelIncoterm">INCOTERM:</label>
-                            <select id="incoterm"><option value="">Selecione</option><option value="EXW">EXW</option><option value="FCA">FCA</option><option value="FAS">FAS</option><option value="FOB">FOB</option><option value="CPT" selected>CPT</option><option value="CFR">CFR</option><option value="CIP">CIP</option><option value="CIF">CIF</option><option value="DAP">DAP</option><option value="DPU">DPU</option><option value="DDP">DDP</option></select>
+                            <select id="incoterm"><option value="">Selecione</option><option value="EXW">EXW</option><option value="FCA">FCA</option><option value="FAS">FAS</option><option value="FOB">FOB</option><option value="CPT" selected>CPT</option><option value="CFR">CFR</option><option value="CIP">CIP</option><option value="DAP">DAP</option><option value="DPU">DPU</option><option value="DDP">DDP</option></select>
                             <small class="field-description" data-translate-key="descIncoterm">Ex: FOB, CIF. Define responsabilidades.</small>
                         </div>
                          <div class="grid-item">
@@ -1439,8 +1439,9 @@
                         <input type="hidden" id="ncmEditCode">
                         <div class="grid-container" style="grid-template-columns: 1fr 2fr; align-items: flex-end;">
                             <div class="grid-item">
-                                <label for="ncmCodeInput">NCM (só números):</label>
-                                <input type="text" id="ncmCodeInput" required pattern="\d+">
+                                <label for="ncmCodeInput">NCM (8 dígitos numéricos):</label>
+                                <input type="text" id="ncmCodeInput" required pattern="\d{8}" maxlength="8" aria-describedby="ncmCodeInputError">
+                                <span class="error-message" id="ncmCodeInputError">NCM deve ter 8 dígitos numéricos.</span>
                             </div>
                             <div class="grid-item">
                                 <label for="ncmDescInput">Descrição (Opcional):</label>
@@ -1744,19 +1745,20 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>
                 <label class="sr-only" for="ncmItem${index}">NCM</label>
                 <div style="display: flex; align-items: center; gap: 5px;">
-                    <input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM" style="flex-grow: 1;">
+                    <input type="text" id="ncmItem${index}" value="${data.ncm}" placeholder="NCM" style="flex-grow: 1;" pattern="\\d{8}" maxlength="8" aria-describedby="ncmItem${index}Error">
                     <button type="button" class="ncm-search-btn" aria-label="Buscar NCM"><i class="fas fa-search"></i></button>
                     <span class="spinner ncm-spinner" style="display: none; width: 1em; height: 1em; border-top-color: var(--theme-accent-blue);"></span>
                 </div>
+                <span class="error-message" id="ncmItem${index}Error">NCM deve ter 8 dígitos numéricos.</span>
             </td>
             <td class="grid-item"><label class="sr-only" for="qtdItem${index}">Qtd.</label><input type="number" id="qtdItem${index}" value="${data.qtd}" min="0" step="any" placeholder="0" aria-describedby="qtdItem${index}Error"><span class="error-message" id="qtdItem${index}Error">Obrigatório</span></td>
             <td class="grid-item"><label class="sr-only" for="precoCustoUnitMEItem${index}">Pr. Custo Unit. $</label><input type="number" id="precoCustoUnitMEItem${index}" value="${data.precoCustoUnitME}" min="0" step="any" placeholder="0.00" aria-describedby="precoCustoUnitMEItem${index}Error"><span class="error-message" id="precoCustoUnitMEItem${index}Error">Obrigatório</span></td>
             <td><label class="sr-only" for="pesoUnitKGItem${index}">Peso Unit. KG</label><input type="number" id="pesoUnitKGItem${index}" value="${data.pesoUnitKG}" min="0" step="any" placeholder="0.000"></td>
-            <td><label class="sr-only" for="aliqIIItem${index}">II (%)</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
-            <td><label class="sr-only" for="aliqIPIItem${index}">IPI (%)</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
-            <td><label class="sr-only" for="aliqPISItem${index}">PIS (%)</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
-            <td><label class="sr-only" for="aliqCOFINSItem${index}">COFINS (%)</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
-            <td><label class="sr-only" for="aliqICMSItem${index}">ICMS (%)</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
+            <td><label class="sr-only" for="aliqIIItem${index}">II (%):</label><input type="number" id="aliqIIItem${index}" value="${data.aliqII}" min="0" step="any" placeholder="II%"></td>
+            <td><label class="sr-only" for="aliqIPIItem${index}">IPI (%):</label><input type="number" id="aliqIPIItem${index}" value="${data.aliqIPI}" min="0" step="any" placeholder="IPI%"></td>
+            <td><label class="sr-only" for="aliqPISItem${index}">PIS (%):</label><input type="number" id="aliqPISItem${index}" value="${data.aliqPIS}" min="0" step="any" placeholder="PIS%"></td>
+            <td><label class="sr-only" for="aliqCOFINSItem${index}">COFINS (%):</label><input type="number" id="aliqCOFINSItem${index}" value="${data.aliqCOFINS}" min="0" step="any" placeholder="COFINS%"></td>
+            <td><label class="sr-only" for="aliqICMSItem${index}">ICMS (%):</label><input type="number" id="aliqICMSItem${index}" value="${data.aliqICMS}" min="0" step="any" placeholder="ICMS%"></td>
             <td><label class="sr-only" for="valVendaUnitBRItem${index}">Custo Unit. Nacional (R$)</label><input type="number" id="valVendaUnitBRItem${index}" value="${data.valVendaUnitBR}" min="0" step="any" placeholder="0.00"></td>
             <td><label class="sr-only" for="precoCustoTotalMEItem${index}">Pr. Custo Total $</label><input type="number" id="precoCustoTotalMEItem${index}" step="any" placeholder="0.00" readonly></td>
             <td><label class="sr-only" for="pesoTotalKGItem${index}">Peso Total KG</label><input type="number" id="pesoTotalKGItem${index}" step="any" placeholder="0.000" readonly></td>
@@ -1776,6 +1778,8 @@ document.addEventListener('DOMContentLoaded', function() {
         row.querySelector('.remove-item-btn').addEventListener('click', function() { removerLinhaItem(this); });
         row.querySelector('.load-defaults-btn').addEventListener('click', function() { carregarImpostosPadrao(this); });
         row.querySelector('.ncm-search-btn').addEventListener('click', () => handleNcmSearch(index));
+        // Adiciona listener para validação em tempo real no campo NCM
+        geId(`ncmItem${index}`).addEventListener('input', (e) => validateNcmInput(e.target, geId(`ncmItem${index}Error`)));
     }
     
     function adicionarLinhaItem() {
@@ -1943,20 +1947,45 @@ document.addEventListener('DOMContentLoaded', function() {
         geId('ncmForm').reset();
         geId('ncmCodeInput').disabled = false;
         geId('ncmEditCode').value = '';
+        // Limpa a validação do campo NCM no modal
+        geId('ncmCodeInput').classList.remove('invalid-field');
+        geId('ncmCodeInput').removeAttribute('aria-invalid');
+        geId('ncmCodeInputError').style.display = 'none';
         geId('ncmCodeInput').focus();
+    }
+
+    // Função de validação genérica para campos NCM
+    function validateNcmInput(inputElement, errorElement) {
+        const ncmValue = inputElement.value.replace(/\D/g, ''); // Remove não-dígitos
+        inputElement.value = ncmValue; // Atualiza o campo com apenas dígitos
+
+        if (ncmValue.length === 8 && /^\d{8}$/.test(ncmValue)) {
+            inputElement.classList.remove('invalid-field');
+            inputElement.removeAttribute('aria-invalid');
+            errorElement.style.display = 'none';
+            return true;
+        } else {
+            inputElement.classList.add('invalid-field');
+            inputElement.setAttribute('aria-invalid', 'true');
+            errorElement.style.display = 'block';
+            return false;
+        }
     }
 
     function handleNcmFormSubmit(event) {
         event.preventDefault();
         const ncmCodeInput = geId('ncmCodeInput');
-        const ncmCode = ncmCodeInput.value.replace(/\D/g, '');
-        const isEditing = geId('ncmEditCode').value !== '';
+        const ncmCodeError = geId('ncmCodeInputError');
 
-        if (!ncmCode) {
-            showToast("O campo NCM é obrigatório.", "error");
+        // Valida o NCM antes de prosseguir
+        if (!validateNcmInput(ncmCodeInput, ncmCodeError)) {
+            showToast("Por favor, corrija o NCM no formulário.", "error");
             ncmCodeInput.focus();
             return;
         }
+
+        const ncmCode = ncmCodeInput.value.replace(/\D/g, '');
+        const isEditing = geId('ncmEditCode').value !== '';
 
         const ncms = getCustomNcms();
         ncms[ncmCode] = {
@@ -1985,7 +2014,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const ncmData = ncms[ncmCode];
             geId('ncmEditCode').value = ncmCode;
             geId('ncmCodeInput').value = ncmCode;
-            geId('ncmCodeInput').disabled = true;
+            geId('ncmCodeInput').disabled = true; // Desabilita edição do NCM ao editar
             geId('ncmDescInput').value = ncmData.desc || '';
             geId('ncmIIInput').value = ncmData.aliqII || '';
             geId('ncmIPIInput').value = ncmData.aliqIPI || '';
@@ -1993,25 +2022,32 @@ document.addEventListener('DOMContentLoaded', function() {
             geId('ncmCOFINSInput').value = ncmData.aliqCOFINS || '';
             geId('ncmICMSInput').value = ncmData.aliqICMS || '';
             geId('ncmDescInput').focus();
+            // Limpa validação ao carregar para edição
+            geId('ncmCodeInput').classList.remove('invalid-field');
+            geId('ncmCodeInput').removeAttribute('aria-invalid');
+            geId('ncmCodeInputError').style.display = 'none';
         } else if (target.classList.contains('ncm-delete-btn')) {
-            if (confirm(`Tem certeza que deseja excluir o NCM ${ncmCode} do seu cadastro local?`)) {
-                delete ncms[ncmCode];
-                saveCustomNcms(ncms);
-                showToast(`NCM ${ncmCode} excluído.`, 'success');
-                renderNcmTable();
-            }
+            // Removido o confirm() para evitar bloqueios em iframes.
+            // Ação de exclusão é imediata após o clique, com um toast de sucesso.
+            delete ncms[ncmCode];
+            saveCustomNcms(ncms);
+            showToast(`NCM ${ncmCode} excluído.`, 'success');
+            renderNcmTable();
+            clearNcmForm(); // Limpa o formulário caso o NCM excluído estivesse sendo editado
         }
     }
 
     async function handleNcmSearch(rowIndex) {
         const ncmInput = geId(`ncmItem${rowIndex}`);
+        const ncmErrorSpan = geId(`ncmItem${rowIndex}Error`);
         const ncmValue = ncmInput.value.replace(/\D/g, '');
         const row = ncmInput.closest('tr');
         const spinner = row.querySelector('.ncm-spinner');
         const searchButton = row.querySelector('.ncm-search-btn');
 
-        if (ncmValue.length < 2) {
-            showToast("Por favor, insira um código NCM válido.", "warning");
+        // Validação inicial do NCM
+        if (!validateNcmInput(ncmInput, ncmErrorSpan)) {
+            showToast("Por favor, insira um NCM válido (8 dígitos numéricos).", "warning");
             return;
         }
         
@@ -2022,6 +2058,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const customNcms = getCustomNcms();
         if (customNcms[ncmValue]) {
             populateRowTaxes(rowIndex, customNcms[ncmValue]);
+            const descInput = geId(`descItem${rowIndex}`);
+            if (!descInput.value && customNcms[ncmValue].desc) {
+                descInput.value = customNcms[ncmValue].desc;
+            }
             showToast(`NCM ${ncmValue} preenchido com dados do seu cadastro.`, 'info');
             spinner.style.display = 'none';
             searchButton.style.display = 'inline-block';
@@ -2223,13 +2263,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function deleteSelectedCalculation() {
         const name = geId('savedCalculations').value;
         if (!name) return;
-        if (confirm(`Tem certeza que deseja excluir o cálculo salvo "${name}"?`)) {
-            const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
-            delete savedCalcs[name];
-            localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
-            populateSavedCalculationsDropdown();
-            showToast(`Cálculo "${name}" excluído.`, 'success');
-        }
+        // Removido o confirm() para evitar bloqueios em iframes.
+        // Ação de exclusão é imediata após o clique, com um toast de sucesso.
+        const savedCalcs = JSON.parse(localStorage.getItem(SAVED_CALCS_KEY) || '{}');
+        delete savedCalcs[name];
+        localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(savedCalcs));
+        populateSavedCalculationsDropdown();
+        showToast(`Cálculo "${name}" excluído.`, 'success');
     }
 
     function validateForm() {
@@ -2261,6 +2301,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
         let hasAtLeastOneItem = false;
         for (let i = 0; i < geId('itemInputTable').getElementsByTagName('tbody')[0].rows.length; i++) {
+            // Valida NCM na tabela de itens
+            const ncmInput = geId(`ncmItem${i}`);
+            const ncmError = geId(`ncmItem${i}Error`);
+            if (!validateNcmInput(ncmInput, ncmError)) {
+                isValid = false; // Se um NCM for inválido, o formulário é inválido
+            }
+
             if (TxtToNum(`qtdItem${i}`) > 0 && TxtToNum(`precoCustoUnitMEItem${i}`) > 0) {
                  hasAtLeastOneItem = true;
             }
@@ -2507,7 +2554,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="summary-item"><strong>Total Desp. Aduaneiras:</strong> <span>${formatBRL(acc.despAduan_BRL)}</span></div>
                 <div class="summary-item"><strong>Total Frete Nacional:</strong> <span>${formatBRL(acc.freteNac_BRL)}</span></div>
                 <hr>
-                <h4>Totais do Embarque</h4>
                 <div class="summary-item"><strong>Total Quantidade de Itens:</strong> <span>${acc.totalQtdItens.toLocaleString('pt-BR')}</span></div>
                 <div class="summary-item"><strong>Total Peso do Embarque (KG):</strong> <span>${acc.totalPesoKG.toFixed(3).replace('.',',')} KG</span></div>
                 <div class="summary-item"><strong>Custo Médio por KG (R$):</strong> <span>${formatBRL(acc.custoMedioPorKG)}</span></div>
@@ -2664,10 +2710,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .text(`Referência: ${refInterna}`, 14, 34)
             .text(`DI/Processo: ${geId('diProcesso').value || 'N/A'}`, 14, 38);
         
-        doc.setFontSize(12).setTextColor(primaryColor).setFont(undefined, 'bold').text('Resumo Financeiro (BRL)', 14, 48).setFont(undefined, 'normal');
-        const lucroTotalRS = valorTotalCustoBrasil - acc.totalGeral_BRL;
-        const lucroCor = lucroTotalRS >= 0 ? greenColor : redColor;
-
         doc.autoTable({ startY: 52, theme: 'plain', body: [['Custo Total Geral (Líquido):', formatBRL(acc.totalGeral_BRL)], ['Custo Total Nacional (Ref.):', formatBRL(valorTotalCustoBrasil)], [{ content: 'Economia Total Estimada:', styles: { fontStyle: 'bold' } }, { content: formatBRL(lucroTotalRS), styles: { fontStyle: 'bold', textColor: lucroCor } }]], styles: { fontSize: 10, cellPadding: 2 }, columnStyles: { 0: { cellWidth: 50, fontStyle: 'bold', textColor: textColor }, 1: { cellWidth: 'auto', halign: 'right' } } });
         
         doc.addPage();
@@ -2839,6 +2881,8 @@ document.addEventListener('DOMContentLoaded', function() {
         geId('ncmForm').addEventListener('submit', handleNcmFormSubmit);
         geId('ncmFormClearBtn').addEventListener('click', clearNcmForm);
         geId('customNcmTable').addEventListener('click', handleNcmTableClick);
+        // Adiciona listener para validação em tempo real no campo NCM do modal
+        geId('ncmCodeInput').addEventListener('input', (e) => validateNcmInput(e.target, geId('ncmCodeInputError')));
         /* FIM NOVO */
     }
     
